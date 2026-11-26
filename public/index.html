@@ -6,23 +6,23 @@
 <title>Criou · Design por perguntas</title>
 <meta name="description" content="Crie posts, stories e campanhas para sua empresa sem precisar entender de design. Responda algumas perguntas e receba peças organizadas de acordo com a identidade visual da sua marca.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800;900&family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=DM+Serif+Display&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=DM+Serif+Display&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
 /* VOICE: ousado e próximo ("Cria aí"), sem prometer o que o produto não faz.
    IDEA: um balcão de pedidos — você diz o que precisa, o sistema entrega a peça.
    PICTURE: peças reais geradas pelo motor (marcas fictícias), nunca mockups genéricos.
-   COLOUR and TYPE: azul elétrico + ácido (base), pink, amarelo e preto (energia); Unbounded + Inter.
+   COLOUR and TYPE: azul elétrico + ácido (base), pink, amarelo e preto (energia); Anton + Inter.
    LAYOUT: faixas largas, uma ideia por seção, CTA para a demonstração em todo o caminho. */
 :root{--bg:#FFFFFF;--ink:#111111;--soft:#F2F3F7;--card:#FFFFFF;--line:#E1E3EB;--mute:#4A4F63;--acc:#D4FF3A;--accInk:#1F3DFF;--blue:#1F3DFF;--pink:#FF2E88;--yel:#FFE500}
-.wm{font:900 22px/1 Unbounded,sans-serif;letter-spacing:-.03em;display:inline-flex;align-items:center}.wm b{font-weight:900;background:var(--acc);color:var(--blue);border-radius:14px 14px 14px 3px;padding:2px 7px 3px;margin-left:1px}
+.wm{font:400 28px/1 Anton,sans-serif;letter-spacing:.01em;text-transform:uppercase;display:inline-flex;align-items:center}.wm b{font-weight:400;background:var(--acc);color:var(--blue);border-radius:14px 14px 14px 3px;padding:2px 7px 3px;margin-left:1px}
 
 *{box-sizing:border-box;min-width:0}
 html{scroll-padding-top:80px}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
-h1,h2,h3{font-family:Unbounded,Inter,sans-serif;line-height:1.05;margin:0;text-wrap:balance}
-h1{font-size:clamp(30px,3.8vw,50px);font-weight:900;letter-spacing:-.02em}
-h2{font-size:clamp(26px,3vw,40px);font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
-h3{font-size:18px;font-weight:600;margin-bottom:8px}
+h1,h2,h3{font-family:Anton,Inter,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:1.02;margin:0;text-wrap:balance}
+h1{font-size:clamp(42px,5.6vw,76px);line-height:1.08}
+h2{font-size:clamp(34px,4.2vw,58px);margin-bottom:16px}
+h3{font-size:22px;margin-bottom:8px}
 p{margin:0 0 14px}
 a{color:inherit}
 .wrap{max-width:1200px;margin:0 auto;padding:0 max(4vw,18px)}
@@ -51,7 +51,7 @@ header.nav{position:sticky;top:0;z-index:20;background:var(--blue);color:#FFFFFF
 .chips-hero span{font:600 14px Inter,sans-serif;background:#FFFFFF;color:var(--blue);padding:8px 14px;border-radius:999px}
 .chips-hero span.ok{background:var(--acc)}
 .hero .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,4vw,56px);align-items:center}
-.hero h1 em{font-style:normal;background:var(--acc);color:var(--blue);border-radius:.45em .45em .45em .1em;padding:0 .18em .04em;white-space:nowrap}
+.hero h1 em{font-style:normal;background:var(--acc);color:var(--blue);border-radius:.3em .3em .3em .08em;padding:0 .14em;white-space:nowrap;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .ctas{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 14px}
 .micro{font-size:14px;color:var(--mute)}
 .hero .micro{color:#DCE2FF}.hero .lead{color:#E9EDFF}
@@ -70,20 +70,20 @@ header.nav{position:sticky;top:0;z-index:20;background:var(--blue);color:#FFFFFF
 .dark .card{background:#1C1C1C;border-color:#333}
 .steps{counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;margin:28px 0}
 .steps .card{position:relative;padding-top:58px}
-.steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:18px;left:24px;width:34px;height:34px;border-radius:12px 12px 12px 3px;background:var(--blue);color:var(--acc);font:900 15px Unbounded,sans-serif;display:grid;place-items:center}
+.steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:18px;left:24px;width:34px;height:34px;border-radius:12px 12px 12px 3px;background:var(--blue);color:var(--acc);font:400 18px Anton,sans-serif;display:grid;place-items:center}
 .list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
 .list li{display:flex;gap:12px;align-items:baseline}
 .list li::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:var(--pink);transform:translateY(-1px)}
 .vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
 .vs ol{margin:0;padding-left:22px;display:grid;gap:8px}
 .vs .card.on{background:var(--blue);color:#FFFFFF;border-color:var(--blue)}
-.quote{font:800 clamp(22px,2.4vw,30px)/1.15 "Bricolage Grotesque";margin-top:30px;max-width:30ch}
+.quote{font:400 clamp(28px,3vw,40px)/1.1 Anton,sans-serif;text-transform:uppercase;letter-spacing:.01em;margin-top:30px;max-width:30ch}
 .quote em{font-style:normal;background:var(--pink);color:#111111;padding:0 .15em;border-radius:6px}
 .fmt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:end;margin-top:28px}
 .fmt figure{margin:0}
 .fmt canvas{width:100%;height:auto;display:block;border-radius:6px;box-shadow:0 16px 30px -18px rgba(0,0,0,.45)}
 .fmt figcaption{margin-top:12px}
-.fmt figcaption b{display:block;font:600 15px Unbounded,sans-serif}
+.fmt figcaption b{display:block;font:400 20px Anton,sans-serif;text-transform:uppercase;letter-spacing:.02em}
 .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center}
 .why{display:grid;gap:12px}
 .why div{background:#1C1C1C;border:1px solid #333;border-radius:18px 18px 18px 4px;padding:14px 16px}
@@ -91,13 +91,13 @@ header.nav{position:sticky;top:0;z-index:20;background:var(--blue);color:#FFFFFF
 .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px;margin-top:28px;align-items:stretch}
 .plan{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px}
 .plan.hi{background:var(--blue);color:#FFFFFF;border-color:var(--blue)}
-.plan .price{font:900 34px/1 Unbounded,sans-serif;margin:10px 0 6px;white-space:nowrap}
+.plan .price{font:400 44px/1 Anton,sans-serif;margin:10px 0 6px;white-space:nowrap}
 .plan .price small{font:600 15px Inter,sans-serif}
 .plan ul{margin:16px 0 20px;padding-left:20px;display:grid;gap:6px;font-size:15.5px}
 .plan .btn{margin-top:auto}
 .plan .note{font-size:13px;margin:10px 0 0;opacity:.8}
 .faq details{border-bottom:1px solid var(--line);padding:6px 0}
-.faq summary{cursor:pointer;font:600 16px Unbounded,sans-serif;padding:14px 0;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary{cursor:pointer;font:700 17px Inter,sans-serif;padding:14px 0;list-style:none;display:flex;justify-content:space-between;gap:16px}
 .faq summary::after{content:"+";color:var(--blue);font-size:26px;line-height:1;font-weight:700}
 .faq details[open] summary::after{content:"–"}
 .faq details p{max-width:72ch;color:var(--mute)}
@@ -264,7 +264,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
 </main>
 
 <footer><div class="wrap">
-  <span><span class="wm" style="font-size:16px">cri<b>ou</b></span> · Você pediu, criou. Design por perguntas, não por arrastar.</span>
+  <span><span class="wm" style="font-size:20px">cri<b>ou</b></span> · Você pediu, criou. Design por perguntas, não por arrastar.</span>
   <span class="mute">Termos de Uso e Política de Privacidade serão publicados antes da abertura do cadastro.</span>
 </div></footer>
 
