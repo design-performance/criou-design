@@ -22,8 +22,6 @@ Não é um editor. Não tem tela de edição livre: só aparecem escolhas segura
 public/
   index.html          Protótipo completo (interface, motor de decisões e desenho em canvas)
 wrangler.jsonc        Configuração do Worker da Cloudflare que serve o site
-.github/workflows/
-  publicar.yml        Publica na Cloudflare a cada mudança em public/
 ```
 
 Próximo passo de código: separar `public/index.html` em `motor.js` (decisões), `desenho.js` (canvas), `marcas/*.json` (pacotes de marca) e `formatos/*.json`, seguindo o modelo do Sistema de Marketing.
@@ -39,15 +37,11 @@ Depois acesse `http://localhost:8000`.
 
 ## Publicar
 
-A publicação é automática: todo push na `main` que mexe em `public/` publica no Worker `design-por-pergunta` da Cloudflare.
+A publicação é automática pelo **Workers Builds** da Cloudflare, ligado a este repositório: todo push na `main` publica o Worker `design-por-pergunta` (configurado em `wrangler.jsonc`, servindo a pasta `public/`).
 
-Para funcionar, o repositório precisa da chave da Cloudflare (uma vez só):
+Para ligar (uma vez só): Cloudflare → **Workers & Pages → Create → Import a repository** → escolher `design-performance/design-por-pergunta` → **Save and Deploy**. Não precisa de token.
 
-1. Na Cloudflare, crie um token em **My Profile → API Tokens → Create Token → Edit Cloudflare Workers**.
-2. No GitHub, em **Settings → Secrets and variables → Actions → New repository secret**, crie `CLOUDFLARE_API_TOKEN` com o token.
-3. Em **Actions → Publicar site (Cloudflare) → Run workflow**, rode a primeira publicação.
-
-O site fica em `https://design-por-pergunta.<seu-subdominio>.workers.dev`. Depois dá para apontar um domínio próprio em **Workers → design-por-pergunta → Settings → Domains & Routes**.
+O site fica em `https://design-por-pergunta.<seu-subdominio>.workers.dev`. Domínio próprio: **Workers → design-por-pergunta → Settings → Domains & Routes**.
 
 ## Roadmap
 
