@@ -151,6 +151,7 @@ const STEPS=[
  {id:'foto',t:'Tem alguma foto pra usar?',a:'Sem foto, entra o grafismo da sua personalidade.',tipo:'foto',pular:true,resumo:()=>st.foto?'Com foto':'Sem foto'}
 ];
 let idx=0,fim=false;
+{const q=new URLSearchParams(location.search);const n=(q.get('nome')||'').slice(0,40).trim(),k=q.get('cor')||'';if(/^#[0-9a-f]{6}$/i.test(k))st.cor=k;if(n){st.nome=n;idx=1;}}
 const visiveis=()=>STEPS.filter(s=>!s.se||s.se());
 const val=v=>typeof v==='function'?v():v;
 

@@ -162,6 +162,8 @@ const FONTES_MARCA=['Montserrat','Poppins','Inter','Playfair Display','Archivo',
 const EXEMPLOS={
   aurora:{nome:'Padaria Aurora',sigla:'Aurora',site:'padariaaurora.com',fundo:'#FFF4E4',escuro:'#3B2A20',destaque:'#E2A62B',ft:'DM Serif Display',fx:'Inter',en:'cor',forma:'arredondado',graf:'pontos',logo:null},
   ventura:{nome:'Clínica Ventura',sigla:'Ventura',site:'clinicaventura.com',fundo:'#EEF6F4',escuro:'#0E3B43',destaque:'#2BB3A3',ft:'Space Grotesk',fx:'Inter',en:'cor',forma:'reto',graf:'faixa',logo:null},
+  vento:{nome:'Studio Vento',sigla:'Vento',site:'studiovento.com',fundo:'#FFF4EA',escuro:'#1E1A16',destaque:'#FF7A1A',ft:'Archivo',fx:'Inter',en:'cor',forma:'reto',graf:'vetor',logo:null},
+  bento:{nome:'Pet Bento',sigla:'Bento',site:'petbento.com',fundo:'#FFF8E6',escuro:'#2B1D52',destaque:'#7B4BD6',ft:'Fredoka',fx:'Nunito',en:'cor',forma:'pilula',graf:'pontos',logo:null},
   js:{nome:'Joander Santos',sigla:'JS',site:'joandersantos.com.br',fundo:'#F3F0E7',escuro:'#14120F',destaque:'#F9541C',ft:'Bricolage Grotesque',fx:'Figtree',en:'serif',forma:'pilula',graf:'vetor',logo:null}
 };
 

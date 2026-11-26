@@ -6,7 +6,7 @@
 <title>Criou · Design por perguntas</title>
 <meta name="description" content="Crie posts, stories e campanhas para sua empresa sem precisar entender de design. Responda algumas perguntas e receba peças organizadas de acordo com a identidade visual da sua marca.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=DM+Serif+Display&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=DM+Serif+Display&family=Space+Grotesk:wght@500;700&family=Fredoka:wght@600;700&family=Nunito:wght@400;600;800&family=Archivo:wght@500;800&display=swap" rel="stylesheet">
 <style>
 /* VOICE: ousado e próximo ("Cria aí"), sem prometer o que o produto não faz.
    IDEA: um balcão de pedidos — você diz o que precisa, o sistema entrega a peça.
@@ -103,6 +103,30 @@ header.nav{position:sticky;top:0;z-index:20;background:var(--blue);color:#FFFFFF
 .faq details p{max-width:72ch;color:var(--mute)}
 footer{padding:40px 0;font-size:14px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+.demo{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:22px 22px 22px 6px;padding:16px;display:grid;gap:12px;margin:22px 0 14px}
+.demo label{font:600 14px Inter,sans-serif;color:#fff}
+.demo input[type=text]{width:100%;font:16px Inter,sans-serif;border:0;border-radius:14px;padding:12px 14px;min-height:48px;color:#111}
+.demo .sw{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.demo .sw button{width:40px;height:40px;border-radius:50%;border:3px solid var(--blue);box-shadow:0 0 0 2px rgba(255,255,255,.5);cursor:pointer}
+.demo .sw button[aria-pressed=true]{box-shadow:0 0 0 3px var(--acc)}
+.live{position:relative;overflow:hidden;background:var(--pink);border-radius:32px;padding:clamp(18px,3vw,32px);display:grid;place-items:center;min-height:360px}
+.live::before{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:var(--yel)}
+.live::after{content:"";position:absolute;left:-30px;bottom:-40px;width:120px;height:120px;background:var(--ink);transform:rotate(18deg)}
+.live canvas{position:relative;z-index:1;max-width:100%;max-height:520px;width:auto;height:auto;border-radius:6px;box-shadow:0 22px 40px -22px rgba(0,0,0,.5)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
+.two .card h3{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.two .card h3 span{font:700 14px Inter,sans-serif;text-transform:none;letter-spacing:0;opacity:.75}
+.two ol{margin:0;padding-left:22px;display:grid;gap:10px}
+.two ol li b{display:block}
+.two ol li span{font-size:15px;opacity:.8}
+.sits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
+.sits figure{margin:0}
+.sits canvas{width:100%;height:auto;display:block;border-radius:6px;box-shadow:0 16px 30px -18px rgba(0,0,0,.45)}
+.sits figcaption{margin-top:12px}
+.sits figcaption b{display:block;font:400 22px Anton,sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.more{margin-top:8px}
+.more>summary{cursor:pointer;font:700 16px Inter,sans-serif;color:var(--blue);padding:14px 0;list-style:none}
+@media(max-width:860px){.two{grid-template-columns:minmax(0,1fr)}.sits{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:860px){.hero .grid,.split{grid-template-columns:minmax(0,1fr)}.vs{grid-template-columns:minmax(0,1fr)}.nav nav{display:none}.nav .wrap{flex-wrap:nowrap}}
 @media(max-width:600px){.fmt{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fmt figure:last-child{grid-column:1/-1}body{font-size:16px}}
 @media(prefers-reduced-motion:no-preference){.stage canvas{transition:transform .5s}.stage:hover .c-post{transform:translateY(-6px)}}
@@ -120,122 +144,109 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
 <section class="hero"><div class="wrap grid">
   <div>
     <div class="chips-hero" aria-hidden="true"><span>Pra quem é?</span><span>Qual é o recado?</span><span class="ok">Criou ✓</span></div>
-    <h1>Você sabe o que precisa comunicar. A gente sabe como transformar isso em <em>design.</em></h1>
-    <p class="lead" style="margin-top:20px">Crie posts, stories e campanhas para sua empresa sem precisar entender de design. Responda algumas perguntas e receba peças organizadas de acordo com a identidade visual da sua marca.</p>
-    <div class="ctas"><a class="btn acc" href="criar/">Cria aí com a minha marca</a><a class="btn ghost" href="#como-funciona">Entender como funciona</a></div>
-    <p class="micro">Sem cadastro para experimentar. Sem editor complicado. Você só precisa saber o que quer comunicar.</p>
+    <h1>Você manda o recado. A gente faz o <em>design.</em></h1>
+    <p class="lead" style="margin-top:18px">Crie posts, stories e campanhas para sua empresa sem precisar entender de design. Responda algumas perguntas e receba peças organizadas de acordo com a identidade visual da sua marca.</p>
+    <form class="demo" id="demo" aria-label="Experimente com a sua marca">
+      <div><label for="dNome">Nome da sua empresa</label><input type="text" id="dNome" maxlength="40" placeholder="Ateliê Lua" autocomplete="organization"></div>
+      <div><label id="dCorL">Cor principal</label><div class="sw" id="dCores" role="group" aria-labelledby="dCorL"></div></div>
+      <div class="ctas" style="margin:4px 0 0"><button class="btn acc" type="submit">Cria aí com a minha marca</button><a class="btn ghost" href="#como-funciona">Entender como funciona</a></div>
+    </form>
+    <p class="micro">Sem cadastro para experimentar. Sem editor. Você só precisa saber o que quer comunicar.</p>
   </div>
   <div>
-    <div class="stage" aria-label="Exemplo de campanha gerada: post, story e banner da mesma marca">
-      <canvas class="c-story" data-marca="aurora" data-fmt="story" data-ex="hero"></canvas>
-      <canvas class="c-post" data-marca="aurora" data-fmt="post" data-ex="hero"></canvas>
-      <canvas class="c-banner" data-marca="aurora" data-fmt="banner" data-ex="hero"></canvas>
-    </div>
-    <p class="cap">Peças geradas pelo sistema para a Padaria Aurora, uma marca fictícia.</p>
+    <div class="live"><canvas id="dCv" role="img" aria-label="Prévia de um post com a sua marca"></canvas></div>
+    <p class="cap">Prévia ao vivo: troque o nome e a cor e veja a peça mudar.</p>
   </div>
 </div></section>
 
-<section class="band pink"><div class="wrap">
-  <h2 style="max-width:22ch">Criar uma arte não deveria ser mais difícil do que pensar no que você quer comunicar.</h2>
-  <div class="split" style="align-items:start;margin-top:20px">
-    <div>
-      <p class="lead">Você abre uma ferramenta, procura um modelo, tenta adaptar as cores, muda a fonte, ajusta o texto e, quando percebe, perdeu um bom tempo tentando fazer algo que deveria ser simples.</p>
-      <p class="mute">O problema não é falta de criatividade. É precisar tomar decisões de design sem necessariamente entender de design. Você não precisa aprender a escolher espaçamentos, hierarquias, combinações de cores e composições para divulgar sua empresa. Precisa de uma solução que faça essas escolhas por você.</p>
-    </div>
-    <div>
-      <ul class="list" style="font-size:18px">
-        <li>Chega de perder tempo adaptando templates.</li>
-        <li>Chega de tentar acertar combinações de cores.</li>
-        <li>Chega de peças diferentes a cada publicação.</li>
-        <li>Chega de depender de conhecimento técnico para comunicar.</li>
-      </ul>
-      <p style="margin-top:22px;font-weight:700">Foi por isso que criamos uma experiência diferente.</p>
-    </div>
+<section class="band pink"><div class="wrap split" style="align-items:start">
+  <div>
+    <h2 style="max-width:18ch">Criar uma arte não deveria ser mais difícil do que pensar no que você quer comunicar.</h2>
+    <p class="lead">O problema não é falta de criatividade. É precisar tomar decisões de design sem entender de design.</p>
+  </div>
+  <div>
+    <ul class="list" style="font-size:18px;margin-top:8px">
+      <li>Chega de perder tempo adaptando templates.</li>
+      <li>Chega de tentar acertar combinações de cores.</li>
+      <li>Chega de peças diferentes a cada publicação.</li>
+      <li>Chega de depender de conhecimento técnico para comunicar.</li>
+    </ul>
+    <p style="margin-top:22px;font-weight:700">Foi por isso que criamos uma experiência diferente.</p>
   </div>
 </div></section>
 
 <section class="band" id="como-funciona"><div class="wrap">
-  <h2>Você responde. O design acontece.</h2>
-  <p class="lead mute">Uma experiência pensada para quem sabe o que quer comunicar, mas não quer precisar aprender a criar uma arte.</p>
-  <div class="steps">
-    <div class="card"><h3>Conte o que precisa</h3><p class="mute">Escolha o tipo de material, informe o assunto e explique a mensagem.</p></div>
-    <div class="card"><h3>O sistema toma as decisões visuais</h3><p class="mute">A plataforma aplica as regras da sua marca, organiza as informações e define a composição da peça.</p></div>
-    <div class="card"><h3>Veja sua criação pronta</h3><p class="mute">Visualize o resultado e receba orientações sobre as decisões de design.</p></div>
-    <div class="card"><h3>Transforme sua mensagem em uma campanha</h3><p class="mute">Gere post, story e banner com a mesma mensagem e identidade visual.</p></div>
+  <h2>Do jeito antigo: 7 passos. Com o Criou: 4.</h2>
+  <p class="lead mute">A diferença está em quem toma as decisões de design.</p>
+  <div class="two">
+    <div class="card"><h3>Jeito antigo <span>você decide tudo</span></h3><ol>
+      <li><b>Escolher um template</b><span>Procurar um modelo parecido com o que você quer.</span></li>
+      <li><b>Adaptar os elementos</b><span>Apagar, mover e trocar o que não serve.</span></li>
+      <li><b>Escolher cores</b><span>Testar até achar uma combinação que dê para ler.</span></li>
+      <li><b>Ajustar fontes</b><span>Decidir tamanhos, pesos e estilos.</span></li>
+      <li><b>Organizar os textos</b><span>Definir o que vem primeiro e o que é destaque.</span></li>
+      <li><b>Corrigir o layout</b><span>Alinhar, dar respiro, consertar o que saiu do lugar.</span></li>
+      <li><b>Adaptar os formatos</b><span>Refazer tudo para story e banner.</span></li></ol></div>
+    <div class="card on" style="background:var(--blue);color:#fff;border-color:var(--blue)"><h3>Com o Criou <span>o sistema decide</span></h3><ol>
+      <li><b>Informar o que precisa</b><span>Post, story, banner ou a campanha completa.</span></li>
+      <li><b>Responder às perguntas</b><span>Sobre o recado e o público, nunca sobre design.</span></li>
+      <li><b>Ver o resultado</b><span>Com a explicação de cada decisão visual.</span></li>
+      <li><b>Salvar a campanha</b><span>Os três formatos juntos, com o cadastro (em breve).</span></li></ol></div>
   </div>
-  <a class="btn" href="criar/">Experimentar agora</a>
+  <p class="quote">Você não precisa aprender a ferramenta. A ferramenta precisa <em>entender</em> o que você precisa.</p>
+  <a class="btn acc" href="criar/" style="margin-top:22px">Cria aí</a>
 </div></section>
 
 <section class="band soft"><div class="wrap">
-  <h2>Não é mais uma tela para você aprender a editar.</h2>
-  <p class="lead mute">A diferença está em quem precisa tomar as decisões.</p>
-  <div class="vs">
-    <div class="card"><h3>Método tradicional</h3><ol><li>Escolher um template.</li><li>Adaptar os elementos.</li><li>Escolher cores.</li><li>Ajustar fontes.</li><li>Organizar os textos.</li><li>Corrigir o layout.</li><li>Adaptar os formatos.</li></ol></div>
-    <div class="card on"><h3>Com o Criou</h3><ol><li>Informar o que precisa.</li><li>Responder às perguntas.</li><li>Visualizar o resultado.</li><li>Baixar a campanha.</li></ol></div>
-  </div>
-  <p class="quote">Você não precisa aprender a ferramenta. A ferramenta precisa <em>entender</em> o que você precisa.</p>
-</div></section>
-
-<section class="band"><div class="wrap">
   <h2>Sua mensagem merece mais de um formato.</h2>
-  <p class="lead mute">Uma comunicação não precisa terminar em uma única publicação. Você informa a mensagem uma vez e recebe uma campanha adaptada para diferentes formatos.</p>
+  <p class="lead mute">Você escreve o recado uma vez e recebe uma campanha adaptada para três formatos, com a mesma identidade visual.</p>
   <div class="fmt">
-    <figure><canvas data-marca="ventura" data-fmt="post" data-ex="fmt"></canvas><figcaption><b>Post · 1080 × 1350 px</b><span class="mute">Para publicações no feed do Instagram.</span></figcaption></figure>
-    <figure><canvas data-marca="ventura" data-fmt="story" data-ex="fmt"></canvas><figcaption><b>Story · 1080 × 1920 px</b><span class="mute">Para stories e comunicações verticais.</span></figcaption></figure>
-    <figure><canvas data-marca="ventura" data-fmt="banner" data-ex="fmt"></canvas><figcaption><b>Banner · 1500 × 500 px</b><span class="mute">Para aplicações horizontais digitais compatíveis com esse formato.</span></figcaption></figure>
+    <figure><canvas data-marca="ventura" data-fmt="post" data-ex="fmt" role="img" aria-label="Post da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Post · 1080 × 1350 px</b><span class="mute">Para publicações no feed do Instagram.</span></figcaption></figure>
+    <figure><canvas data-marca="ventura" data-fmt="story" data-ex="fmt" role="img" aria-label="Story da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Story · 1080 × 1920 px</b><span class="mute">Para stories e comunicações verticais.</span></figcaption></figure>
+    <figure><canvas data-marca="ventura" data-fmt="banner" data-ex="fmt" role="img" aria-label="Banner da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Banner · 1500 × 500 px</b><span class="mute">Para aplicações horizontais digitais compatíveis com esse formato.</span></figcaption></figure>
   </div>
-  <p style="margin-top:26px;font-weight:700">Uma mesma comunicação. Três formatos. Uma identidade visual consistente.</p>
-  <p class="cap" style="text-align:left">Exemplo com a Clínica Ventura, uma marca fictícia.</p>
-</div></section>
-
-<section class="band soft"><div class="wrap split">
-  <div>
-    <h2>Sua marca tem personalidade. Suas peças precisam respeitar isso.</h2>
-    <p class="lead">Cores, fontes, logotipo e elementos visuais fazem parte de uma identidade que precisa ser preservada. Por isso, o Criou usa as características da sua marca na produção das peças.</p>
-    <p style="font-weight:700">Não é você quem precisa lembrar de todas as regras da sua marca. O sistema aplica as regras que foram cadastradas.</p>
-    <a class="btn" href="criar/">Configurar minha marca</a>
-  </div>
-  <div class="card">
-    <h3>Na demonstração</h3>
-    <ul class="list" style="margin:10px 0 18px"><li>Nome da empresa.</li><li>Logotipo (opcional).</li><li>Cor principal.</li></ul>
-    <h3>No cadastro completo (em breve)</h3>
-    <ul class="list" style="margin-top:10px"><li>Cores de apoio.</li><li>Fontes.</li><li>Formas e elementos gráficos.</li><li>Fotografias.</li><li>Textos obrigatórios.</li><li>Palavras que devem ser evitadas.</li></ul>
-  </div>
-</div></section>
-
-<section class="band dark"><div class="wrap split">
-  <div>
-    <h2>Além de criar, o sistema explica.</h2>
-    <p class="lead">Cada peça é construída com decisões visuais que possuem uma finalidade. O Criou apresenta explicações curtas sobre essas escolhas, ajudando você a entender como sua comunicação foi organizada.</p>
-    <p class="mute">O objetivo não é apenas entregar uma peça, mas tornar a experiência de comunicação mais simples e compreensível.</p>
-  </div>
-  <div class="why">
-    <div><b>Contraste:</b> a combinação de cores foi selecionada para facilitar a leitura.</div>
-    <div><b>Hierarquia:</b> o título recebeu destaque para deixar a mensagem principal mais evidente.</div>
-    <div><b>Composição:</b> os elementos foram distribuídos para organizar a informação.</div>
-    <div><b>Formato:</b> o conteúdo foi adaptado às dimensões da publicação.</div>
-  </div>
+  <p class="cap" style="text-align:left;margin-top:16px">Exemplo com a Clínica Ventura, uma marca fictícia.</p>
 </div></section>
 
 <section class="band" id="para-quem"><div class="wrap">
   <h2>Feito para quem precisa comunicar, não necessariamente desenhar.</h2>
-  <div class="cols" style="margin-top:24px">
-    <div class="card"><h3>Pequenos empreendedores</h3><p class="mute">Você administra seu negócio, cuida dos clientes e ainda precisa divulgar seus produtos e serviços. Tenha uma maneira mais simples de produzir suas próprias peças.</p></div>
-    <div class="card"><h3>Lojas e comércios</h3><p class="mute">Divulgue promoções, novidades, eventos, produtos e comunicados mantendo uma identidade visual consistente.</p></div>
-    <div class="card"><h3>Prestadores de serviços</h3><p class="mute">Apresente seus serviços, divulgue informações e mantenha uma comunicação profissional.</p></div>
-    <div class="card"><h3>Profissionais autônomos</h3><p class="mute">Produza conteúdo sem precisar depender de ferramentas complexas.</p></div>
-    <div class="card"><h3>Pequenas empresas</h3><p class="mute">Organize a comunicação da sua marca e reduza a necessidade de produzir cada peça manualmente.</p></div>
+  <p class="lead mute">Lojas, prestadores de serviço, autônomos e pequenas empresas. Três situações do dia a dia, três marcas diferentes, o mesmo sistema.</p>
+  <div class="sits">
+    <figure><canvas data-marca="aurora" data-fmt="post" data-ex="aurora" role="img" aria-label="Post da Padaria Aurora: Pão de fermentação natural sai às 7h"></canvas><figcaption><b>Novidade da semana</b><span class="mute">Padaria Aurora · personalidade elegante</span></figcaption></figure>
+    <figure><canvas data-marca="vento" data-fmt="post" data-ex="vento" role="img" aria-label="Post do Studio Vento: Aula aberta de pilates no sábado"></canvas><figcaption><b>Evento</b><span class="mute">Studio Vento · personalidade moderna</span></figcaption></figure>
+    <figure><canvas data-marca="bento" data-fmt="post" data-ex="bento" role="img" aria-label="Post do Pet Bento: Banho e tosa com 20% na terça"></canvas><figcaption><b>Promoção</b><span class="mute">Pet Bento · personalidade divertida</span></figcaption></figure>
   </div>
+  <p class="cap" style="text-align:left;margin-top:16px">Marcas fictícias, criadas para demonstração.</p>
 </div></section>
 
+<section class="band dark"><div class="wrap">
+  <h2>Por dentro do Criou</h2>
+  <div class="split" style="align-items:start;margin-top:18px">
+    <div>
+      <h3 style="color:var(--acc)">Sua marca, respeitada</h3>
+      <p class="mute">Se a sua marca já tem identidade, o Criou usa o que você informar. Se não tem, uma pergunta de personalidade define a direção visual.</p>
+      <ul class="list" style="margin:14px 0"><li>Na demonstração: nome, logotipo, cor principal, fonte e personalidade.</li><li>No cadastro completo (em breve): cores de apoio, fotografias, textos obrigatórios e palavras que devem ser evitadas.</li></ul>
+      <p style="font-weight:700">Não é você quem precisa lembrar das regras da sua marca. O sistema aplica as regras que foram cadastradas.</p>
+    </div>
+    <div>
+      <h3 style="color:var(--acc)">Além de criar, explica</h3>
+      <div class="why" style="margin-top:12px">
+        <div><b>Contraste:</b> a combinação de cores foi selecionada para facilitar a leitura.</div>
+        <div><b>Hierarquia:</b> o título recebeu destaque para deixar a mensagem principal mais evidente.</div>
+        <div><b>Composição:</b> os elementos foram distribuídos para organizar a informação.</div>
+        <div><b>Formato:</b> o conteúdo foi adaptado às dimensões da publicação.</div>
+      </div>
+    </div>
+  </div>
+</div></section>
 <section class="band soft" id="planos"><div class="wrap">
   <h2>Comece gratuitamente. Continue quando precisar.</h2>
   <p class="lead mute">Experimente a plataforma, conheça o resultado e escolha o plano que acompanha sua rotina de comunicação.</p>
   <div class="plans">
     <div class="plan"><h3>Gratuito</h3><div class="price">R$ 0</div><p class="mute">Conheça a experiência e crie sua primeira campanha.</p>
       <ul><li>Cadastro gratuito.</li><li>Uma marca.</li><li>Pré-visualizações com marca d'água.</li><li>Uma campanha completa gratuita: post, story e banner.</li><li>Download da primeira campanha sem marca d'água.</li></ul>
-      <a class="btn acc" href="criar/">Começar gratuitamente</a>
-      <p class="note">A campanha gratuita é limitada a uma por pessoa e por empresa, conforme as regras de utilização. No pré-lançamento, a demonstração funciona sem cadastro; o download será liberado com o cadastro.</p></div>
+      <a class="btn acc" href="criar/">Cria aí</a>
+      <p class="note">A campanha gratuita é limitada a uma por pessoa e por empresa, conforme as regras de utilização. No pré-lançamento, você testa sem cadastro. O download abre com o cadastro.</p></div>
     <div class="plan hi"><h3>Essencial mensal</h3><div class="price">R$ 29,90<small>/mês</small></div><p>Para quem precisa produzir peças continuamente.</p>
       <ul><li>Uma marca cadastrada.</li><li>Acesso aos formatos disponíveis.</li><li>Criação de novas peças.</li><li>Download sem marca d'água.</li><li>Pré-visualizações.</li><li>Sem limite de quantidade no uso normal, sujeito à política de uso razoável.</li><li>Cancelamento pelo próprio painel.</li></ul>
       <button class="btn acc" disabled>Em breve</button></div>
@@ -289,13 +300,17 @@ const FAQ=[
 ['O sistema garante vendas ou engajamento?','Não. O produto é uma ferramenta de produção visual. Não garante resultados comerciais, alcance ou desempenho de campanhas.'],
 ['Posso contratar uma implantação personalizada?','Sim. Empresas com manuais de identidade visual e necessidades específicas podem contratar o serviço de consultoria e implementação.']];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-document.getElementById('faq').innerHTML=FAQ.map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('');
+const item=([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`;
+document.getElementById('faq').innerHTML=FAQ.slice(0,8).map(item).join('')+`<details class="more"><summary>Ver todas as dúvidas (${FAQ.length})</summary>${FAQ.slice(8).map(item).join('')}</details>`;
 const EX={
+  aurora:{publico:'clientes',assunto:'novidade',titulo:'Pão de fermentação natural sai às 7h',apoio:'Encomende até as 18h do dia anterior.',chamada:'Encomendar'},
+  vento:{publico:'clientes',assunto:'evento',titulo:'Aula aberta de pilates no sábado',apoio:'Traga um amigo. Vagas limitadas.',data:'2026-12-12',hora:'09:00',chamada:'Garantir vaga'},
+  bento:{publico:'clientes',assunto:'promocao',titulo:'Banho e tosa com 20% na terça',apoio:'Válido para agendamentos pelo WhatsApp.',chamada:'Agendar'},
   hero:{publico:'clientes',assunto:'novidade',titulo:'Pão de fermentação natural sai às 7h',apoio:'Encomende até as 18h do dia anterior.',chamada:'Encomendar'},
   fmt:{publico:'clientes',campanha:true,assunto:'novidade',titulo:'Check-up completo em uma manhã',apoio:'Exames, consulta e resultado no mesmo dia.',chamada:'Agendar'}
 };
 async function pinta(){
-  for(const k of ['aurora','ventura'])await DPP.fontes(DPP.EXEMPLOS[k]);
+  for(const k of ['aurora','ventura','vento','bento'])await DPP.fontes(DPP.EXEMPLOS[k]);
   document.querySelectorAll('canvas[data-marca]').forEach(c=>{
     const m=DPP.EXEMPLOS[c.dataset.marca],r=EX[c.dataset.ex],out=DPP.desenhar(m,c.dataset.fmt,r);
     DPP.previa(c,out.canvas,{maxW:c.dataset.fmt==='banner'?900:640,marcaDagua:false});
@@ -303,6 +318,23 @@ async function pinta(){
 }
 pinta();
 DPP.evento('landing_view');
+/* Demo do topo: nome + cor -> post ao vivo */
+const CORES=['#2F6FEB','#F9541C','#E2A62B','#2BB3A3','#7B4BD6','#D6336C','#1F8A4C','#14120F'];
+let dCor=CORES[5];
+const sw=document.getElementById('dCores');
+sw.innerHTML=CORES.map(c=>`<button type="button" style="background:${c}" aria-label="Cor ${c}" aria-pressed="${c===dCor}" data-c="${c}"></button>`).join('');
+let dp=0;
+async function demo(){
+  const id=++dp,nome=document.getElementById('dNome').value.trim()||'Sua empresa';
+  const m=DPP.marcaDeCor(nome,dCor,{ft:'Archivo',fx:'Inter',en:'cor',forma:'pilula',graf:'vetor'});
+  await DPP.fontes(m);if(id!==dp)return;
+  const o=DPP.desenhar(m,'post',{publico:'clientes',assunto:'novidade',titulo:'Seu recado aqui, do jeito da sua marca'});
+  const c=document.getElementById('dCv');DPP.previa(c,o.canvas,{maxW:520});c.setAttribute('aria-label',`Prévia de um post de ${nome}`);
+}
+sw.addEventListener('click',e=>{const b=e.target.closest('button[data-c]');if(!b)return;dCor=b.dataset.c;sw.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));demo();});
+document.getElementById('dNome').addEventListener('input',demo);
+document.getElementById('demo').addEventListener('submit',e=>{e.preventDefault();const n=document.getElementById('dNome').value.trim();location.href='criar/?'+new URLSearchParams({nome:n,cor:dCor}).toString();});
+demo();
 }
 </script>
 </body>
