@@ -43,9 +43,9 @@ Depois acesse `http://localhost:8000`.
 
 ## Publicar
 
-A publicação é automática pelo **Workers Builds** da Cloudflare, ligado a este repositório: todo push na `main` publica o Worker `design-por-pergunta` (configurado em `wrangler.jsonc`, servindo a raiz do repositório). O mesmo conteúdo também sai no GitHub Pages: design-performance.github.io/design-por-pergunta/.
+A publicação é automática pelo **Workers Builds** da Cloudflare, ligado a este repositório: todo push na `main` publica o Worker `design-por-pergunta` (configurado em `wrangler.jsonc`, servindo a raiz do repositório). O mesmo conteúdo também sai no GitHub Pages: design-performance.github.io/criou-design/. O Worker manteve o nome `design-por-pergunta` para não quebrar a publicação já ligada.
 
-Para ligar (uma vez só): Cloudflare → **Workers & Pages → Create → Import a repository** → escolher `design-performance/design-por-pergunta` → **Save and Deploy**. Não precisa de token.
+Para ligar (uma vez só): Cloudflare → **Workers & Pages → Create → Import a repository** → escolher `design-performance/criou-design` → **Save and Deploy**. Não precisa de token.
 
 O site fica em `https://design-por-pergunta.<seu-subdominio>.workers.dev`. Domínio próprio: **Workers → design-por-pergunta → Settings → Domains & Routes**.
 
