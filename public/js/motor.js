@@ -1,4 +1,4 @@
-/* Design por Perguntas — motor de decisões e desenho.
+/* Criou (design por perguntas) — motor de decisões e desenho.
    Recebe: marca (pacote de marca) + formato + respostas.
    Devolve: as decisões (com o porquê) e a peça desenhada num canvas.
    O motor não sabe nada de nenhuma marca específica: tudo vem do pacote. */

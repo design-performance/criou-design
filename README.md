@@ -1,6 +1,6 @@
-# Design por perguntas
+# Criou · Design por perguntas
 
-**Design por perguntas, não por arrastar.** Quem não entende de design responde o que sabe (formato, público, assunto, mensagem, data, foto) e recebe a peça pronta, dentro da identidade visual da marca, com a explicação de cada decisão.
+**Você pediu, criou.** Design por perguntas, não por arrastar. Quem não entende de design responde o que sabe (formato, público, assunto, mensagem, data, foto) e recebe a peça pronta, dentro da identidade visual da marca, com a explicação de cada decisão.
 
 Não é um editor. Não tem tela de edição livre: só aparecem escolhas seguras, como combinações de cores que passam no teste de contraste.
 
