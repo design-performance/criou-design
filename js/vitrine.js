@@ -33,6 +33,14 @@
     'h-link': { marca: 'lume', formato: 'post-linkedin', layout: 'editorial', par: 'editorial', foto: '1485808191679-5f86510681a2',
       dados: { assunto: 'novidade', titulo: 'Novo latte de ==doce de leite==', apoio: 'Feito com leite da serra e café da casa.' } },
     /* Exemplos */
+    'e-manchete': { marca: 'verde', formato: 'post-retrato', layout: 'manchete', par: 'direto',
+      dados: { assunto: 'dica', titulo: 'plantas boas mudam a ==casa toda.==', apoio: 'Cinco espécies que aguentam pouca luz.', chamada: 'Ver a lista' } },
+    'e-foco': { marca: 'vento', formato: 'post-retrato', layout: 'foco', par: 'geometrica', foto: '1747239069226-55382c570116',
+      dados: { assunto: 'novidade', titulo: '==fo==co', apoio: 'Uma hora de pilates para desligar o resto do dia. Aulas às 7h, 12h e 19h.', chamada: 'Agendar aula' } },
+    'e-meiotom': { marca: 'ciclo', formato: 'story', layout: 'meiotom', par: 'expressiva', foto: '1757830034050-82ff5713fba7',
+      dados: { assunto: 'novidade', titulo: 'garimpo', apoio: 'Peças únicas toda sexta. Uma de cada, quem chega primeiro leva.', data: '2026-12-05' } },
+    'e-grade': { marca: 'lume', formato: 'post-quadrado', layout: 'grade', par: 'tecnica', foto: '1485808191679-5f86510681a2',
+      dados: { assunto: 'evento', titulo: 'Noite do café', apoio: 'Degustação de grãos especiais com o barista.', data: '2026-12-19', hora: '19:00', chamada: 'Reservar' } },
     'e-aurora': { marca: 'aurora', formato: 'post-retrato', layout: 'fundo', par: 'elegante', foto: '1549438247-223f2db1dd29',
       dados: { assunto: 'novidade', titulo: 'Pão de fermentação natural sai às ==7h==', apoio: 'Encomende até as 18h do dia anterior.', chamada: 'Encomendar' } },
     'e-verde': { marca: 'verde', formato: 'post-quadrado', layout: 'limpo', par: 'amigavel', foto: '1543169621-36c1c4662410',
@@ -63,7 +71,20 @@
     var fo = F.porId(e.formato), m = marcaDe(e.marca, e.par), d = Object.assign({}, e.dados);
     if (e.foto) d.imagem = { src: 'unsplash' };
     var dec = MO.decidir(fo, d, m, e.layout);
-    if (e.foto && dec.temFoto) { var s = MD.slot(fo, dec); if (s) d._foto = foto(e.foto, s.w, s.h); }
+    if (e.foto && dec.temFoto) {
+      var s = MD.slot(fo, dec), efeitos = s && (s.forma && (s.forma.efeito || s.forma.janela || s.forma.escurecer) || s.extras || s.chave);
+      if (s && !efeitos) d._foto = foto(e.foto, s.w, s.h);
+      else if (s) {
+        // Efeitos de foto precisam do recorte no navegador (o Unsplash libera o uso em canvas).
+        var q = MD.quadroFoto(fo, dec);
+        el.style.aspectRatio = fo.largura + ' / ' + fo.altura;
+        MD.fotos(fo, dec, foto(e.foto, Math.min(1600, q.w * 1.2), Math.min(1600, q.h * 1.2)), {}, 1).then(function (fs) { Object.assign(d, fs); montar(el, fo, d, m, dec); }).catch(function () { montar(el, fo, d, m, dec); });
+        return;
+      }
+    }
+    montar(el, fo, d, m, dec);
+  }
+  function montar(el, fo, d, m, dec) {
     var f = document.createElement('iframe');
     f.setAttribute('title', m.nome + ': ' + MO.semMarcas(d.titulo));
     f.setAttribute('tabindex', '-1');
@@ -74,7 +95,7 @@
     el.innerHTML = '';
     el.appendChild(f);
     el.setAttribute('role', 'img');
-    el.setAttribute('aria-label', 'Exemplo: ' + fo.nome + ' de ' + m.nome + ', layout ' + M.LAYOUTS[e.layout].nome + ': ' + MO.semMarcas(d.titulo));
+    el.setAttribute('aria-label', 'Exemplo: ' + fo.nome + ' de ' + m.nome + ', layout ' + M.LAYOUTS[dec.estilo].nome + ': ' + MO.semMarcas(d.titulo));
     escalar(el);
   }
   function escalar(el) {

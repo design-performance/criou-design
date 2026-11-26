@@ -299,6 +299,15 @@
           var link = el.closest('a') || (el.tagName === 'A' ? el : null);
           if (link) partes.forEach(function (p) { p.options.hyperlink = { url: link.href }; });
           var alinhar = /center/.test(st.textAlign) ? 'center' : /right/.test(st.textAlign) ? 'right' : 'left';
+          // Texto girado (layouts com título na vertical): caixa sem giro + rotação no PowerPoint.
+          var giro = el.closest('[data-girar]'), rot = 0;
+          if (giro) {
+            rot = ((Number(giro.getAttribute('data-girar')) || 0) + 360) % 360;
+            var cx = x + w / 2, cy = y + h / 2, w0 = h, h0 = w;
+            x = cx - w0 / 2; y = cy - h0 / 2; w = w0; h = h0;
+            r = { width: w / PX, height: h / PX, left: r.left, top: r.top };
+            pl = pt = pr = pb = 0;
+          }
           var folga = alinhar === 'left' ? 16 : 0; // folga para a fonte do PowerPoint não quebrar a linha antes
           s.addText(partes, {
             x: x + pl * PX, y: y + pt * PX,
@@ -308,7 +317,7 @@
             charSpacing: (parseFloat(st.letterSpacing) || 0) * 72 * PX || undefined,
             align: alinhar,
             valign: el.getAttribute('data-forma') === 'botao' || st.verticalAlign === 'middle' ? 'middle' : 'top',
-            margin: 0, fit: 'none', wrap: true, paraSpaceBefore: 0, paraSpaceAfter: 0
+            margin: 0, fit: 'none', wrap: true, paraSpaceBefore: 0, paraSpaceAfter: 0, rotate: rot || undefined
           });
         }
       }

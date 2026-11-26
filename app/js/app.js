@@ -7,8 +7,15 @@
 (function () {
   'use strict';
 
-  /* Download sem marca d'água só depois que o cadastro abrir. */
-  var LIBERADO = false;
+  /* Planos. Gratuito: precisa de cadastro para baixar, até LIMITE_DIA peças por dia, PNG com marca d'água
+     discreta e só layouts básicos e elaborados. Essencial: tudo, sem marca d'água.
+     Enquanto o cadastro não abre, ninguém baixa (?teste=1 simula o cadastro feito, para conferência). */
+  var Q0 = new URLSearchParams(location.search);
+  var CADASTRO_ABERTO = false;
+  var CADASTRADO = CADASTRO_ABERTO || Q0.get('teste') === '1';
+  var PLANO = Q0.get('plano') === 'essencial' ? 'essencial' : 'gratuito';
+  var LIMITE_DIA = 3;
+  var LIBERADO = CADASTRADO && PLANO === 'essencial';
 
   var M = window.CriouMarca, F = window.CriouFormatos, MO = window.CriouMotor, MD = window.CriouModelos;
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -278,6 +285,7 @@
     desenharPares();
     swatches($('#cores-peca'), est.cor, function (c) { est.cor = c; mudou(); desenharLayouts(); }, true);
     if (!criarLigado) { criarLigado = true; ligarCriar(); }
+    desenharControles(); infoPlano();
     desenharLayouts();
     atualizarPrevia();
   }
@@ -370,7 +378,7 @@
     caixa.innerHTML = '';
     if (!est.imagem) return;
     var fo = formatoDasMinis(), lay = M.LAYOUTS[M.layout(est.layout)].foto ? est.layout : 'limpo';
-    var dec = MO.decidir(fo, Object.assign({}, est.dados, { imagem: est.imagem }), marca, lay), s = MD.slot(fo, dec) || { w: fo.largura, h: fo.altura };
+    var dec = MO.decidir(fo, Object.assign({}, est.dados, { imagem: est.imagem }), marca, lay), s = MD.quadroFoto(fo, dec) || { w: fo.largura, h: fo.altura };
     var ed = window.CriouRecorte.editor({ id: 'foto', numero: 'Enquadramento', rotulo: 'Foto', w: s.w, h: s.h, src: est.imagem.src, ajuste: est.imagem.ajuste, aoMudar: function (aj) { est.imagem.ajuste = aj; mudou(); mudouMinis(); } });
     ed.style.maxWidth = Math.round(300 * s.w / s.h) + 'px';
     caixa.appendChild(ed);
@@ -388,8 +396,9 @@
       var niveis = {}, ordem = [];
       Object.keys(M.LAYOUTS).forEach(function (k) { var n = M.LAYOUTS[k].nivel; if (!niveis[n]) { niveis[n] = []; ordem.push(n); } niveis[n].push(k); });
       caixa.innerHTML = ordem.map(function (n) {
-        return '<div class="nivel"><span>' + n + '</span><div class="itens">' + niveis[n].map(function (k) {
-          return '<button type="button" class="lay" role="radio" data-l="' + k + '" aria-checked="false" aria-label="Layout ' + M.LAYOUTS[k].nome + ', ' + n + '"><div class="mini"></div><b>' + M.LAYOUTS[k].nome + '</b></button>';
+        return '<div class="nivel' + (n === 'Premium' ? ' premium' : '') + '"><span>' + n + (n === 'Premium' && PLANO === 'gratuito' ? ' · no Essencial' : '') + '</span><div class="itens">' + niveis[n].map(function (k) {
+          var trava = M.LAYOUTS[k].premium && PLANO === 'gratuito';
+          return '<button type="button" class="lay" role="radio" data-l="' + k + '" aria-checked="false" aria-label="Layout ' + M.LAYOUTS[k].nome + ', ' + n + (trava ? ', disponível no plano Essencial' : '') + '">' + (trava ? '<span class="cadeado" aria-hidden="true">Premium</span>' : '') + '<div class="mini"></div><b>' + M.LAYOUTS[k].nome + '</b></button>';
         }).join('') + '</div></div>';
       }).join('');
     }
@@ -417,7 +426,28 @@
     $('#pares').innerHTML = html;
   }
 
+  var OPCOES = {
+    posicao: [['', 'Automática'], ['topo', 'Topo'], ['centro', 'Centro'], ['base', 'Base']],
+    alinhamento: [['', 'Automático'], ['esquerda', 'Esquerda'], ['centro', 'Centro'], ['direita', 'Direita']],
+    girar: [['0', 'Horizontal'], ['1', 'Vertical']]
+  };
+  function desenharControles() {
+    var L = M.LAYOUTS[M.layout(est.layout)];
+    $('#ctl-posicao').hidden = !L.posicao; $('#ctl-alinhamento').hidden = !L.posicao; $('#ctl-girar').hidden = !L.girar;
+    $('#ctl-nota').textContent = !L.posicao ? 'O layout ' + L.nome + ' tem composição fixa' + (L.girar ? ': dá para escolher só a direção do título.' : '.') : '';
+    $$('#secao-texto [data-ctl]').forEach(function (g) {
+      var k = g.getAttribute('data-ctl'), atual = k === 'girar' ? (est.dados.girar == null ? (L.giradoPadrao ? '1' : '0') : (est.dados.girar ? '1' : '0')) : (est.dados[k] || '');
+      g.innerHTML = OPCOES[k].map(function (o) { return '<button type="button" class="chip" role="radio" data-v="' + o[0] + '" aria-checked="' + (o[0] === atual) + '">' + o[1] + '</button>'; }).join('');
+    });
+  }
   function ligarCriar() {
+    $('#secao-texto').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-v]'), g = b && b.closest('[data-ctl]'); if (!g) return;
+      var k = g.getAttribute('data-ctl');
+      if (k === 'girar') est.dados.girar = b.dataset.v === '1'; else est.dados[k] = b.dataset.v;
+      $$('[data-v]', g).forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
+      mudou(); mudouMinis();
+    });
     $('#formatos').addEventListener('click', function (e) {
       var b = e.target.closest('[data-f]'); if (!b) return;
       est.formato = b.dataset.f;
@@ -428,6 +458,7 @@
       var b = e.target.closest('.lay'); if (!b) return;
       est.layout = b.dataset.l;
       $$('#layouts .lay').forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
+      desenharControles();
       if (formatoAtual().campos.indexOf('imagem') >= 0) desenharFoto();
       mudou();
     });
@@ -446,10 +477,7 @@
   async function dadosPara(fo, layoutId, m, dadosBase) {
     var d = Object.assign({}, dadosBase || est.dados, { imagem: est.imagem });
     var dec = MO.decidir(fo, d, m, layoutId);
-    if (est.imagem && dec.temFoto) {
-      var s = MD.slot(fo, dec);
-      if (s) d._foto = await window.CriouRecorte.cortar(est.imagem.src, s.w, s.h, est.imagem.ajuste, fo.email ? 2 : 1);
-    }
+    if (est.imagem && dec.temFoto) Object.assign(d, await MD.fotos(fo, dec, est.imagem.src, est.imagem.ajuste, fo.email ? 2 : 1));
     return { d: d, dec: dec };
   }
 
@@ -492,6 +520,7 @@
       if (c && mostrarErros) { c.classList.add('tem-erro'); if (c.closest('details')) c.closest('details').open = true; }
     });
     v.avisos.forEach(function (a) { html += '<div class="msg aviso">' + esc(a.texto) + '</div>'; });
+    if (bloqueadoPremium()) html = '<div class="msg premium"><b>Layout premium, disponível no plano Essencial.</b> Veja a prévia à vontade.</div>' + html;
     $('#msgs').innerHTML = html;
     $('#pendencia').textContent = v.ok ? '' : (MO.limpar(est.dados.titulo) ? 'Resolva o que está em vermelho para registrar.' : 'Escreva o recado para registrar.');
     return v;
@@ -501,11 +530,23 @@
   var CHAVE_PECAS = 'criou.pecas.v1';
   function lerPecas() { try { return JSON.parse(localStorage.getItem(CHAVE_PECAS)) || []; } catch (e) { return []; } }
   function codigoNovo() { return 'CR-' + Date.now().toString(36).toUpperCase().slice(-5) + Math.random().toString(36).slice(2, 4).toUpperCase(); }
+  function hoje() { return new Date().toISOString().slice(0, 10); }
+  function usoHoje() { try { var u = JSON.parse(localStorage.getItem('criou.uso') || '{}'); return u.dia === hoje() ? u.n : 0; } catch (e) { return 0; } }
+  function contarUso() { try { localStorage.setItem('criou.uso', JSON.stringify({ dia: hoje(), n: usoHoje() + 1 })); } catch (e) { } }
+  function bloqueadoPremium() { return PLANO === 'gratuito' && M.LAYOUTS[M.layout(est.layout)].premium; }
+  function infoPlano() {
+    var i = $('#plano-info'); if (!i) return;
+    i.textContent = PLANO === 'gratuito' ? 'Plano gratuito: ' + usoHoje() + ' de ' + LIMITE_DIA + ' peças hoje. Layouts premium no Essencial.' : 'Plano Essencial: sem limite no uso normal.';
+  }
   function registrar(e) {
     e.preventDefault();
     var v = mensagens(true);
     if (!v.ok) { var p = $('#form-peca .tem-erro input, #form-peca .tem-erro textarea'); if (p) p.focus(); return; }
+    if (bloqueadoPremium()) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Layout premium.</b> Ele faz parte do plano Essencial. Você pode ver a prévia à vontade; para registrar no gratuito, escolha um layout básico ou elaborado.</div>'); $('#layouts').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (PLANO === 'gratuito' && !est.editando && usoHoje() >= LIMITE_DIA) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Limite de hoje.</b> O plano gratuito cria até ' + LIMITE_DIA + ' peças por dia. Amanhã libera de novo, ou conheça o Essencial, sem limite no uso normal.</div>'); return; }
     var fo = formatoAtual(), lista = lerPecas(), codigo = est.editando || codigoNovo();
+    if (!est.editando) contarUso();
+    infoPlano();
     var reg = { codigo: codigo, formato: fo.id, estilo: est.layout, par: est.par, cor: est.cor, dados: est.dados, quando: new Date().toISOString(), comFoto: !!est.imagem };
     lista = lista.filter(function (x) { return x.codigo !== codigo; }); lista.unshift(reg);
     try { localStorage.setItem(CHAVE_PECAS, JSON.stringify(lista.slice(0, 200))); } catch (err) { }
@@ -524,13 +565,17 @@
   }
   function montarDownloads(fo, codigo) {
     var caixa = $('#baixar'); caixa.innerHTML = '';
+    if (!CADASTRADO) {
+      caixa.innerHTML = '<p class="ajuda"><b>Para baixar, falta o cadastro gratuito</b>, que abre em breve. Sua peça já está salva em "Minhas peças". No plano gratuito, o download sai em PNG com uma marca d\'água discreta; no Essencial, em PNG, JPG, PDF e PowerPoint, sem marca.</p>';
+      return;
+    }
     var lista = fo.kit ? fo.kit.map(F.porId) : [fo];
-    if (!LIBERADO) caixa.insertAdjacentHTML('beforeend', '<p class="ajuda">Nesta versão de teste, o download sai em PNG com marca d\'água. PNG, JPG, PDF e PowerPoint sem marca d\'água abrem com o cadastro.</p>');
+    if (!LIBERADO) caixa.insertAdjacentHTML('beforeend', '<p class="ajuda">Plano gratuito: PNG com uma marca d\'água discreta. Sem marca e em JPG, PDF e PowerPoint no Essencial.</p>');
     lista.forEach(function (f) {
       var linha = el('div', { class: 'exportar', role: 'group', 'aria-label': 'Baixar ' + f.nome });
       linha.insertAdjacentHTML('beforeend', '<span class="rot" style="width:100%;margin:6px 0 0">' + f.nome + (f.rede && fo.kit && f.rede !== 'Instagram' ? ' · ' + f.rede : '') + '</span>');
       (LIBERADO ? f.exportar : ['png']).forEach(function (t) {
-        var b = el('button', { type: 'button', class: 'btn-mini' }, (LIBERADO ? '' : 'Prévia ') + t.toUpperCase() + ' ↓');
+        var b = el('button', { type: 'button', class: 'btn-mini' }, t.toUpperCase() + ' ↓');
         b.addEventListener('click', function () { baixar(f, t, codigo, b); });
         linha.appendChild(b);
       });
@@ -545,7 +590,7 @@
       window.CriouFontesAtivas = [m.fontes.titulo, m.fontes.texto];
       var r = await dadosPara(fo, est.layout, m);
       var html = MD.html(fo, r.d, m, r.dec, { previa: !LIBERADO });
-      var nome = nomeArquivo(fo, codigo, m) + (LIBERADO ? '' : '-previa');
+      var nome = nomeArquivo(fo, codigo, m);
       var info = { largura: fo.largura, escala: fo.email ? 2 : 1, dpi: fo.dpi, codigo: codigo, fonte: m.fontes.texto, empresa: m.nome, autor: m.nome };
       if (tipo === 'html') await X.arquivo(new Blob([html], { type: 'text/html' }), nome + '.html');
       else await X[tipo](html, nome, info);

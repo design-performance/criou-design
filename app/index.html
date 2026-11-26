@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<p class="aviso-topo"><b>Versão de teste.</b> Sua marca e suas peças ficam salvas só neste aparelho. Os downloads saem com marca d'água até o cadastro abrir.</p>
+<p class="aviso-topo"><b>Versão de teste.</b> Sua marca e suas peças ficam salvas só neste aparelho. O download abre com o cadastro gratuito, em breve.</p>
 <header class="topo">
   <a class="wm" href="../" aria-label="Criou, voltar para a página inicial">CRI<span>OU</span></a>
   <nav aria-label="Estúdio">
@@ -155,6 +155,13 @@
             <h2>Layout</h2>
             <div class="niveis" id="layouts" role="radiogroup" aria-label="Layouts"></div>
           </div>
+          <div class="secao" id="secao-texto">
+            <h2>Texto na peça</h2>
+            <div class="campo" id="ctl-posicao"><span class="rot" id="r-pos">Posição</span><div class="chips" role="radiogroup" aria-labelledby="r-pos" data-ctl="posicao"></div></div>
+            <div class="campo" id="ctl-alinhamento"><span class="rot" id="r-ali">Alinhamento</span><div class="chips" role="radiogroup" aria-labelledby="r-ali" data-ctl="alinhamento"></div></div>
+            <div class="campo" id="ctl-girar"><span class="rot" id="r-gir">Título</span><div class="chips" role="radiogroup" aria-labelledby="r-gir" data-ctl="girar"></div></div>
+            <p class="ajuda" id="ctl-nota"></p>
+          </div>
           <div class="secao">
             <h2>Fonte</h2>
             <div class="chips" id="pares" role="radiogroup" aria-label="Combinação de fontes"></div>
@@ -165,6 +172,7 @@
           </div>
           <div class="msgs" id="msgs" aria-live="polite"></div>
           <div class="acoes"><button class="btn" type="submit" id="registrar">Registrar peça</button><span class="ajuda" id="pendencia"></span></div>
+          <p class="ajuda" id="plano-info"></p>
         </form>
         <div class="feito" id="feito" hidden tabindex="-1">
           <h2>Criou. <span id="feito-sub">Peça registrada.</span></h2>

@@ -102,12 +102,17 @@
   /* ---------- Layouts, em três níveis ---------- */
   var LAYOUTS = {
     limpo: { nivel: 'Básico', nome: 'Limpo', desenho: 'simples', par: 'direto', foto: 'bloco', frase: 'Fundo claro, bastante respiro e uma cor de destaque.' },
-    texto: { nivel: 'Básico', nome: 'Só texto', desenho: 'texto', par: 'contemporanea', foto: null, frase: 'O recado é a imagem: título grande, sem foto.' },
+    texto: { nivel: 'Básico', nome: 'Só texto', desenho: 'texto', par: 'contemporanea', foto: null, girar: true, frase: 'O recado é a imagem: título grande, sem foto.' },
+    manchete: { nivel: 'Elaborado', nome: 'Manchete', desenho: 'manchete', par: 'direto', foto: 'fundo', girar: true, frase: 'Título enorme como manchete, legendas pequenas nos cantos.' },
     bloco: { nivel: 'Elaborado', nome: 'Bloco de cor', desenho: 'robusto', par: 'direto', foto: 'bloco', frase: 'Cor chapada, título grande e formas fortes.' },
     fundo: { nivel: 'Elaborado', nome: 'Foto de fundo', desenho: 'fundo', par: 'geometrica', foto: 'fundo', frase: 'A foto ocupa a peça inteira e o texto vem por cima, com sombra para ler.' },
     editorial: { nivel: 'Premium', nome: 'Editorial', desenho: 'sofisticado', par: 'elegante', foto: 'bloco', frase: 'Fundo profundo, linhas finas e composição de revista.' },
-    gradiente: { nivel: 'Premium', nome: 'Gradiente', desenho: 'efeito', par: 'expressiva', foto: 'bloco', frase: 'Luzes em degradê, textura e foto em cartão.' }
+    gradiente: { nivel: 'Premium', nome: 'Gradiente', desenho: 'efeito', par: 'expressiva', foto: 'bloco', frase: 'Luzes em degradê, textura e foto em cartão.' },
+    foco: { nivel: 'Premium', nome: 'Foco', desenho: 'foco', par: 'geometrica', foto: 'fundo', posicao: false, frase: 'Foto desfocada na cor da marca, com uma janela nítida e o título por cima.' },
+    grade: { nivel: 'Premium', nome: 'Grade', desenho: 'grade', par: 'tecnica', foto: 'fundo', posicao: false, frase: 'Pôster com grade, quadrados de cor e título que vaza da peça.' },
+    meiotom: { nivel: 'Premium', nome: 'Meio-tom', desenho: 'meiotom', par: 'expressiva', foto: 'fundo', posicao: false, girar: true, giradoPadrao: true, frase: 'Recorte em retícula, como impressão antiga, e título na vertical.' }
   };
+  Object.keys(LAYOUTS).forEach(function (k) { LAYOUTS[k].premium = LAYOUTS[k].nivel === 'Premium'; if (LAYOUTS[k].posicao !== false) LAYOUTS[k].posicao = true; });
   /* Nomes antigos (peças registradas antes) */
   var ANTIGOS = { simples: 'limpo', sofisticado: 'editorial', robusto: 'bloco' };
   function layout(id) { return LAYOUTS[id] ? id : (ANTIGOS[id] || 'limpo'); }
