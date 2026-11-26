@@ -3,127 +3,125 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Criar · Criou</title>
+<title>Cria aí · Criou</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=DM+Serif+Display&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Fredoka:wght@600;700&family=Nunito:wght@400;600;800&family=Playfair+Display:wght@800&family=Archivo:wght@500;800&family=Montserrat:wght@500;800&family=Poppins:wght@500;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
-/* VOICE: um atendente calmo que pergunta uma coisa de cada vez.
-   IDEA: balcão de pedidos — perguntas de um lado, a peça pronta do outro.
+/* VOICE: uma conversa: o Criou pergunta uma coisa de cada vez e responde com a peça.
+   IDEA: balcão de pedidos — o balão da pergunta de um lado, a peça se montando do outro.
    PICTURE: a peça (ou a campanha) ao vivo, com marca d'água de prévia.
-   COLOUR and TYPE: creme, quase preto e laranja; Bricolage e Figtree.
-   LAYOUT: perguntas à esquerda, peça à direita; no celular, peça primeiro. */
-:root{--bg:#FFFFFF;--ink:#111111;--soft:#F2F3F7;--card:#FFFFFF;--line:#E1E3EB;--mute:#4A4F63;--acc:#D4FF3A;--accInk:#1F3DFF;--blue:#1F3DFF;--pink:#FF2E88;--yel:#FFE500}
-.wm{font:400 28px/1 Anton,sans-serif;letter-spacing:.01em;text-transform:uppercase;display:inline-flex;align-items:center}.wm b{font-weight:400;background:var(--acc);color:var(--blue);border-radius:14px 14px 14px 3px;padding:2px 7px 3px;margin-left:1px}
-
+   COLOUR and TYPE: azul elétrico + ácido, pink de apoio; Anton nos títulos, Inter no resto.
+   LAYOUT: pergunta à esquerda e peça à direita; no celular, peça pequena fixa no topo e pergunta embaixo. */
+:root{--bg:#FFFFFF;--ink:#111111;--soft:#F2F3F7;--line:#E1E3EB;--mute:#4A4F63;--acc:#D4FF3A;--blue:#1F3DFF;--pink:#FF2E88}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
-h1,h2,h3{font-family:Anton,Inter,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:1.04;margin:0;text-wrap:balance}
-.pre{background:var(--ink);color:#FFFFFF;font-size:13.5px;text-align:center;padding:7px 16px}
-.top{display:flex;align-items:center;gap:16px;padding:14px max(4vw,16px);background:var(--blue);color:#FFFFFF;flex-wrap:wrap}
-.logo{text-decoration:none;color:#FFFFFF;display:flex;align-items:center;margin-right:auto}
-.prog{display:flex;gap:6px;font-size:13.5px;font-weight:600}
-.prog span{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.14);color:#DCE2FF}
-.prog span.on{background:var(--acc);color:var(--blue)}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;padding:22px max(4vw,16px) 56px;max-width:1320px;margin:0 auto;align-items:start}
-.panel{display:grid;gap:14px}
-.panel>h1{font-size:clamp(32px,3.6vw,48px)}
-.panel>p{margin:0;color:var(--mute)}
-.q{border:1px solid var(--line);background:var(--card);border-radius:22px;padding:16px 18px 18px;margin:0}
-.q legend{float:left;width:100%;font:700 16px Inter,sans-serif;margin-bottom:12px}
-.q .help{clear:both;color:var(--mute);font-size:14px;margin:8px 0 0}
-.chips{clear:both;display:flex;flex-wrap:wrap;gap:8px}
-.chips label{position:relative}
-.chips input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
-.chips span{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-weight:600;font-size:15px}
-.chips small{font-weight:400;color:var(--mute)}
-.chips input:checked+span{background:var(--blue);color:#FFFFFF;border-color:var(--blue)}
-.chips input:checked+span small{color:inherit;opacity:.75}
-.chips input:focus-visible+span,button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
-.f{clear:both;display:grid;gap:6px;margin-top:10px}
-.f label{font-size:14px;font-weight:600}
-input[type=text],input[type=date],input[type=time],textarea{width:100%;font:16px Figtree,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:11px 14px;min-height:46px}
-textarea{resize:vertical;min-height:72px}
-.row{clear:both;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.count{font-size:13px;color:var(--mute);justify-self:end}.count.bad{color:var(--accInk);font-weight:700}
-.colors{clear:both;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.colors button{width:44px;height:44px;border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--line);cursor:pointer}
+h1,h2{font-family:Anton,Inter,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;margin:0}
+.wm{font:400 26px/1 Anton,sans-serif;letter-spacing:.01em;text-transform:uppercase;display:inline-flex;align-items:center;color:#fff;text-decoration:none}
+.wm b{font-weight:400;background:var(--acc);color:var(--blue);border-radius:13px 13px 13px 3px;padding:2px 7px 3px;margin-left:1px}
+.pre{background:var(--ink);color:#fff;font-size:13px;text-align:center;padding:7px 16px}
+.top{display:flex;align-items:center;gap:16px;padding:12px max(4vw,16px);background:var(--blue);color:#fff}
+.bar{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;max-width:420px;margin-left:auto}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .3s}
+.count{font-size:13px;color:#DCE2FF;white-space:nowrap}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:32px;padding:28px max(4vw,16px) 56px;max-width:1280px;margin:0 auto;align-items:start}
+.chat{display:grid;gap:16px;align-content:start}
+.ask{display:flex;gap:12px;align-items:flex-start}
+.av{flex:none;width:44px;height:44px;border-radius:14px 14px 14px 4px;background:var(--blue);color:var(--acc);font:400 15px Anton,sans-serif;display:grid;place-items:center;text-transform:uppercase}
+.bubble{background:var(--blue);color:#fff;border-radius:22px 22px 22px 6px;padding:16px 20px;max-width:560px}
+.bubble h1{font-size:clamp(26px,3vw,38px)}
+.bubble p{margin:8px 0 0;color:#DCE2FF;font-size:15px}
+.answer{display:grid;gap:12px;padding-left:56px}
+.opts{display:flex;flex-wrap:wrap;gap:10px}
+.opt{min-height:48px;padding:10px 18px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font:600 15px Inter,sans-serif;color:var(--ink);cursor:pointer;text-align:left}
+.opt small{display:block;font-weight:400;color:var(--mute);font-size:13px}
+.opt:hover{border-color:var(--blue)}
+.opt[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.opt[aria-pressed=true] small{color:#DCE2FF}
+.opt.card{border-radius:18px;padding:12px 16px;flex:1 1 220px}
+.rec{display:inline-block;margin-left:6px;font:700 11px Inter,sans-serif;background:var(--acc);color:var(--blue);padding:2px 8px;border-radius:99px;vertical-align:middle}
+input[type=text],input[type=date],input[type=time],textarea{width:100%;font:16px Inter,sans-serif;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:13px 16px;min-height:50px}
+textarea{resize:vertical;min-height:80px}
+input:focus,textarea:focus{border-color:var(--blue);outline:none}
+label.l{font-size:14px;font-weight:600}
+.hint{font-size:13.5px;color:var(--mute);margin:0}
+.hint.bad{color:#B4002E;font-weight:600}
+.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.colors{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.colors button{width:48px;height:48px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line);cursor:pointer}
 .colors button[aria-pressed=true]{box-shadow:0 0 0 3px var(--blue)}
-input[type=color]{width:56px;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:3px;cursor:pointer}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:999px;font:700 15px Inter,sans-serif;text-decoration:none;border:0;cursor:pointer;background:var(--ink);color:#FFFFFF}
-.btn.acc{background:var(--acc);color:var(--blue)}.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
-.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.status{font-size:14px;color:var(--mute)}
-.out{position:sticky;top:12px;display:grid;gap:14px}
-.stage{background:var(--soft);border-radius:28px;padding:clamp(14px,2.4vw,26px);display:flex;gap:12px;align-items:flex-end;justify-content:center;min-height:340px}
+input[type=color]{width:60px;height:48px;border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:3px;cursor:pointer}
+.nav{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-left:56px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:12px 24px;border-radius:999px;font:700 15px Inter,sans-serif;text-decoration:none;border:0;cursor:pointer;background:var(--ink);color:#fff}
+.btn.acc{background:var(--acc);color:var(--blue)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.link{background:none;color:var(--mute);padding:12px 8px;text-decoration:underline}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.summary{display:flex;flex-wrap:wrap;gap:8px;padding-left:56px}
+.summary button{border:0;background:var(--soft);color:var(--ink);border-radius:99px;padding:7px 12px;font:500 13px Inter,sans-serif;cursor:pointer}
+.summary button b{font-weight:700}
+.out{position:sticky;top:12px;display:grid;gap:12px}
+.stage{background:var(--soft);border-radius:28px;padding:clamp(14px,2.2vw,24px);display:grid;place-items:center;min-height:300px}
 .stage canvas{max-width:100%;max-height:64vh;width:auto;height:auto;border-radius:6px;box-shadow:0 18px 40px -18px rgba(0,0,0,.45)}
-.stage.camp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.75fr);align-items:end}
+.stage.camp{grid-template-columns:minmax(0,1fr) minmax(0,.75fr);align-items:end;gap:12px}
 .stage.camp canvas{width:100%;max-height:none}
 .stage.camp canvas.b{grid-column:1/-1}
-.nudge{background:var(--blue);color:#FFFFFF;border-radius:22px 22px 22px 6px;padding:16px 18px;display:grid;gap:10px}
-.nudge p{margin:0;font-weight:600}
-.why{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 20px}
-.why h2{font-size:19px;margin-bottom:10px}
-.why ol{margin:0;padding-left:20px;display:grid;gap:7px;font-size:15px}
+.cap{font-size:13px;color:var(--mute);text-align:center;margin:0}
+.why{background:#fff;border:1.5px solid var(--line);border-radius:22px 22px 22px 6px;padding:16px 18px}
+.why h2{font-size:20px;margin-bottom:8px}
+.why ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:15px}
 .why li::marker{color:var(--blue);font-weight:700}
-.warn{display:grid;gap:6px;margin:0 0 12px;padding:0;list-style:none}
-.warn li{background:#FDE4D9;border-radius:12px;padding:8px 12px;font-size:14px}
-dialog{border:0;border-radius:26px;padding:26px;background:var(--card);color:var(--ink);max-width:min(92vw,520px)}
-dialog::backdrop{background:rgba(20,18,15,.6)}
-dialog h2{font-size:24px;margin-bottom:10px}
+.warn{display:grid;gap:6px;margin:0 0 10px;padding:0;list-style:none}
+.warn li{background:#FFE3EF;color:#5B0B2C;border-radius:12px;padding:8px 12px;font-size:14px}
+.done{background:var(--acc);color:var(--blue);border-radius:22px 22px 22px 6px;padding:16px 20px}
+.done h2{font-size:clamp(30px,3.4vw,44px)}
+.done p{margin:6px 0 0;font-weight:600}
+dialog{border:0;border-radius:26px;padding:26px;background:#fff;color:var(--ink);max-width:min(92vw,520px)}
+dialog::backdrop{background:rgba(17,17,17,.6)}
+dialog h2{font-size:28px;margin-bottom:10px}
 [hidden]{display:none!important}
-@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.out{position:static;order:-1}.stage canvas{max-height:42vh}.stage.camp canvas{max-height:none}}
-@media(max-width:520px){.row{grid-template-columns:minmax(0,1fr)}.prog{display:none}}
+.so-mobile{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:900px){
+  .grid{grid-template-columns:minmax(0,1fr);gap:16px;padding-top:12px}
+  .out{order:-1;position:sticky;top:0;z-index:5;background:#fff;padding:8px 0;gap:6px}
+  .stage{min-height:0;padding:10px;border-radius:20px}
+  .stage canvas{max-height:30vh}
+  .stage.camp canvas{max-height:22vh;width:auto;justify-self:center}
+  .why{display:none}
+  .why.full.aberto{display:block}
+  .out.fim{position:static}
+  .so-mobile{display:inline-flex!important}
+  .answer,.nav,.summary{padding-left:0}
+  .av{display:none}
+}
+@media(max-width:520px){.row{grid-template-columns:minmax(0,1fr)}.count{display:none}}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
 </head>
 <body>
 <div class="pre">Pré-lançamento: a demonstração funciona sem cadastro. Salvar e baixar será liberado com a abertura do cadastro.</div>
-<header class="top"><a class="logo" href="../"><span class="wm">cri<b>ou</b></span></a>
-  <div class="prog" aria-label="Etapas"><span id="p1" class="on">1 · Sua empresa</span><span id="p2">2 · O que você precisa</span></div></header>
+<header class="top"><a class="wm" href="../" aria-label="Criou, voltar para o início">cri<b>ou</b></a><div class="bar" role="progressbar" aria-label="Progresso" aria-valuemin="0" aria-valuemax="100"><i id="barra" style="width:0"></i></div><span class="count" id="contagem"></span></header>
 
 <main class="grid">
-  <section class="panel" id="etapa1" aria-label="Sua empresa">
-    <h1>E aí, cria? Vamos começar pela sua empresa.</h1>
-    <p>Três respostas e o sistema já sabe como suas peças devem parecer.</p>
-    <fieldset class="q"><legend>Qual é o nome da sua empresa?</legend>
-      <div class="f"><input type="text" id="nome" maxlength="40" placeholder="Ex.: Ateliê Lua" autocomplete="organization"></div></fieldset>
-    <fieldset class="q"><legend>Você possui logotipo?</legend>
-      <div class="actions" style="clear:both"><label class="btn ghost" for="logo">Enviar logotipo (PNG)</label><input type="file" id="logo" accept="image/png,image/jpeg,image/webp" hidden><button class="btn ghost" id="semLogo" hidden>Remover</button><span class="status" id="logoNome">Sem logotipo: usamos o nome da empresa.</span></div></fieldset>
-    <fieldset class="q"><legend>Qual é a cor principal da sua marca?</legend>
-      <div class="colors" id="cores"></div>
-      <p class="help">Não sabe o código? Escolha a mais próxima. O sistema monta as outras cores e só usa combinações que passam no teste de contraste.</p></fieldset>
-    <div class="actions"><button class="btn acc" id="ir2">Continuar</button><span class="status" id="st1"></span></div>
-  </section>
-
-  <section class="panel" id="etapa2" aria-label="O que você precisa" hidden>
-    <h1>Qual é o recado de hoje?</h1>
-    <p>Responda sobre o conteúdo. As decisões de design ficam com o sistema.</p>
-    <fieldset class="q"><legend>O que você precisa criar?</legend><div class="chips" id="q-formato"></div></fieldset>
-    <fieldset class="q"><legend>Para quem é essa comunicação?</legend><div class="chips" id="q-publico"></div></fieldset>
-    <fieldset class="q"><legend>Qual é o assunto?</legend><div class="chips" id="q-assunto"></div></fieldset>
-    <fieldset class="q"><legend>Qual é a mensagem principal?</legend>
-      <div class="f"><label for="titulo">Título</label><input type="text" id="titulo" maxlength="90"><span class="count" id="c-titulo"></span></div>
-      <div class="f"><label for="apoio">Frase de apoio <small>(opcional)</small></label><textarea id="apoio" maxlength="140"></textarea><span class="count" id="c-apoio"></span></div></fieldset>
-    <fieldset class="q"><legend>Existe uma data ou local?</legend>
-      <div class="row"><div class="f"><label for="data">Data</label><input type="date" id="data"></div><div class="f"><label for="hora">Horário</label><input type="time" id="hora"></div><div class="f"><label for="local">Local</label><input type="text" id="local" maxlength="28" placeholder="Ex.: Online"></div></div></fieldset>
-    <fieldset class="q"><legend>Você deseja que o público realize alguma ação?</legend>
-      <div class="f"><label for="chamada">Texto do botão <small>(opcional)</small></label><input type="text" id="chamada" maxlength="24" placeholder="Ex.: Fale com a gente"></div></fieldset>
-    <fieldset class="q"><legend>Você possui alguma fotografia para utilizar?</legend>
-      <div class="actions" style="clear:both"><label class="btn ghost" for="foto">Enviar foto</label><input type="file" id="foto" accept="image/*" hidden><button class="btn ghost" id="semFoto" hidden>Tirar foto</button><span class="status" id="fotoNome">Sem foto</span></div></fieldset>
-    <div class="actions"><button class="btn ghost" id="volta1">Voltar para a empresa</button></div>
+  <section class="chat" aria-live="polite">
+    <div class="ask"><div class="av" aria-hidden="true">ou</div><div class="bubble"><h1 id="pergunta"></h1><p id="ajuda"></p></div></div>
+    <div class="answer" id="resposta"></div>
+    <div class="nav" id="nav"></div>
+    <div class="summary" id="resumo" aria-label="Suas respostas"></div>
   </section>
 
   <aside class="out" aria-label="Prévia">
     <div class="stage" id="stage"><canvas id="cv1" role="img" aria-label="Prévia da peça"></canvas></div>
-    <div class="nudge" id="nudge" hidden><p id="nudgeTxt"></p><div class="actions" id="nudgeAct"></div></div>
-    <div class="why"><ul class="warn" id="avisos"></ul><h2>Por que ficou assim</h2><ol id="motivos"><li>Responda as perguntas e o sistema explica cada decisão.</li></ol></div>
+    <p class="cap" id="legenda">A peça se monta a cada resposta.</p>
+    <div class="why" id="why"><ul class="warn" id="avisos"></ul><h2>Por que ficou assim</h2><ol id="motivos"></ol><button class="btn link" id="verTodos" hidden>Ver todas as decisões</button></div>
   </aside>
 </main>
 
 <dialog id="dlg" aria-labelledby="dlgT">
   <h2 id="dlgT">Crie sua conta gratuita para salvar e baixar sua primeira campanha completa.</h2>
   <p>Estamos finalizando o cadastro. Quando ele abrir, você vai poder salvar esta marca e baixar a primeira campanha (post, story e banner) sem marca d'água, depois de confirmar o seu e-mail.</p>
-  <p class="status">Por enquanto, a demonstração funciona sem conta e nenhum dado seu é guardado.</p>
-  <div class="actions" style="margin-top:14px"><button class="btn" id="fechar">Continuar experimentando</button></div>
+  <p class="hint">Por enquanto, a demonstração funciona sem conta e nenhum dado seu é guardado.</p>
+  <div class="nav" style="padding:14px 0 0"><button class="btn" id="fechar">Continuar criando</button></div>
 </dialog>
 
 <script src="../js/motor.js"></script>
@@ -132,70 +130,128 @@ dialog h2{font-size:24px;margin-bottom:10px}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 const CORES=['#F9541C','#E2A62B','#2BB3A3','#2F6FEB','#7B4BD6','#D6336C','#1F8A4C','#14120F'];
-const st={nome:'',logo:null,cor:'#F9541C',formato:'post',publico:'clientes',assunto:'novidade',titulo:'',apoio:'',data:'',hora:'',local:'',chamada:'',foto:null,campanha:false,viuPrevia:false};
-let marca=DPP.marcaDeCor('Sua empresa',st.cor);
+const st={nome:'',temId:null,fonte:'',logo:null,logoNome:'',cor:'#2F6FEB',perso:'',formato:'',publico:'',assunto:'',titulo:'',apoio:'',data:'',hora:'',local:'',chamada:'',foto:null,fotoNome:'',todos:false};
 DPP.evento('demo_started');
 
-/* ---------- etapa 1 ---------- */
-$('cores').innerHTML=CORES.map(c=>`<button type="button" style="background:${c}" aria-label="Cor ${c}" aria-pressed="${c===st.cor}" data-c="${c}"></button>`).join('')+`<label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600">Outra<input type="color" id="corLivre" value="${st.cor}"></label>`;
-const setCor=c=>{st.cor=c;document.querySelectorAll('#cores button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===c));$('corLivre').value=c;atualizaMarca();};
-$('cores').addEventListener('click',e=>{const b=e.target.closest('button[data-c]');if(b)setCor(b.dataset.c);});
-$('corLivre').addEventListener('input',e=>setCor(e.target.value));
-$('nome').addEventListener('input',()=>{st.nome=$('nome').value;atualizaMarca();});
-const lerImg=(file,cb)=>{if(file.size>8e6){alertar('Imagem muito grande. Use um arquivo de até 8 MB.');return;}const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>cb(im);im.src=fr.result;};fr.readAsDataURL(file);};
-const alertar=t=>{$('st1').textContent=t;};
-$('logo').onchange=e=>{const f=e.target.files[0];if(!f)return;lerImg(f,im=>{st.logo=im;$('logoNome').textContent=f.name;$('semLogo').hidden=false;atualizaMarca();});};
-$('semLogo').onclick=()=>{st.logo=null;$('logo').value='';$('logoNome').textContent='Sem logotipo: usamos o nome da empresa.';$('semLogo').hidden=true;atualizaMarca();};
-function atualizaMarca(){marca=DPP.marcaDeCor(st.nome||'Sua empresa',st.cor,{logo:st.logo});render();}
-$('ir2').onclick=()=>{if(!st.nome.trim()){alertar('Escreva o nome da empresa para continuar.');$('nome').focus();return;}
-  DPP.evento('brand_completed');$('etapa1').hidden=true;$('etapa2').hidden=false;$('p1').classList.remove('on');$('p2').classList.add('on');
-  if(!st.titulo){st.titulo='Novidade fresquinha para você';$('titulo').value=st.titulo;cont('titulo',45,90);}render();window.scrollTo({top:0,behavior:'smooth'});};
-$('volta1').onclick=()=>{$('etapa2').hidden=true;$('etapa1').hidden=false;$('p2').classList.remove('on');$('p1').classList.add('on');};
+/* ---------- roteiro: uma pergunta por vez ---------- */
+const P=DPP.PERSONALIDADES;
+const STEPS=[
+ {id:'nome',t:'E aí, cria? Qual é o nome da sua empresa?',a:'É o que aparece no lugar do logo, se você não tiver um.',tipo:'texto',campo:'nome',ph:'Ateliê Lua',max:40,obrig:true,resumo:()=>st.nome},
+ {id:'temId',t:'Sua marca já tem identidade visual?',a:'Se já tem, a gente respeita. Se não tem, a gente monta uma direção pra você.',tipo:'opcoes',campo:'temId',ops:{sim:'Sim, tenho logo e cores',nao:'Ainda não, quero ajuda'},obrig:true,resumo:()=>st.temId==='sim'?'Já tem identidade':'Sem identidade'},
+ {id:'logo',t:'Manda o seu logo.',a:'PNG com fundo transparente fica melhor. Sem logo, usamos o nome da empresa.',tipo:'logo',se:()=>st.temId==='sim',resumo:()=>st.logo?'Logo enviado':'Sem logo'},
+ {id:'cor',t:'Qual é a cor principal da sua marca?',a:'Escolha a mais próxima. O Criou monta as outras e só usa combinações que passam no teste de contraste.',tipo:'cor',resumo:()=>`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${st.cor};margin-right:4px"></span>Cor`},
+ {id:'fonte',t:'Qual fonte vocês usam?',a:'Se não souber, tudo bem: a personalidade escolhe por você.',tipo:'opcoes',campo:'fonte',se:()=>st.temId==='sim',ops:()=>Object.fromEntries([...DPP.FONTES_MARCA.map(f=>[f,`<span style="font-family:'${f}';font-weight:800">${f}</span>`]),['','Não sei']]),resumo:()=>st.fonte||'Fonte pela personalidade'},
+ {id:'perso',t:'Qual personalidade combina com a sua marca?',a:()=>st.temId==='sim'?'Ela define a composição e os grafismos. Suas cores e sua fonte continuam as mesmas.':'Ela escolhe fonte, formas, composição e grafismos.',tipo:'opcoes',campo:'perso',cartao:true,ops:()=>Object.fromEntries(Object.entries(P).map(([k,v])=>[k,`${v.nome}<small>${v.direcao}</small>`])),obrig:true,resumo:()=>P[st.perso]?P[st.perso].nome:''},
+ {id:'formato',t:'O que você precisa criar?',a:'Com a campanha, você escreve uma vez e recebe os três formatos.',tipo:'opcoes',campo:'formato',cartao:true,ops:{campanha:'Campanha completa <span class="rec">recomendado</span><small>Post, story e banner juntos</small>',post:'Post<small>1080 × 1350</small>',story:'Story<small>1080 × 1920</small>',banner:'Banner<small>1500 × 500</small>'},obrig:true,resumo:()=>({campanha:'Campanha completa',post:'Post',story:'Story',banner:'Banner'})[st.formato]},
+ {id:'publico',t:'Pra quem é esse recado?',a:'Muda o selo e o tom da peça.',tipo:'opcoes',campo:'publico',ops:DPP.PUBLICOS,obrig:true,resumo:()=>DPP.PUBLICOS[st.publico]},
+ {id:'assunto',t:'Qual é o assunto?',a:'O assunto escolhe a combinação de cores.',tipo:'opcoes',campo:'assunto',ops:DPP.ASSUNTOS,obrig:true,resumo:()=>DPP.ASSUNTOS[st.assunto]},
+ {id:'titulo',t:'Qual é o recado?',a:'Escreva como você falaria. Até 45 caracteres fica melhor numa imagem.',tipo:'recado',obrig:true,resumo:()=>`“${st.titulo}”`},
+ {id:'data',t:'Tem data ou local?',a:'Se tiver, vira uma pílula fácil de achar.',tipo:'data',pular:true,resumo:()=>(st.data||st.hora||st.local)?'Com data':'Sem data'},
+ {id:'chamada',t:'Quer que a pessoa faça algo?',a:'Vira um botão na cor de ação. Ex.: "Encomendar", "Ver agenda".',tipo:'texto',campo:'chamada',ph:'Fale com a gente',max:24,pular:true,resumo:()=>st.chamada?`Botão “${st.chamada}”`:'Sem botão'},
+ {id:'foto',t:'Tem alguma foto pra usar?',a:'Sem foto, entra o grafismo da sua personalidade.',tipo:'foto',pular:true,resumo:()=>st.foto?'Com foto':'Sem foto'}
+];
+let idx=0,fim=false;
+const visiveis=()=>STEPS.filter(s=>!s.se||s.se());
+const val=v=>typeof v==='function'?v():v;
 
-/* ---------- etapa 2 ---------- */
-function chips(el,name,ops,val,on){el.innerHTML=Object.entries(ops).map(([k,v])=>`<label><input type="radio" name="${name}" value="${esc(k)}" ${k===val?'checked':''}><span>${v}</span></label>`).join('');el.onchange=e=>on(e.target.value);}
-chips($('q-formato'),'formato',{post:'Post <small>1080 × 1350</small>',story:'Story <small>1080 × 1920</small>',banner:'Banner <small>1500 × 500</small>',campanha:'Campanha completa <small>os três</small>'},st.formato,v=>{if(v==='campanha'){st.campanha=true;DPP.evento('campaign_started');}else{st.campanha=false;st.formato=v;}render();});
-chips($('q-publico'),'publico',DPP.PUBLICOS,st.publico,v=>{st.publico=v;render();});
-chips($('q-assunto'),'assunto',DPP.ASSUNTOS,st.assunto,v=>{st.assunto=v;render();});
-const cont=(id,ideal,max)=>{const n=$(id).value.length,c=$('c-'+id);c.textContent=`${n} de ${max}${ideal?` · ideal até ${ideal}`:''}`;c.classList.toggle('bad',!!ideal&&n>ideal);};
-[['titulo',45,90],['apoio',0,140]].forEach(([id,i,mx])=>{cont(id,i,mx);$(id).addEventListener('input',()=>{st[id]=$(id).value;cont(id,i,mx);render();});});
-['data','hora','local','chamada'].forEach(id=>$(id).addEventListener('input',()=>{st[id]=$(id).value;render();}));
-$('foto').onchange=e=>{const f=e.target.files[0];if(!f)return;lerImg(f,im=>{st.foto=im;$('fotoNome').textContent=f.name;$('semFoto').hidden=false;render();});};
-$('semFoto').onclick=()=>{st.foto=null;$('foto').value='';$('fotoNome').textContent='Sem foto';$('semFoto').hidden=true;render();};
+function mostra(){
+  const vs=visiveis(),s=vs[idx];
+  if(!fim){$('why').classList.remove('full');document.querySelector('.out').classList.remove('fim');}
+  $('barra').style.width=(fim?100:Math.round(idx/vs.length*100))+'%';
+  $('contagem').textContent=fim?'Pronto':`Pergunta ${idx+1} de ${vs.length}`;
+  if(fim){return mostraFim();}
+  $('pergunta').textContent=s.t;$('ajuda').textContent=val(s.a)||'';
+  const R=$('resposta');R.innerHTML='';
+  if(s.tipo==='texto'){R.innerHTML=`<input type="text" id="campo" maxlength="${s.max}" placeholder="${esc(s.ph)}" value="${esc(st[s.campo])}" autocomplete="off"><p class="hint" id="hint"></p>`;
+    const i=$('campo');i.addEventListener('input',()=>{st[s.campo]=i.value;$('hint').textContent='';render();});i.addEventListener('keydown',e=>{if(e.key==='Enter')avanca();});setTimeout(()=>i.focus(),50);}
+  if(s.tipo==='opcoes'){const ops=val(s.ops);R.innerHTML=`<div class="opts">${Object.entries(ops).map(([k,v])=>`<button type="button" class="opt${s.cartao?' card':''}" data-k="${esc(k)}" aria-pressed="${st[s.campo]===k&&(k!==''||st[s.campo+'_ok'])}">${v}</button>`).join('')}</div><p class="hint" id="hint"></p>`;
+    R.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{st[s.campo]=b.dataset.k;st[s.campo+'_ok']=true;render();setTimeout(avanca,180);});}
+  if(s.tipo==='cor'){R.innerHTML=`<div class="colors">${CORES.map(c=>`<button type="button" style="background:${c}" aria-label="Cor ${c}" aria-pressed="${c===st.cor}" data-c="${c}"></button>`).join('')}<label class="hint" style="display:flex;align-items:center;gap:8px">Outra <input type="color" id="corLivre" value="${st.cor}"></label></div>`;
+    const set=c=>{st.cor=c;R.querySelectorAll('button[data-c]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===c));render();};
+    R.querySelectorAll('button[data-c]').forEach(b=>b.onclick=()=>set(b.dataset.c));$('corLivre').oninput=e=>set(e.target.value);}
+  if(s.tipo==='logo'||s.tipo==='foto'){const k=s.tipo,tem=k==='logo'?st.logo:st.foto,nome=k==='logo'?st.logoNome:st.fotoNome;
+    R.innerHTML=`<div class="opts"><label class="btn ghost" for="arq">${tem?'Trocar arquivo':'Escolher arquivo'}</label><input type="file" id="arq" accept="image/png,image/jpeg,image/webp" hidden>${tem?'<button class="btn link" id="tira">Remover</button>':''}</div><p class="hint" id="hint">${tem?esc(nome):'Nenhum arquivo'}</p>`;
+    $('arq').onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>8e6){$('hint').textContent='Use um arquivo de até 8 MB.';$('hint').classList.add('bad');return;}const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{if(k==='logo'){st.logo=im;st.logoNome=f.name;}else{st.foto=im;st.fotoNome=f.name;}mostra();render();};im.src=fr.result;};fr.readAsDataURL(f);};
+    if($('tira'))$('tira').onclick=()=>{if(k==='logo'){st.logo=null;st.logoNome='';}else{st.foto=null;st.fotoNome='';}mostra();render();};}
+  if(s.tipo==='recado'){R.innerHTML=`<label class="l" for="titulo">Título</label><input type="text" id="titulo" maxlength="90" placeholder="Pão quentinho saindo às 7h" value="${esc(st.titulo)}" autocomplete="off"><p class="hint" id="hint"></p><label class="l" for="apoio">Frase de apoio (opcional)</label><textarea id="apoio" maxlength="140" placeholder="Encomende até as 18h do dia anterior.">${esc(st.apoio)}</textarea>`;
+    const t=$('titulo'),cnt=()=>{const n=t.value.length;$('hint').textContent=`${n} de 90 · ideal até 45`;$('hint').classList.toggle('bad',n>45);};cnt();
+    t.addEventListener('input',()=>{st.titulo=t.value;cnt();render();});$('apoio').addEventListener('input',e=>{st.apoio=e.target.value;render();});setTimeout(()=>t.focus(),50);}
+  if(s.tipo==='data'){R.innerHTML=`<div class="row"><div><label class="l" for="data">Data</label><input type="date" id="data" value="${esc(st.data)}"></div><div><label class="l" for="hora">Horário</label><input type="time" id="hora" value="${esc(st.hora)}"></div><div><label class="l" for="local">Local</label><input type="text" id="local" maxlength="28" placeholder="Online" value="${esc(st.local)}"></div></div>`;
+    ['data','hora','local'].forEach(k=>$(k).addEventListener('input',e=>{st[k]=e.target.value;render();}));}
+  const N=$('nav');N.innerHTML='';
+  if(idx>0){const b=document.createElement('button');b.className='btn ghost';b.textContent='Voltar';b.onclick=()=>{idx--;mostra();};N.appendChild(b);}
+  if(s.tipo!=='opcoes'){const b=document.createElement('button');b.className='btn acc';b.textContent=idx===vs.length-1?'Ver minha peça':'Continuar';b.onclick=avanca;N.appendChild(b);}
+  if(s.pular){const b=document.createElement('button');b.className='btn link';b.textContent='Pular';b.onclick=()=>{limpa(s);avanca(true);};N.appendChild(b);}
+  resumo();
+}
+function limpa(s){if(s.id==='data'){st.data=st.hora=st.local='';}if(s.id==='chamada')st.chamada='';if(s.id==='foto'){st.foto=null;st.fotoNome='';}render();}
+function avanca(){
+  const vs=visiveis(),s=vs[idx];
+  if(s&&s.obrig){const v=s.campo?st[s.campo]:st.titulo;if(!String(v||'').trim()){const h=$('hint');if(h){h.textContent=s.tipo==='opcoes'?'Escolha uma opção para continuar.':'Escreva para continuar.';h.classList.add('bad');}return;}}
+  if(s&&s.id==='nome')DPP.evento('brand_completed');
+  if(s&&s.id==='titulo'&&!st.viuPrevia){st.viuPrevia=true;DPP.evento('first_preview');}
+  if(idx<vs.length-1){idx++;mostra();}else{fim=true;mostra();}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function resumo(){
+  const vs=visiveis(),feitos=fim?vs:vs.slice(0,idx);
+  $('resumo').innerHTML=feitos.map(s=>{const r=s.resumo&&s.resumo();return r?`<button type="button" data-id="${s.id}" title="Mudar esta resposta">${r}</button>`:'';}).join('');
+  $('resumo').querySelectorAll('button').forEach(b=>b.onclick=()=>{fim=false;idx=visiveis().findIndex(s=>s.id===b.dataset.id);mostra();window.scrollTo({top:0,behavior:'smooth'});});
+}
+function mostraFim(){
+  const camp=st.formato==='campanha';
+  if(camp)DPP.evento('campaign_completed');
+  $('pergunta').textContent=camp?'Criou. Sua campanha está pronta.':'Criou. Sua peça está pronta.';
+  $('ajuda').textContent='Toque numa resposta abaixo para mudar qualquer coisa.';
+  $('resposta').innerHTML=`<div class="done"><h2>${camp?'Post, story e banner':'Pronto pra usar'}</h2><p>${camp?'Você escreveu uma vez. O Criou adaptou para três formatos.':'Quer a mesma mensagem em post, story e banner?'}</p></div>`;
+  const N=$('nav');N.innerHTML='';
+  const b1=document.createElement('button');b1.className='btn acc';b1.textContent='Salvar e baixar (em breve)';b1.onclick=()=>{DPP.evento('signup_started');$('dlg').showModal();};N.appendChild(b1);
+  if(!camp){const b2=document.createElement('button');b2.className='btn';b2.textContent='Virar campanha completa';b2.onclick=()=>{st.formato='campanha';DPP.evento('campaign_started');render();mostra();};N.appendChild(b2);}
+  const b3=document.createElement('button');b3.className='btn ghost';b3.textContent='Criar outro recado';b3.onclick=()=>{Object.assign(st,{titulo:'',apoio:'',data:'',hora:'',local:'',chamada:'',foto:null,fotoNome:'',assunto:'',publico:''});fim=false;idx=visiveis().findIndex(s=>s.id==='publico');render();mostra();};N.appendChild(b3);
+  const b4=document.createElement('button');b4.className='btn link so-mobile';b4.textContent='Por que ficou assim?';b4.onclick=()=>{$('why').classList.toggle('aberto');window.scrollTo({top:0,behavior:'smooth'});};N.appendChild(b4);
+  $('why').classList.add('full');document.querySelector('.out').classList.add('fim');
+  resumo();
+}
 
-/* ---------- prévia ---------- */
+/* ---------- marca a partir das respostas ---------- */
+function marca(){
+  const p=P[st.perso]||{};
+  const extra={logo:st.logo,forma:p.forma,graf:p.graf,en:p.en};
+  if(st.temId==='sim'&&st.fonte){extra.ft=st.fonte;extra.fx='Inter';extra.en=p.en==='serif'?'cor':p.en;}
+  else if(p.ft){extra.ft=p.ft;extra.fx=p.fx;}
+  return DPP.marcaDeCor(st.nome||'Sua empresa',st.cor,extra);
+}
+/* ---------- prévia ao vivo ---------- */
 let pend=0;
 async function render(){
-  const id=++pend;await DPP.fontes(marca);if(id!==pend)return;
-  const r={publico:st.publico,assunto:st.assunto,titulo:st.titulo||(st.nome?`${st.nome}: sua mensagem aqui`:'Sua mensagem aqui'),apoio:st.apoio,data:st.data,hora:st.hora,local:st.local,chamada:st.chamada,foto:st.foto};
+  const id=++pend,m=marca();await DPP.fontes(m);if(id!==pend)return;
+  const r={publico:st.publico||'clientes',assunto:st.assunto||'novidade',titulo:st.titulo||'Seu recado aqui',apoio:st.apoio,data:st.data,hora:st.hora,local:st.local,chamada:st.chamada,foto:st.foto,campanha:st.formato==='campanha'};
   const stage=$('stage');let d;
-  if(st.campanha){
+  if(st.formato==='campanha'){
     stage.classList.add('camp');
-    const outs=['post','story','banner'].map(f=>DPP.desenhar(marca,f,r));
-    stage.innerHTML='<canvas class="p" role="img" aria-label="Prévia do post"></canvas><canvas class="s" role="img" aria-label="Prévia do story"></canvas><canvas class="b" role="img" aria-label="Prévia do banner"></canvas>';
-    const cs=stage.querySelectorAll('canvas');outs.forEach((o,i)=>DPP.previa(cs[i],o.canvas,{maxW:i===2?760:420}));
+    const outs=['post','story','banner'].map(f=>DPP.desenhar(m,f,r));
+    stage.innerHTML='<canvas class="p" role="img"></canvas><canvas class="s" role="img"></canvas><canvas class="b" role="img"></canvas>';
+    const cs=stage.querySelectorAll('canvas'),nomes=['Post','Story','Banner'];
+    outs.forEach((o,i)=>{DPP.previa(cs[i],o.canvas,{maxW:i===2?760:420});cs[i].setAttribute('aria-label',`Prévia do ${nomes[i].toLowerCase()} de ${m.nome}: ${r.titulo}`);});
     d=outs[0].decisao;d={...d,motivos:[['Campanha','a mesma mensagem foi adaptada para post, story e banner, com a mesma identidade visual.'],...d.motivos.filter(x=>x[0]!=='Formato')]};
-    nudge('Você acabou de criar uma campanha com três formatos, sem precisar editar uma única peça.',[['Salvar e baixar minha campanha','acc',abrirCadastro]]);
-    DPP.evento('campaign_completed');
+    $('legenda').textContent='Campanha: post, story e banner com a mesma mensagem.';
   }else{
     stage.classList.remove('camp');
-    if(!stage.querySelector('#cv1')){stage.innerHTML='<canvas id="cv1" role="img" aria-label="Prévia da peça"></canvas>';}
-    const o=DPP.desenhar(marca,st.formato,r);DPP.previa($('cv1'),o.canvas,{maxW:st.formato==='banner'?820:520});d=o.decisao;
-    if(!$('etapa2').hidden){
-      if(!st.viuPrevia){st.viuPrevia=true;DPP.evento('first_preview');}
-      nudge('Sua primeira peça está pronta. Vamos transformar essa mensagem em uma campanha completa?',[['Gerar campanha completa','acc',()=>{document.querySelector('input[name=formato][value=campanha]').checked=true;st.campanha=true;DPP.evento('campaign_started');render();}],['Salvar e baixar','ghost',abrirCadastro]]);
-    }else $('nudge').hidden=true;
+    if(!stage.querySelector('#cv1'))stage.innerHTML='<canvas id="cv1" role="img"></canvas>';
+    const f=st.formato||'post',o=DPP.desenhar(m,f,r);DPP.previa($('cv1'),o.canvas,{maxW:f==='banner'?820:520});d=o.decisao;
+    $('cv1').setAttribute('aria-label',`Prévia do ${DPP.FORMATOS[f].nome.toLowerCase()} de ${m.nome}: ${r.titulo}`);
+    $('legenda').textContent=st.formato?`${DPP.FORMATOS[f].nome} · ${DPP.FORMATOS[f].dim} px`:'A peça se monta a cada resposta.';
   }
-  $('motivos').innerHTML=d.motivos.map(([a,b])=>`<li><b>${esc(a)}:</b> ${esc(b)}</li>`).join('');
+  const lista=st.todos?d.motivos:d.motivos.slice(0,3);
+  $('motivos').innerHTML=lista.map(([a,b])=>`<li><b>${esc(a)}:</b> ${esc(b)}</li>`).join('');
+  $('verTodos').hidden=st.todos||d.motivos.length<=3;$('verTodos').textContent=`Ver todas as decisões (${d.motivos.length})`;
   $('avisos').innerHTML=d.avisos.map(a=>`<li>${esc(a)}</li>`).join('');
 }
-function nudge(txt,btns){$('nudge').hidden=false;$('nudgeTxt').textContent=txt;$('nudgeAct').innerHTML='';btns.forEach(([t,cls,fn])=>{const b=document.createElement('button');b.className='btn '+(cls==='acc'?'acc':'ghost');if(cls!=='acc')b.style.cssText='color:#FFFFFF;border-color:rgba(255,255,255,.5)';b.textContent=t;b.onclick=fn;$('nudgeAct').appendChild(b);});}
-function abrirCadastro(){DPP.evento('signup_started');$('dlg').showModal();}
+$('verTodos').onclick=()=>{st.todos=true;render();};
 $('fechar').onclick=()=>$('dlg').close();
-/* Botão direito e arrastar ficam desligados na prévia: ela é para visualizar. */
 $('stage').addEventListener('contextmenu',e=>e.preventDefault());
 $('stage').addEventListener('dragstart',e=>e.preventDefault());
-render();
+mostra();render();
 }
 </script>
 </body>

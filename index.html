@@ -292,7 +292,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 document.getElementById('faq').innerHTML=FAQ.map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('');
 const EX={
   hero:{publico:'clientes',assunto:'novidade',titulo:'Pão de fermentação natural sai às 7h',apoio:'Encomende até as 18h do dia anterior.',chamada:'Encomendar'},
-  fmt:{publico:'campanha',assunto:'novidade',titulo:'Check-up completo em uma manhã',apoio:'Exames, consulta e resultado no mesmo dia.',chamada:'Agendar'}
+  fmt:{publico:'clientes',campanha:true,assunto:'novidade',titulo:'Check-up completo em uma manhã',apoio:'Exames, consulta e resultado no mesmo dia.',chamada:'Agendar'}
 };
 async function pinta(){
   for(const k of ['aurora','ventura'])await DPP.fontes(DPP.EXEMPLOS[k]);

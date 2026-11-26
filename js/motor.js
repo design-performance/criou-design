@@ -8,7 +8,7 @@ const FORMATOS={
   story:{nome:'Story',dim:'1080 × 1920',w:1080,h:1920,m:96,top:220,bot:280,tipo:'v'},
   banner:{nome:'Banner',dim:'1500 × 500',w:1500,h:500,m:60,top:60,bot:60,tipo:'h'}
 };
-const PUBLICOS={clientes:'Clientes',equipe:'Equipe',campanha:'Campanha'};
+const PUBLICOS={clientes:'Clientes',equipe:'Equipe',geral:'Público geral'};
 const ASSUNTOS={novidade:'Novidade',evento:'Evento',aviso:'Aviso',dica:'Dica',promocao:'Promoção'};
 const PREF={novidade:'escuro',evento:'destaque',aviso:'claro',dica:'claro',promocao:'destaque'};
 
@@ -29,7 +29,9 @@ function marcaDeCor(nome,cor,extra){
   const escuro=extra&&extra.escuro||mix(destaque,'#0B0A08',.86);
   const fundo=extra&&extra.fundo||mix(destaque,'#FFFFFF',.93);
   const n=(nome||'Sua empresa').trim();
-  return {nome:n,sigla:n.length>14?n.split(/\s+/)[0].slice(0,14):n,site:extra&&extra.site||'',fundo,escuro,destaque,ft:'Bricolage Grotesque',fx:'Figtree',en:'serif',forma:'pilula',graf:'vetor',logo:extra&&extra.logo||null};
+  const base={nome:n,sigla:n.length>14?n.split(/\s+/)[0].slice(0,14):n,site:'',fundo,escuro,destaque,ft:'Bricolage Grotesque',fx:'Figtree',en:'serif',forma:'pilula',graf:'vetor',logo:null};
+  const e=extra||{};['site','logo','ft','fx','en','forma','graf'].forEach(k=>{if(e[k]!==undefined&&e[k]!==null&&e[k]!=='')base[k]=e[k];});if(e.logo===null)base.logo=null;
+  return base;
 }
 
 /* ---------- decisões ---------- */
@@ -37,10 +39,11 @@ function decidir(m,f,r){
   const motivos=[],avisos=[];const pals=paletas(m),ok=pals.filter(p=>p.ok);
   let pal;
   if(r.paleta&&r.paleta!=='auto'&&ok.find(p=>p.id===r.paleta)){pal=ok.find(p=>p.id===r.paleta);motivos.push(['Cores',`combinação ${pal.nome.toLowerCase()} escolhida, com contraste de ${pal.ratio.toFixed(1)}:1.`]);}
-  else{const quer=r.publico==='campanha'?'escuro':PREF[r.assunto]||'claro';pal=ok.find(p=>p.id===quer)||ok[0]||pals[0];
-    motivos.push(['Cores',`${ASSUNTOS[r.assunto]||'O assunto'}${r.publico==='campanha'?' em campanha':''} pede a combinação ${pal.nome.toLowerCase()}${pal.id!==quer?' (a ideal não passou no teste de contraste com estas cores, então entrou a próxima segura)':''}. Contraste do texto: ${pal.ratio.toFixed(1)}:1.`]);}
+  const camp=!!(r.campanha||r.publico==='campanha');
+  if(pal){}else{const quer=camp?'escuro':PREF[r.assunto]||'claro';pal=ok.find(p=>p.id===quer)||ok[0]||pals[0];
+    motivos.push(['Cores',`${ASSUNTOS[r.assunto]||'O assunto'}${camp?' em campanha':''} pede a combinação ${pal.nome.toLowerCase()}${pal.id!==quer?' (a ideal não passou no teste de contraste com estas cores, então entrou a próxima segura)':''}. Contraste do texto: ${pal.ratio.toFixed(1)}:1.`]);}
   const fora=pals.length-ok.length;
-  if(fora)motivos.push(['Contraste',`${fora} combinação${fora>1?'ões':''} da marca ficou${fora>1?'ram':''} de fora porque o texto não seria lido com segurança.`]);
+  if(fora)motivos.push(['Contraste',`${fora} ${fora>1?'combinações':'combinação'} da marca ${fora>1?'ficaram':'ficou'} de fora porque o texto não seria lido com segurança.`]);
   const accTxt=cr(pal.acc,pal.bg)>=3?pal.acc:pal.ink;
   const btnBg=cr(pal.acc,pal.bg)>=2?pal.acc:pal.ink;const btnInk=melhor(btnBg,[m.fundo,m.escuro,'#FFFFFF']);
   const t=(r.titulo||'').trim(),n=t.length;
@@ -53,7 +56,7 @@ function decidir(m,f,r){
   if(/clique aqui/i.test(r.chamada||''))avisos.push('"Clique aqui" não diz o que acontece. Prefira algo como "Ver agenda".');
   const destaque=m.en!=='nenhum'&&t.split(/\s+/).length>1;
   if(destaque)motivos.push(['Destaque',`a última palavra ganha ${m.en==='serif'?'uma serifada itálica':'a cor de destaque'}, para o olhar terminar na ideia principal.`]);
-  const selo=r.publico==='campanha'?'Campanha':r.publico==='equipe'?'Para a equipe':(ASSUNTOS[r.assunto]||'');
+  const selo=r.publico==='equipe'?'Para a equipe':(ASSUNTOS[r.assunto]||'');
   if(r.foto)motivos.push(['Composição',f.tipo==='h'?'a foto fica à direita e o texto à esquerda, na ordem de leitura.':'a foto vai em cima, com os cantos da marca; o grafismo sai para não disputar atenção.']);
   else motivos.push(['Composição','sem foto, entra o grafismo da marca para organizar o espaço e a peça não ficar vazia.']);
   if(r.assunto==='aviso')motivos.push(['Aviso','ganha uma faixa de destaque no topo: chama atenção sem gritar.']);
@@ -101,7 +104,7 @@ function desenhar(m,formatoId,r){
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d'),D=Desenho(ctx,m);
   ctx.fillStyle=pal.bg;ctx.fillRect(0,0,W,H);
   if(r.assunto==='aviso'){ctx.fillStyle=d.btnBg;ctx.fillRect(0,0,W,f.tipo==='h'?14:22);}
-  const tit=(r.titulo||'Escreva sua mensagem').trim(),dt=dataTxt(r),ch=(r.chamada||'').trim(),forte=r.publico==='campanha',ap=(r.apoio||'').trim();
+  const tit=(r.titulo||'Escreva sua mensagem').trim(),dt=dataTxt(r),ch=(r.chamada||'').trim(),forte=!!(r.campanha||r.publico==='campanha'),ap=(r.apoio||'').trim();
   if(f.tipo==='v'){
     const lh=formatoId==='story'?84:74;D.logo(mg,f.top,lh,pal);D.selo(W-mg,f.top+lh/2,formatoId==='story'?32:29,d.selo,pal.ink,d.accTxt);
     let topo=f.top+lh+56;
@@ -144,6 +147,17 @@ async function fontes(m){
   try{await Promise.all([`800 40px "${m.ft}"`,`400 40px "${m.fx}"`,`500 40px "${m.fx}"`,`600 40px "${m.fx}"`,`700 40px "${m.fx}"`,'italic 400 40px "Instrument Serif"'].map(f=>document.fonts.load(f)));}catch(e){}
 }
 
+/* Personalidade visual: uma pergunta escolhe fonte, forma, grafismo e destaque.
+   Se a empresa já tem fonte própria, a personalidade não troca a fonte, só a composição. */
+const PERSONALIDADES={
+  seria:{nome:'Séria e profissional',direcao:'Clara e confiável',ft:'Inter',fx:'Inter',en:'cor',forma:'reto',graf:'faixa'},
+  divertida:{nome:'Divertida e descontraída',direcao:'Colorida e brincalhona',ft:'Fredoka',fx:'Nunito',en:'cor',forma:'pilula',graf:'pontos'},
+  elegante:{nome:'Elegante e sofisticada',direcao:'Minimalista e refinada',ft:'Playfair Display',fx:'Inter',en:'serif',forma:'arredondado',graf:'vetor'},
+  moderna:{nome:'Moderna e ousada',direcao:'Forte e direta',ft:'Archivo',fx:'Inter',en:'cor',forma:'reto',graf:'vetor'},
+  leve:{nome:'Leve e acolhedora',direcao:'Suave e próxima',ft:'Nunito',fx:'Nunito',en:'cor',forma:'pilula',graf:'faixa'}
+};
+const FONTES_MARCA=['Montserrat','Poppins','Inter','Playfair Display','Archivo','Nunito'];
+
 /* Marcas de exemplo (fictícias) para a página de venda. */
 const EXEMPLOS={
   aurora:{nome:'Padaria Aurora',sigla:'Aurora',site:'padariaaurora.com',fundo:'#FFF4E4',escuro:'#3B2A20',destaque:'#E2A62B',ft:'DM Serif Display',fx:'Inter',en:'cor',forma:'arredondado',graf:'pontos',logo:null},
@@ -155,5 +169,5 @@ const EXEMPLOS={
    quando o backend existir, envia para a API sem dados pessoais. */
 function evento(nome,dados){try{(window.__eventos=window.__eventos||[]).push({nome,t:Date.now(),...(dados||{})});}catch(e){}}
 
-window.DPP={FORMATOS,PUBLICOS,ASSUNTOS,paletas,cr,mix,marcaDeCor,decidir,desenhar,previa,fontes,EXEMPLOS,evento};
+window.DPP={FORMATOS,PUBLICOS,ASSUNTOS,PERSONALIDADES,FONTES_MARCA,paletas,cr,mix,marcaDeCor,decidir,desenhar,previa,fontes,EXEMPLOS,evento};
 })();
