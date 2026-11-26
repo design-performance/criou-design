@@ -61,12 +61,12 @@ O site fica em `https://design-por-pergunta.<seu-subdominio>.workers.dev`. Domí
 
 ## Estúdio (`/app/`)
 
-A plataforma: o cliente cadastra a marca (cores, fontes, logotipo, forma, rodapé, texto legal e regras de linguagem), escolhe o formato e um dos três estilos (Simples, Sofisticado, Robusto) e recebe a peça pronta, com o porquê de cada decisão.
+A plataforma: o cliente cadastra a marca (cores, fontes, logotipo, forma, rodapé, texto legal e regras de linguagem), entra com nome, cor e logo e cria numa tela só: formato, recado, foto, layout (básico, elaborado ou premium), combinação de fontes e cor e recebe a peça pronta, com o porquê de cada decisão.
 
 - `app/js/marca.js` · marca do cliente, paleta derivada com contraste conferido, fontes e formas
-- `app/js/formatos.js` · formatos (campanha completa, posts, story, LinkedIn, banner, topo de e-mail, e-mail marketing, cartaz A4, convite A5)
+- `app/js/formatos.js` · formatos: Instagram, YouTube, LinkedIn e campanha completa; banner, e-mail, cartaz e outdoor em "mais formatos"
 - `app/js/motor.js` · validação, revisão de linguagem e árvore de decisão
-- `app/js/modelos.js` · os três estilos, adaptados a cada proporção, e o e-mail em tabelas
+- `app/js/modelos.js` · seis layouts (Limpo, Só texto, Bloco de cor, Foto de fundo, Editorial, Gradiente), adaptados a cada proporção, e o e-mail em tabelas
 - `app/js/recorte.js`, `formatacao.js`, `exportar.js` · enquadramento da foto, negrito/itálico/realce e exportação (PNG, JPG, PDF, PowerPoint editável, HTML)
 
 Enquanto o cadastro não abre, tudo fica no aparelho e o download sai em PNG com marca d'água (`LIBERADO = false` em `app/js/app.js`).

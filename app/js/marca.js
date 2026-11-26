@@ -86,12 +86,33 @@
   };
   function raioCss(r) { return r.map(function (v) { return v + 'px'; }).join(' '); }
 
-  /* ---------- Estilos de template ---------- */
-  var ESTILOS = {
-    simples: { nome: 'Simples', frase: 'Limpo, com bastante respiro e uma cor de destaque.' },
-    sofisticado: { nome: 'Sofisticado', frase: 'Fundo profundo, linhas finas e composição editorial.' },
-    robusto: { nome: 'Robusto', frase: 'Cor chapada, título grande e formas fortes.' }
+  /* ---------- Combinações de fontes (Google Fonts) ---------- */
+  var PARES = {
+    direto: { nome: 'Direta', titulo: 'Archivo', texto: 'Inter' },
+    geometrica: { nome: 'Geométrica', titulo: 'Montserrat', texto: 'Inter' },
+    amigavel: { nome: 'Amigável', titulo: 'Poppins', texto: 'Figtree' },
+    contemporanea: { nome: 'Contemporânea', titulo: 'Bricolage Grotesque', texto: 'Inter' },
+    tecnica: { nome: 'Técnica', titulo: 'Space Grotesk', texto: 'Inter' },
+    expressiva: { nome: 'Expressiva', titulo: 'Unbounded', texto: 'Figtree' },
+    elegante: { nome: 'Elegante', titulo: 'Playfair Display', texto: 'Inter' },
+    editorial: { nome: 'Editorial', titulo: 'DM Serif Display', texto: 'Figtree' },
+    divertida: { nome: 'Divertida', titulo: 'Fredoka', texto: 'Nunito' }
   };
+
+  /* ---------- Layouts, em três níveis ---------- */
+  var LAYOUTS = {
+    limpo: { nivel: 'Básico', nome: 'Limpo', desenho: 'simples', par: 'direto', foto: 'bloco', frase: 'Fundo claro, bastante respiro e uma cor de destaque.' },
+    texto: { nivel: 'Básico', nome: 'Só texto', desenho: 'texto', par: 'contemporanea', foto: null, frase: 'O recado é a imagem: título grande, sem foto.' },
+    bloco: { nivel: 'Elaborado', nome: 'Bloco de cor', desenho: 'robusto', par: 'direto', foto: 'bloco', frase: 'Cor chapada, título grande e formas fortes.' },
+    fundo: { nivel: 'Elaborado', nome: 'Foto de fundo', desenho: 'fundo', par: 'geometrica', foto: 'fundo', frase: 'A foto ocupa a peça inteira e o texto vem por cima, com sombra para ler.' },
+    editorial: { nivel: 'Premium', nome: 'Editorial', desenho: 'sofisticado', par: 'elegante', foto: 'bloco', frase: 'Fundo profundo, linhas finas e composição de revista.' },
+    gradiente: { nivel: 'Premium', nome: 'Gradiente', desenho: 'efeito', par: 'expressiva', foto: 'bloco', frase: 'Luzes em degradê, textura e foto em cartão.' }
+  };
+  /* Nomes antigos (peças registradas antes) */
+  var ANTIGOS = { simples: 'limpo', sofisticado: 'editorial', robusto: 'bloco' };
+  function layout(id) { return LAYOUTS[id] ? id : (ANTIGOS[id] || 'limpo'); }
+  var ESTILOS = {};
+  Object.keys(LAYOUTS).forEach(function (k) { ESTILOS[k] = LAYOUTS[k]; });
 
   /* ---------- Marca padrão (exemplo fictício) ---------- */
   function padrao() {
@@ -101,7 +122,7 @@
       cores: { principal: '#1F3DFF', escura: '', acao: '', destaque: '', fundo: '' },
       fontes: { titulo: 'Archivo', texto: 'Inter' },
       forma: 'suave',
-      estilo: 'simples',
+      estilo: 'limpo',
       rodape: { site: '', social: '', frase: '' },
       legal: '',
       linguagem: { tom: 'proximo', proibidas: '', estrangeirismos: true, maxExclamacoes: 1, caixaAltaTitulo: false },
@@ -166,7 +187,7 @@
   raiz.CriouMarca = {
     ler: ler, salvar: salvar, padrao: padrao, paleta: paleta, realces: realces,
     FONTES: FONTES, urlFontes: urlFontes, pilha: pilha, serifada: serifada,
-    FORMAS: FORMAS, raioCss: raioCss, ESTILOS: ESTILOS,
+    FORMAS: FORMAS, raioCss: raioCss, ESTILOS: ESTILOS, LAYOUTS: LAYOUTS, PARES: PARES, layout: layout,
     cor: { mix: mix, contraste: contraste, sobre: sobre, garantir: garantir, lum: lum, girar: girar }
   };
 })(window);

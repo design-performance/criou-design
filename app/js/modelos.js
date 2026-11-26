@@ -102,7 +102,7 @@
   function contexto(formato, dados, marca, dec) {
     var W = formato.largura, H = formato.altura, m = formato.margem;
     var mg = formato.margens || {}, mt = mg.topo != null ? mg.topo : m, mb = mg.base != null ? mg.base : m;
-    var tipo = dec.tipo, U = tipo === 'largo' ? H * 1.55 : W;
+    var tipo = dec.tipo, U = tipo === 'largo' ? H * (W / H >= 2.6 ? 1.9 : 1.55) : W;
     if (tipo === 'alto' && H / W < 1.5) U = W * 1.04;
     return {
       W: W, H: H, m: m, mt: mt, mb: mb, tipo: tipo, U: U, P: dec.paleta, marca: marca, dados: dados, dec: dec,
@@ -282,25 +282,157 @@
     return { fundo: fundo, corpo: corpo };
   }
 
+
+  /* ---------- Imagens geradas (degradês e texturas), para sair iguais no PNG, PDF e PowerPoint ---------- */
+  var cacheGerado = {};
+  function rgba(h, a) { var x = String(h).replace('#', ''); return 'rgba(' + parseInt(x.substr(0, 2), 16) + ',' + parseInt(x.substr(2, 2), 16) + ',' + parseInt(x.substr(4, 2), 16) + ',' + a + ')'; }
+  function tela(w, h) { if (typeof document === 'undefined') return null; var c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+  /* Sombra em degradê para texto sobre foto: escuro onde o texto fica. */
+  function sombra(W, H, cor, lado) {
+    var k = ['s', W, H, cor, lado].join('|'); if (cacheGerado[k]) return cacheGerado[k];
+    var w = Math.round(W / 2), h = Math.round(H / 2), c = tela(w, h); if (!c) return '';
+    var x = c.getContext('2d'), g;
+    if (lado === 'esquerda') { g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, rgba(cor, 0.94)); g.addColorStop(0.45, rgba(cor, 0.75)); g.addColorStop(0.8, rgba(cor, 0.05)); g.addColorStop(1, rgba(cor, 0)); }
+    else { g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, rgba(cor, 0.55)); g.addColorStop(0.2, rgba(cor, 0)); g.addColorStop(0.42, rgba(cor, 0.05)); g.addColorStop(0.72, rgba(cor, 0.82)); g.addColorStop(1, rgba(cor, 0.96)); }
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    return (cacheGerado[k] = c.toDataURL('image/png'));
+  }
+  /* Luzes em degradê com textura de grão (layout Gradiente e fundo sem foto). */
+  function luzes(W, H, P, semente, suave) {
+    var k = ['l', W, H, P.principal, P.destaque, P.escura, semente, suave].join('|'); if (cacheGerado[k]) return cacheGerado[k];
+    var w = Math.round(W / 2), h = Math.round(H / 2), c = tela(w, h); if (!c) return '';
+    var x = c.getContext('2d'), U = Math.max(w, h);
+    x.fillStyle = P.escura; x.fillRect(0, 0, w, h);
+    function bolha(cx, cy, r, cor, a) { var g = x.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, rgba(cor, a)); g.addColorStop(1, rgba(cor, 0)); x.fillStyle = g; x.fillRect(0, 0, w, h); }
+    if (suave) { var g2 = x.createLinearGradient(0, 0, w * 0.4, h); g2.addColorStop(0, P.principal); g2.addColorStop(1, P.escura); x.fillStyle = g2; x.fillRect(0, 0, w, h); bolha(w * 0.85, h * 0.1, U * 0.6, P.destaque, 0.35); }
+    else {
+      bolha(w * 0.9, h * 0.05, U * 0.75, P.principal, 0.95);
+      bolha(w * 0.05, h * 0.55, U * 0.6, P.destaque, 0.55);
+      bolha(w * 0.7, h * 0.95, U * 0.55, P.principal, 0.6);
+    }
+    // grão
+    var img = x.getImageData(0, 0, w, h), d = img.data, s = 1234 + (semente || 0);
+    for (var i = 0; i < d.length; i += 4) { s = (s * 16807) % 2147483647; var n = (s / 2147483647 - 0.5) * 18; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+    x.putImageData(img, 0, 0);
+    return (cacheGerado[k] = c.toDataURL('image/jpeg', 0.9));
+  }
+
+  /* =========================================================
+     SÓ TEXTO · básico, o recado é a imagem
+     ========================================================= */
+  function texto(c) {
+    var P = c.P, fundo = P.fundo, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U;
+    var logoH = U * 0.055, topo = c.mt;
+    var realce = function (x) { return '<span style="background:' + P.apoio + ';color:' + P.escura + ';padding:0 .1em;box-decoration-break:clone;-webkit-box-decoration-break:clone">' + x + '</span>'; };
+    corpo += caixa(abs(0, 0, W, Math.max(6, U * 0.014)) + 'background:' + P.principal);
+    corpo += '<div style="' + abs(m, topo, W * 0.5) + '">' + logo(c.marca, P, logoH, fundo, W * 0.4) + '</div>';
+    var rod = rodapeHtml(c, P.suave, 'left');
+    var fimTexto = H - c.mb - (rod.h ? rod.h + U * 0.03 : 0);
+    var tam = U * (c.tipo === 'largo' ? 0.13 : 0.135) * c.dec.escala;
+    var selo = c.selo ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:700;font-size:' + px(U * 0.026) + ';line-height:1.3;color:' + P.principalLegivel + ';text-transform:uppercase;letter-spacing:.14em;margin-bottom:' + px(U * 0.03) + ';flex:none">' + esc(c.selo) + '</div>' : '';
+    var bloco = selo +
+      '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:800;font-size:' + px(tam) + ';line-height:1.02;letter-spacing:-0.025em;color:' + (c.vazio ? P.suave : P.escura) + ';flex:none">' + rico(c.titulo, realce) + '</div>' +
+      (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-size:' + px(U * 0.036) + ';line-height:1.35;color:' + P.texto + ';margin-top:' + px(U * 0.03) + ';flex:none">' + rico(c.apoio, realce) + '</div>' : '') +
+      acoes(c.data ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:700;font-size:' + px(U * 0.03) + ';line-height:1.3;color:' + P.principalLegivel + ';margin-top:' + px(U * 0.03) + ';text-transform:uppercase;letter-spacing:.04em;flex:none">' + esc(c.data) + '</div>' : '', botao(c.chamada, c.marca, P, fundo, U * 0.03, 'left'), c.tipo === 'largo', U * 0.022);
+    var py = topo + logoH + U * 0.06;
+    corpo += pilha(m, py, W - 2 * m, fimTexto - py, bloco, 'left', 'center');
+    corpo += rod.html;
+    return { fundo: fundo, corpo: corpo };
+  }
+
+  /* =========================================================
+     FOTO DE FUNDO · elaborado, foto na peça inteira
+     ========================================================= */
+  function fundoFoto(c) {
+    var P = c.P, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U;
+    var escuro = C.mix(P.escura, '#000000', 0.35), tx = '#ffffff';
+    var ac = C.garantir(P.destaque, escuro, 4.5);
+    var realce = function (x) { return '<span style="color:' + ac + '">' + x + '</span>'; };
+    var largo = c.tipo === 'largo';
+    if (c.temFoto) {
+      corpo += foto(c.foto, 0, 0, W, H);
+      corpo += '<img data-x="img" src="' + sombra(W, H, escuro, largo ? 'esquerda' : 'base') + '" alt="" style="' + abs(0, 0, W, H) + 'display:block">';
+    } else {
+      corpo += '<img data-x="img" src="' + luzes(W, H, P, 3, true) + '" alt="" style="' + abs(0, 0, W, H) + 'display:block">';
+    }
+    var logoH = U * 0.055, topo = c.mt;
+    var seloH = U * 0.048;
+    var selo = c.selo ? '<div data-x="caixa" style="background:' + ac + ';border-radius:' + M.raioCss(M.FORMAS[c.marca.forma].raio(seloH)) + ';height:' + px(seloH) + ';padding:0 ' + px(U * 0.02) + ';display:inline-flex;align-items:center"><span data-x="texto" style="font-family:' + c.fX + ';font-weight:800;font-size:' + px(U * 0.021) + ';line-height:1;color:' + C.sobre(ac, P.escura) + ';text-transform:uppercase;letter-spacing:.1em;white-space:nowrap">' + esc(c.selo) + '</span></div>' : '';
+    corpo += '<div style="' + abs(m, topo, (largo ? W * 0.55 : W - 2 * m)) + 'display:flex;align-items:center;justify-content:space-between">' + logo(c.marca, P, logoH, escuro, W * 0.4) + (largo ? '' : selo) + '</div>';
+    var rod = rodapeHtml(c, C.mix('#ffffff', escuro, 0.18), 'left');
+    var fimTexto = H - c.mb - (rod.h ? rod.h + U * 0.03 : 0);
+    var tam = U * (largo ? 0.1 : 0.105) * c.dec.escala;
+    var bloco = (largo && selo ? '<div style="margin-bottom:' + px(U * 0.025) + ';flex:none">' + selo + '</div>' : '') +
+      '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:800;font-size:' + px(tam) + ';line-height:1.04;letter-spacing:-0.02em;color:' + tx + ';flex:none' + (c.vazio ? ';opacity:.7' : '') + '">' + rico(c.titulo, realce) + '</div>' +
+      (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:500;font-size:' + px(U * 0.034) + ';line-height:1.35;color:' + C.mix('#ffffff', escuro, 0.1) + ';margin-top:' + px(U * 0.024) + ';flex:none">' + rico(c.apoio, realce) + '</div>' : '') +
+      acoes(c.data ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:700;font-size:' + px(U * 0.028) + ';line-height:1.3;color:' + ac + ';margin-top:' + px(U * 0.024) + ';text-transform:uppercase;letter-spacing:.06em;flex:none">' + esc(c.data) + '</div>' : '', botao(c.chamada, c.marca, P, escuro, U * 0.03, 'left'), largo, U * 0.022);
+    var py = topo + logoH + U * 0.06;
+    corpo += pilha(m, py, (largo ? W * 0.55 : W - 2 * m), fimTexto - py, bloco, 'left', largo ? 'center' : 'flex-end');
+    corpo += rod.html;
+    return { fundo: escuro, corpo: corpo };
+  }
+
+  /* =========================================================
+     GRADIENTE · premium, luzes, grão e foto em cartão
+     ========================================================= */
+  function efeito(c) {
+    var P = c.P, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U;
+    var base = P.escura, tx = '#ffffff', ac = C.garantir(C.mix(P.destaque, '#ffffff', 0.15), base, 4.5);
+    var realce = function (x) { return '<span style="color:' + ac + ';font-style:italic">' + x + '</span>'; };
+    corpo += '<img data-x="img" src="' + luzes(W, H, P, 7, false) + '" alt="" style="' + abs(0, 0, W, H) + 'display:block">';
+    var logoH = U * 0.05, topo = c.mt, largo = c.tipo === 'largo';
+    corpo += '<div style="' + abs(m, topo, W * 0.5) + '">' + logo(c.marca, P, logoH, base, W * 0.4) + '</div>';
+    var rod = rodapeHtml(c, C.mix('#ffffff', base, 0.25), 'left');
+    var fimTexto = H - c.mb - (rod.h ? rod.h + U * 0.03 : 0);
+    var s = slotEfeito(c.tipo, W, H, m, c.mt), borda = Math.max(4, U * 0.008);
+    if (c.temFoto) {
+      var r = M.FORMAS[c.marca.forma].raio(Math.min(s.w, s.h) * 0.3);
+      corpo += '<div data-x="caixa" style="' + abs(s.x - borda, s.y - borda, s.w + 2 * borda, s.h + 2 * borda) + 'background:#ffffff;border-radius:' + M.raioCss(r.map(function (v) { return v + borda; })) + ';box-shadow:0 ' + px(U * 0.03) + ' ' + px(U * 0.07) + ' rgba(0,0,0,.35);transform:rotate(' + (largo ? 0 : 3) + 'deg)">' +
+        '<img data-x="img" src="' + c.foto + '" alt="" style="position:absolute;left:' + px(borda) + ';top:' + px(borda) + ';width:' + px(s.w) + ';height:' + px(s.h) + ';object-fit:cover;display:block;border-radius:' + M.raioCss(r) + '"></div>';
+    }
+    var tam = U * (largo ? 0.1 : 0.11) * c.dec.escala * (c.temFoto ? (c.tipo === 'quadrado' ? 0.85 : 0.92) : 1.15);
+    var selo = c.selo ? '<div style="display:flex;margin-bottom:' + px(U * 0.026) + ';flex:none"><div data-x="caixa" style="background:' + C.mix('#ffffff', base, 0.85) + ';border:' + px(Math.max(1.5, U * 0.002)) + ' solid ' + C.mix('#ffffff', base, 0.6) + ';border-radius:999px;height:' + px(U * 0.046) + ';padding:0 ' + px(U * 0.02) + ';display:inline-flex;align-items:center"><span data-x="texto" style="font-family:' + c.fX + ';font-weight:700;font-size:' + px(U * 0.02) + ';line-height:1;color:#fff;text-transform:uppercase;letter-spacing:.16em;white-space:nowrap">' + esc(c.selo) + '</span></div></div>' : '';
+    var bloco = selo +
+      '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:700;font-size:' + px(tam) + ';line-height:1.03;letter-spacing:-0.025em;color:' + tx + ';flex:none' + (c.vazio ? ';opacity:.7' : '') + '">' + rico(c.titulo, realce) + '</div>' +
+      (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:400;font-size:' + px(U * 0.032) + ';line-height:1.4;color:' + C.mix('#ffffff', base, 0.15) + ';margin-top:' + px(U * 0.024) + ';flex:none">' + rico(c.apoio, realce) + '</div>' : '') +
+      acoes(c.data ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:600;font-size:' + px(U * 0.026) + ';line-height:1.3;color:' + ac + ';margin-top:' + px(U * 0.024) + ';text-transform:uppercase;letter-spacing:.14em;flex:none">' + esc(c.data) + '</div>' : '', botao(c.chamada, c.marca, Object.assign({}, P, { acao: ac }), base, U * 0.03, 'left'), largo, U * 0.022);
+    var px0 = m, py, pw = W - 2 * m;
+    var lado = largo || c.tipo === 'quadrado';
+    if (lado) { pw = (c.temFoto ? s.x : W) - m * (c.temFoto ? 1.5 : 2); py = topo + logoH + U * 0.03; }
+    else py = c.temFoto ? s.y + s.h + U * 0.07 : topo + logoH + U * 0.1;
+    corpo += pilha(px0, py, pw, fimTexto - py, bloco, 'left', largo ? 'center' : 'flex-end');
+    corpo += rod.html;
+    return { fundo: base, corpo: corpo };
+  }
+  function slotEfeito(tipo, W, H, m, mt) {
+    if (tipo === 'largo') { var h = Math.round(H * 0.68), w = Math.round(h * 0.82); return { x: W - m - w - m * 0.3, y: Math.round((H - h) / 2), w: w, h: h }; }
+    if (tipo === 'alto') { var w2 = Math.round(W * 0.62), h2 = Math.round(w2 * 1.05); return { x: W - m - w2, y: mt + Math.round(W * 0.12), w: w2, h: h2 }; }
+    var w3 = Math.round(W * 0.4), h3 = Math.round(W * 0.5); return { x: W - m - w3, y: Math.round((H - h3) / 2) + Math.round(W * 0.03), w: w3, h: h3 };
+  }
+
   function fotoAltura(estilo, tipo, W, H, mt, mb, extras) {
     extras = extras || 0;
     if (estilo === 'simples') return Math.round(tipo === 'alto' ? (H - mt - mb) * (0.5 - 0.035 * extras) : H * (0.42 - 0.04 * extras));
     return Math.round(H * (tipo === 'alto' ? 0.48 - 0.03 * extras : 0.46 - 0.04 * extras));
   }
 
-  var ESTILOS = { simples: simples, sofisticado: sofisticado, robusto: robusto };
+  var ESTILOS = { simples: simples, sofisticado: sofisticado, robusto: robusto, texto: texto, fundo: fundoFoto, efeito: efeito };
 
   /* Tamanho do quadro da foto em cada estilo (para o recorte). */
   function slot(formato, dec) {
     var W = formato.largura, H = formato.altura, m = formato.margem, mg = formato.margens || {};
     var mt = mg.topo != null ? mg.topo : m, mb = mg.base != null ? mg.base : m;
     if (formato.email) return { w: 600, h: 320 };
-    var U = dec.tipo === 'largo' ? H * 1.55 : W; if (dec.tipo === 'alto' && H / W < 1.5) U = W * 1.04;
-    if (dec.estilo === 'simples') {
+    var D = dec.desenho || 'simples';
+    if (D === 'texto') return null;
+    if (D === 'fundo') return { w: W, h: H };
+    if (D === 'efeito') { var se = slotEfeito(dec.tipo, W, H, m, mt); return { w: se.w, h: se.h }; }
+    var U = dec.tipo === 'largo' ? H * (W / H >= 2.6 ? 1.9 : 1.55) : W; if (dec.tipo === 'alto' && H / W < 1.5) U = W * 1.04;
+    if (D === 'simples') {
       if (dec.tipo === 'largo') return { w: W - Math.round(W * 0.6), h: H };
       return { w: W - 2 * m, h: fotoAltura('simples', dec.tipo, W, H, mt, mb, dec.extras) };
     }
-    if (dec.estilo === 'sofisticado') {
+    if (D === 'sofisticado') {
       if (dec.tipo === 'largo') return { w: Math.round(W * 0.38), h: H };
       var logoH = U * 0.05, y0 = mt + logoH + U * 0.06, fim = H - mb - U * 0.08;
       if (dec.tipo === 'quadrado') return { w: Math.round(W * 0.4), h: Math.round(fim - y0) };
@@ -312,7 +444,7 @@
 
   function peca(formato, dados, marca, dec, opts) {
     var c = contexto(formato, dados, marca, dec);
-    var r = ESTILOS[dec.estilo](c);
+    var r = ESTILOS[dec.desenho || 'simples'](c);
     return documento(marca, c.W, c.H, r.fundo, r.corpo, opts);
   }
 
@@ -341,7 +473,7 @@
   }
 
   function email(formato, dados, marca, dec, opts) {
-    var P = dec.paleta, est = dec.estilo, fT = M.pilha(marca.fontes.titulo), fX = M.pilha(marca.fontes.texto);
+    var P = dec.paleta, est = ({ simples: 'simples', texto: 'simples', robusto: 'robusto', fundo: 'robusto', sofisticado: 'sofisticado', efeito: 'sofisticado' })[dec.desenho] || 'simples', fT = M.pilha(marca.fontes.titulo), fX = M.pilha(marca.fontes.texto);
     var titulo = limpar(dados.titulo) || 'Seu recado aqui', apoio = limpar(dados.apoio), data = dataTexto(dados.data, dados.hora, dados.local);
     var cab = est === 'simples' ? '#ffffff' : est === 'sofisticado' ? P.escura : P.principal;
     var ac = C.garantir(P.destaque, P.escura, 4.5);

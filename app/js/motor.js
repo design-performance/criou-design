@@ -72,7 +72,7 @@
   /* ---------- Árvore de decisão ---------- */
   function decidir(formato, dados, marca, estiloId) {
     var porque = [];
-    var estilo = M.ESTILOS[estiloId] ? estiloId : (marca.estilo || 'simples');
+    var estilo = M.layout(estiloId || marca.estilo), L = M.LAYOUTS[estilo];
     var P = M.paleta(marca);
     var t = semMarcas(dados.titulo), n = t.length;
     var escala = n <= 40 ? 1 : n <= 60 ? 0.85 : 0.72;
@@ -80,12 +80,13 @@
 
     var W = formato.largura, H = formato.altura || 0;
     var prop = H ? W / H : 1, tipo = formato.email ? 'email' : prop >= 1.6 ? 'largo' : prop <= 0.75 ? 'alto' : 'quadrado';
-    var temFoto = !!(dados.imagem && dados.imagem.src);
+    var temFoto = !!(dados.imagem && dados.imagem.src) && !!L.foto;
+    if (dados.imagem && dados.imagem.src && !L.foto) porque.push({ tema: 'Composição', texto: 'Layout só texto: a foto não entra. Escolha outro layout para usar a foto.' });
     if (!formato.email) porque.push({ tema: 'Composição', texto: tipo === 'largo' ? 'Formato horizontal: texto à esquerda' + (temFoto ? ' e foto ocupando a lateral' : ' e forma gráfica à direita') + '.' : tipo === 'alto' ? 'Formato vertical: ' + (temFoto ? 'foto em cima e texto embaixo, dentro da área segura.' : 'título no centro óptico, com respiro em volta.') : 'Formato quadrado: ' + (temFoto ? 'foto e texto divididos para os dois respirarem.' : 'título como protagonista.') });
     if (formato.margens) porque.push({ tema: 'Formato', texto: formato.nota || 'Margens maiores no topo e na base.' });
 
-    var nomeEstilo = M.ESTILOS[estilo].nome;
-    porque.push({ tema: 'Estilo', texto: nomeEstilo + ': ' + M.ESTILOS[estilo].frase.toLowerCase() });
+    porque.push({ tema: 'Layout', texto: L.nome + ' (' + L.nivel.toLowerCase() + '): ' + L.frase.charAt(0).toLowerCase() + L.frase.slice(1) });
+    if (L.foto === 'fundo') porque.push({ tema: 'Contraste', texto: temFoto ? 'Uma sombra em degradê entra atrás do texto para ele ler bem sobre qualquer foto.' : 'Sem foto: o fundo vira um degradê com as cores da marca.' });
     porque.push({ tema: 'Contraste', texto: 'As cores de texto e fundo foram conferidas: tudo passa de 4,5:1, o mínimo para leitura confortável.' });
     P.porque.forEach(function (p) { porque.push({ tema: 'Contraste', texto: p }); });
     porque.push({ tema: 'Tipografia', texto: 'Títulos em ' + marca.fontes.titulo + ' e textos em ' + marca.fontes.texto + ', as fontes da sua marca.' });
@@ -105,7 +106,7 @@
     if (marca.legal) porque.push({ tema: 'Marca', texto: 'O texto legal obrigatório da marca entrou no rodapé.' });
 
     var extras = (limpar(dados.apoio) ? 1 : 0) + (temData || limpar(dados.local) || limpar(dados.hora) ? 1 : 0) + (limpar(dados.chamada) ? 1 : 0);
-    return { extras: extras, estilo: estilo, paleta: P, escala: escala, tipo: tipo, temFoto: temFoto, temData: temData, assunto: assunto, extensao: extensao, porque: porque };
+    return { extras: extras, desenho: L.desenho, estilo: estilo, paleta: P, escala: escala, tipo: tipo, temFoto: temFoto, temData: temData, assunto: assunto, extensao: extensao, porque: porque };
   }
 
   raiz.CriouMotor = { validar: validar, decidir: decidir, revisar: revisar, semMarcas: semMarcas, limpar: limpar };

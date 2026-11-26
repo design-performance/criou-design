@@ -24,7 +24,8 @@ main{max-width:1320px;margin:0 auto;padding:28px clamp(14px,3vw,32px) 80px}
 .lede{color:var(--suave);max-width:640px;margin:8px 0 0;font-size:17px}
 .cartao{background:#fff;border:1px solid var(--linha);border-radius:var(--r);padding:20px}
 .grade{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
-@media (max-width:960px){.grade{grid-template-columns:1fr}}
+@media (max-width:960px){.grade{grid-template-columns:minmax(0,1fr)}}
+.grade > *{min-width:0}
 .secao{border-top:1px solid var(--linha);padding:18px 0}
 .secao:first-child{border-top:0;padding-top:0}
 .secao h2{font-size:22px;margin-bottom:4px}
@@ -139,3 +140,28 @@ details.porque-caixa summary{cursor:pointer;font-weight:800;margin-top:14px;min-
   .topo nav button{font-size:13.5px;padding:8px 9px}
   main{padding-top:20px}
 }
+
+.marcador{font-style:normal;background:var(--acc);padding:0 .14em;border-radius:.18em}
+.swatches{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sw{width:44px;height:44px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px #c9c9d4;cursor:pointer;padding:0}
+.sw[aria-checked=true]{box-shadow:0 0 0 3px var(--ink)}
+.sw-livre{position:relative;overflow:hidden;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}
+.sw-livre input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.sw-marca{width:auto;border-radius:999px;padding:0 14px 0 6px;display:inline-flex;align-items:center;gap:8px;background:#fff;font-weight:700;font-size:13px}
+.sw-marca i{width:30px;height:30px;border-radius:50%;display:block}
+.rede{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}
+.rede > span{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--suave);min-width:92px}
+.chip small{font-weight:500;color:inherit;opacity:.7;margin-left:4px}
+.chip.rec{border-color:var(--pink)}
+details.mais{margin-top:6px}
+details.mais summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center;gap:6px;color:var(--blue)}
+details.mais summary .opc{color:var(--suave);font-weight:400}
+.opc-h{font-family:Inter,sans-serif;font-size:13px;text-transform:none;color:var(--suave);font-weight:500;letter-spacing:0;margin-left:6px}
+.niveis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.nivel > span{display:block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--suave);margin-bottom:6px}
+.nivel .itens{display:grid;gap:10px}
+.lay{border:2px solid var(--linha);background:#fff;border-radius:12px;padding:6px;cursor:pointer;text-align:left}
+.lay[aria-checked=true]{border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,61,255,.2)}
+.lay b{display:block;font-size:13px;margin:6px 2px 2px}
+.lay .mini{aspect-ratio:4/5}
+@media (max-width:560px){.niveis{grid-template-columns:1fr 1fr 1fr;gap:8px}.lay b{font-size:12px}}
