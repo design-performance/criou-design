@@ -32,6 +32,12 @@
       dados: { assunto: 'promocao', titulo: 'Banho e tosa com ==20%== na terça', chamada: 'Agendar' } },
     'h-link': { marca: 'lume', formato: 'post-linkedin', layout: 'editorial', par: 'editorial', foto: '1485808191679-5f86510681a2',
       dados: { assunto: 'novidade', titulo: 'Novo latte de ==doce de leite==', apoio: 'Feito com leite da serra e café da casa.' } },
+    /* Demonstração (Como funciona) */
+    'd-0': { marca: 'ciclo', formato: 'post-retrato', layout: 'limpo', par: 'direto', dados: { assunto: 'evento', titulo: '' } },
+    'd-1': { marca: 'ciclo', formato: 'post-retrato', layout: 'limpo', par: 'direto', foto: '1757830034050-82ff5713fba7', dados: { assunto: 'evento', titulo: 'Feira de troca no ==domingo==', apoio: 'Traga até 5 peças e leve outras.', data: '2026-12-13', hora: '10:00', chamada: 'Quero participar' } },
+    'd-2': { marca: 'ciclo', formato: 'post-retrato', layout: 'fundo', par: 'geometrica', foto: '1757830034050-82ff5713fba7', dados: { assunto: 'evento', titulo: 'Feira de troca no ==domingo==', apoio: 'Traga até 5 peças e leve outras.', data: '2026-12-13', hora: '10:00', chamada: 'Quero participar' } },
+    'd-3': { marca: 'ciclo', formato: 'post-retrato', layout: 'gradiente', par: 'expressiva', cor: '#1F3DFF', foto: '1757830034050-82ff5713fba7', dados: { assunto: 'evento', titulo: 'Feira de troca no ==domingo==', apoio: 'Traga até 5 peças e leve outras.', data: '2026-12-13', hora: '10:00', chamada: 'Quero participar' } },
+    'd-4': { marca: 'ciclo', formato: 'post-retrato', layout: 'manchete', par: 'direto', cor: '#0E7C66', dados: { assunto: 'evento', titulo: 'feira de troca no ==domingo.==', apoio: 'Traga até 5 peças e leve outras.', data: '2026-12-13', hora: '10:00', chamada: 'Quero participar' } },
     /* Exemplos */
     'e-manchete': { marca: 'verde', formato: 'post-retrato', layout: 'manchete', par: 'direto',
       dados: { assunto: 'dica', titulo: 'plantas boas mudam a ==casa toda.==', apoio: 'Cinco espécies que aguentam pouca luz.', chamada: 'Ver a lista' } },
@@ -54,12 +60,12 @@
     'e-lume': { marca: 'lume', formato: 'thumb-youtube', layout: 'fundo', par: 'geometrica', foto: '1485808191679-5f86510681a2',
       dados: { assunto: 'dica', titulo: 'Como fazemos o ==latte perfeito==' } },
     'e-ciclo': { marca: 'ciclo', formato: 'post-linkedin', layout: 'gradiente', par: 'tecnica', foto: '1621262331542-df0768a47e2c',
-      dados: { assunto: 'evento', titulo: 'Feira de troca de roupas no ==domingo==', apoio: 'Traga até 5 peças e leve outras.', data: '2026-12-14', hora: '10:00' } }
+      dados: { assunto: 'evento', titulo: 'Feira de troca de roupas no ==domingo==', apoio: 'Traga até 5 peças e leve outras.', data: '2026-12-13', hora: '10:00' } }
   };
 
-  function marcaDe(k, par) {
+  function marcaDe(k, par, cor) {
     var b = MARCAS[k], m = M.padrao();
-    m.nome = b.nome; m.cores.principal = b.cor; m.configurada = true;
+    m.nome = b.nome; m.cores.principal = cor || b.cor; m.configurada = true;
     m.rodape.site = b.site; m.rodape.social = b.social;
     var p = M.PARES[par] || M.PARES.direto;
     m.fontes = { titulo: p.titulo, texto: p.texto };
@@ -68,7 +74,7 @@
 
   function desenhar(el) {
     var e = EX[el.getAttribute('data-ex')]; if (!e) return;
-    var fo = F.porId(e.formato), m = marcaDe(e.marca, e.par), d = Object.assign({}, e.dados);
+    var fo = F.porId(e.formato), m = marcaDe(e.marca, e.par, e.cor), d = Object.assign({}, e.dados);
     if (e.foto) d.imagem = { src: 'unsplash' };
     var dec = MO.decidir(fo, d, m, e.layout);
     if (e.foto && dec.temFoto) {
@@ -108,4 +114,45 @@
   pecas.forEach(desenhar);
   if (window.ResizeObserver) { var ro = new ResizeObserver(function (es) { es.forEach(function (x) { escalar(x.target); }); }); pecas.forEach(function (p) { ro.observe(p); }); }
   else window.addEventListener('resize', function () { pecas.forEach(escalar); });
+
+  /* Seção rosa: as dúvidas vão sendo riscadas quando a seção aparece. */
+  var duv = document.querySelector('.duvidas');
+  if (duv && window.IntersectionObserver) new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { duv.classList.add('vivo'); o.disconnect(); } }, { threshold: 0.35 }).observe(duv);
+  else if (duv) duv.classList.add('vivo');
+
+  /* Como funciona: o estúdio montando a peça, em passos. */
+  var palco = document.querySelector('.est-palco');
+  if (palco) {
+    var camadas = palco.querySelectorAll('.camada'), passos = document.querySelectorAll('#passos li');
+    var digita = document.getElementById('digita'), lay = document.querySelectorAll('#est-lay em'), cores = document.querySelectorAll('#est-cor i');
+    var btn = document.getElementById('est-btn'), ok = document.getElementById('est-ok');
+    var TXT = 'Feira de troca no domingo';
+    function mostra(n) { camadas.forEach(function (c, i) { c.classList.toggle('on', i === n); }); }
+    function passo(n) { passos.forEach(function (p, i) { p.classList.toggle('on', i === n); }); }
+    function layout(l) { lay.forEach(function (x) { x.classList.toggle('on', x.getAttribute('data-l') === l); }); }
+    function cor(n) { cores.forEach(function (x, i) { x.classList.toggle('on', i === n); }); }
+    var calmo = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (calmo) { mostra(4); passo(2); digita.textContent = TXT; layout('manchete'); cor(2); }
+    else {
+      var t = [];
+      function em(ms, fn) { t.push(setTimeout(fn, ms)); }
+      function ciclo() {
+        t.forEach(clearTimeout); t = [];
+        digita.textContent = ''; layout('limpo'); cor(0); btn.classList.remove('on'); ok.classList.remove('on');
+        mostra(0); passo(0);
+        em(1400, function () { passo(1); });
+        for (var i = 1; i <= TXT.length; i++) (function (k) { em(1500 + k * 60, function () { digita.textContent = TXT.slice(0, k); }); })(i);
+        em(1500 + TXT.length * 60 + 200, function () { mostra(1); });
+        var b = 1500 + TXT.length * 60 + 1600;
+        em(b, function () { passo(2); layout('fundo'); mostra(2); });
+        em(b + 1700, function () { layout('gradiente'); cor(1); mostra(3); });
+        em(b + 3400, function () { layout('manchete'); cor(2); mostra(4); });
+        em(b + 5200, function () { passo(3); btn.classList.add('on'); });
+        em(b + 5700, function () { ok.classList.add('on'); });
+        em(b + 8200, ciclo);
+      }
+      if (window.IntersectionObserver) { var rodando = false; new IntersectionObserver(function (es) { if (es[0].isIntersecting && !rodando) { rodando = true; ciclo(); } }, { threshold: 0.3 }).observe(palco); }
+      else ciclo();
+    }
+  }
 })();

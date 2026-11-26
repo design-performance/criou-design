@@ -156,6 +156,81 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
 @media(max-width:980px){.hero .grid,.split,.faq-grid{grid-template-columns:minmax(0,1fr)}.plans{grid-template-columns:minmax(0,1fr);max-width:560px}.mural{max-width:640px;margin:0 auto}}
 @media(max-width:860px){.two{grid-template-columns:minmax(0,1fr)}.nav nav{display:none}}
 @media(max-width:600px){.fmt{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fmt figure:last-child{grid-column:1/-1}body{font-size:16px}.ctas .btn{flex:1 1 auto}.galeria{columns:2 150px}.galeria figcaption{flex-direction:column;gap:2px}.galeria figcaption span{text-align:left}}
+
+/* Botões de chamada: destaque */
+.btn.cta{background:var(--acc);color:var(--ink);border:2.5px solid var(--ink);box-shadow:5px 5px 0 var(--ink);min-height:60px;padding:16px 30px;font-size:18px;font-weight:800;transition:transform .15s,box-shadow .15s}
+.btn.cta span{display:inline-block;transition:transform .2s}
+.btn.cta:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.btn.cta:hover span{transform:translateX(4px)}
+.btn.cta:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+.btn.cta.sm{min-height:46px;padding:10px 20px;font-size:15px;box-shadow:3px 3px 0 var(--ink);border-width:2px}
+.btn.cta.escuro{background:var(--ink);color:var(--acc);border-color:var(--ink);box-shadow:5px 5px 0 var(--blue)}
+.btn.cta.escuro:hover{box-shadow:7px 7px 0 var(--blue)}
+.plan .btn.cta{box-shadow:4px 4px 0 var(--ink)}
+
+/* Seção rosa: decisões que somem */
+.problema{align-items:center}
+.duvidas{position:relative;min-height:440px}
+.duvidas span{position:absolute;font:800 clamp(15px,1.5vw,19px)/1.2 Inter,sans-serif;background:#fff;color:var(--ink);padding:14px 18px;border-radius:18px 18px 18px 4px;box-shadow:0 14px 26px -14px rgba(60,0,30,.55);white-space:nowrap}
+.duvidas span::after{content:"";position:absolute;left:12px;right:12px;top:50%;height:3px;background:var(--ink);transform:scaleX(0);transform-origin:left;border-radius:3px}
+.duvidas .d1{left:2%;top:4%;transform:rotate(-4deg)}
+.duvidas .d2{right:4%;top:0;transform:rotate(3deg);background:var(--yel)}
+.duvidas .d3{left:20%;top:23%;transform:rotate(2deg)}
+.duvidas .d4{right:0;top:30%;transform:rotate(-3deg);background:var(--ink);color:#fff}
+.duvidas .d4::after{background:var(--pink)}
+.duvidas .d5{left:0;top:48%;transform:rotate(3deg);background:var(--yel)}
+.duvidas .d6{right:12%;top:57%;transform:rotate(-2deg)}
+.duvidas .d7{left:14%;top:72%;transform:rotate(-3deg)}
+.duvidas .d8{right:6%;bottom:2%;background:var(--acc);color:var(--blue);font:400 clamp(34px,4vw,54px)/1 Anton,sans-serif;text-transform:uppercase;padding:14px 24px;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);transform:rotate(-4deg) scale(.6);opacity:0}
+.duvidas.vivo span:not(.ok)::after{animation:risca .45s ease forwards}
+.duvidas.vivo span:not(.ok){animation:apaga .45s ease forwards}
+.duvidas.vivo .d1,.duvidas.vivo .d1::after{animation-delay:.2s}.duvidas.vivo .d2,.duvidas.vivo .d2::after{animation-delay:.5s}.duvidas.vivo .d3,.duvidas.vivo .d3::after{animation-delay:.8s}.duvidas.vivo .d4,.duvidas.vivo .d4::after{animation-delay:1.1s}.duvidas.vivo .d5,.duvidas.vivo .d5::after{animation-delay:1.4s}.duvidas.vivo .d6,.duvidas.vivo .d6::after{animation-delay:1.7s}.duvidas.vivo .d7,.duvidas.vivo .d7::after{animation-delay:2s}
+.duvidas.vivo .d8{animation:surge .5s cubic-bezier(.3,1.6,.5,1) 2.5s forwards}
+@keyframes risca{to{transform:scaleX(1)}}
+@keyframes apaga{to{opacity:.6}}
+@keyframes surge{to{opacity:1;transform:rotate(-4deg) scale(1)}}
+@media(prefers-reduced-motion:reduce){.duvidas span:not(.ok){opacity:.45}.duvidas span:not(.ok)::after{transform:scaleX(1)}.duvidas .d8{opacity:1;transform:rotate(-4deg)}.duvidas.vivo *{animation:none!important}}
+
+/* Como funciona: demonstração animada */
+.demo{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:clamp(28px,4vw,56px);align-items:center}
+.passos{list-style:none;padding:0;margin:0;display:grid;gap:12px;counter-reset:p}
+.passos li{counter-increment:p;position:relative;padding:18px 20px 18px 66px;border:1.5px solid var(--line);border-radius:20px;transition:background .3s,border-color .3s,color .3s}
+.passos li::before{content:counter(p);position:absolute;left:18px;top:16px;width:34px;height:34px;border-radius:50%;background:var(--soft);font:400 18px/34px Anton,sans-serif;text-align:center}
+.passos li b{display:block;font-size:18px}
+.passos li span{font-size:15px;color:var(--mute)}
+.passos li.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.passos li.on span{color:#DCE2FF}
+.passos li.on::before{background:var(--acc);color:var(--blue)}
+.estudio{background:#fff;border:2px solid var(--ink);border-radius:22px;box-shadow:10px 10px 0 var(--ink);overflow:hidden}
+.est-barra{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1.5px solid var(--line);background:var(--soft)}
+.est-barra i{width:11px;height:11px;border-radius:50%;background:#d6d8e2}
+.est-barra span{margin-left:10px;font:700 13px Inter,sans-serif;color:var(--mute)}
+.est-corpo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:22px;padding:22px;align-items:center}
+.est-form small{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:14px 0 7px}
+.est-form small:first-child{margin-top:0}
+.est-chips{display:flex;flex-wrap:wrap;gap:6px}
+.est-chips em{font-style:normal;font-size:13px;font-weight:600;border:1.5px solid #cfd2dc;border-radius:999px;padding:5px 11px;transition:all .25s}
+.est-chips em.on,.est-chips em.f-on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.est-campo{min-height:64px;border:1.5px solid #cfd2dc;border-radius:10px;padding:9px 11px;font-size:14px;line-height:1.35}
+.est-campo .cursor{display:inline-block;width:2px;height:16px;background:var(--blue);vertical-align:-3px;margin-left:1px;animation:pisca 1s steps(1) infinite}
+@keyframes pisca{50%{opacity:0}}
+.est-cores{display:flex;gap:8px}
+.est-cores i{width:26px;height:26px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px #cfd2dc;transition:box-shadow .25s}
+.est-cores i.on{box-shadow:0 0 0 2.5px var(--ink)}
+.est-btn{margin-top:18px;display:inline-block;background:var(--acc);border:2px solid var(--ink);border-radius:999px;font-weight:800;font-size:14px;padding:9px 18px;transition:transform .2s}
+.est-btn.on{transform:scale(.94);background:var(--ink);color:var(--acc)}
+.est-palco{position:relative;aspect-ratio:1080/1350}
+.est-palco .camada{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;border-radius:8px}
+.est-palco .camada.on{opacity:1}
+.est-ok{position:absolute;right:-8px;bottom:-10px;background:var(--acc);border:2px solid var(--ink);border-radius:999px;font-weight:800;font-size:14px;padding:6px 14px;opacity:0;transform:scale(.6);transition:all .35s cubic-bezier(.3,1.6,.5,1)}
+.est-ok.on{opacity:1;transform:scale(1)}
+
+/* Frase em destaque */
+.frase{background:var(--acc);padding:clamp(80px,10vw,140px) 0;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+.frase p{font:400 clamp(40px,6.4vw,96px)/1.04 Anton,sans-serif;text-transform:uppercase;letter-spacing:.005em;color:var(--ink);margin:0 0 40px;max-width:21ch;text-wrap:balance}
+.frase em{font-style:normal;background:var(--blue);color:var(--acc);padding:.06em .14em 0;border-radius:.12em;display:inline-block;line-height:.9}
+@media(max-width:980px){.demo{grid-template-columns:minmax(0,1fr)}.passos{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.passos{grid-template-columns:1fr}.est-corpo{grid-template-columns:1fr}.est-form{display:none}.duvidas{min-height:0;display:flex;flex-wrap:wrap;gap:12px 10px;padding-top:6px}.duvidas span{position:static;font-size:15px;padding:11px 14px}.duvidas .d8{margin-top:10px;font-size:40px}}
 </style>
 </head>
 <body>
@@ -163,16 +238,16 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
 <header class="nav"><div class="wrap">
   <a class="logo" href="#topo" aria-label="Criou, início"><span class="wm">cri<b>ou</b></span></a>
   <nav aria-label="Principal"><a href="#como-funciona">Como funciona</a><a href="#exemplos">Exemplos</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a></nav>
-  <a class="btn acc sm" href="app/">Cria aí</a>
+  <a class="btn cta sm" href="app/">Cria aí <span aria-hidden="true">→</span></a>
 </div></header>
 
 <main id="topo">
 <section class="hero"><div class="wrap grid">
   <div>
-    <span class="eyebrow"><i></i>Design para redes sociais, sem editor</span>
+    <span class="eyebrow"><i></i>Design sem precisar saber design</span>
     <h1>Você manda o recado. A gente faz o <em>design.</em></h1>
-    <p class="lead">Posts, stories, miniaturas e campanhas com a cara da sua marca. Escreva o que quer dizer, escolha o layout e a peça sai pronta.</p>
-    <div class="ctas"><a class="btn acc" href="app/">Criar minha peça</a><a class="btn ghost" href="#exemplos">Ver exemplos</a></div>
+    <p class="lead">Você informa o que precisa comunicar. O Criou organiza as informações, constrói o design e oferece opções visuais para você escolher. Posts, stories, miniaturas e campanhas com a cara da sua marca.</p>
+    <div class="ctas"><a class="btn cta" href="app/">Criar minha peça <span aria-hidden="true">→</span></a><a class="btn ghost" href="#exemplos">Ver exemplos</a></div>
     <ul class="selos"><li>Grátis para testar</li><li>Sem cadastro para experimentar</li><li>Sem editor</li></ul>
   </div>
   <div>
@@ -186,44 +261,67 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
   </div>
 </div></section>
 
-<section class="band pink"><div class="wrap split">
+<section class="band pink"><div class="wrap split problema">
   <div>
-    <h2 style="max-width:18ch">Criar uma arte não deveria ser mais difícil do que pensar no que você quer comunicar.</h2>
+    <h2 style="max-width:16ch">Criar uma arte não deveria ser mais difícil do que pensar no que você quer comunicar.</h2>
     <p class="lead">O problema não é falta de criatividade. É precisar tomar decisões de design sem entender de design.</p>
+    <p style="margin-top:26px;font-weight:800;font-size:20px">O Criou toma essas decisões por você.</p>
   </div>
-  <div>
-    <ul class="list" style="font-size:19px;margin-top:10px">
-      <li>Chega de perder tempo adaptando templates.</li>
-      <li>Chega de tentar acertar combinações de cores.</li>
-      <li>Chega de peças diferentes a cada publicação.</li>
-      <li>Chega de depender de conhecimento técnico para comunicar.</li>
-    </ul>
-    <p style="margin-top:28px;font-weight:700;font-size:18px">Foi por isso que criamos uma experiência diferente.</p>
+  <div class="duvidas" aria-label="Decisões de design que o Criou toma por você">
+    <span class="d1">Qual fonte combina?</span>
+    <span class="d2">Essa cor dá para ler?</span>
+    <span class="d3">O título cabe?</span>
+    <span class="d4">Centraliza ou alinha?</span>
+    <span class="d5">Qual o tamanho do story?</span>
+    <span class="d6">Onde vai o logo?</span>
+    <span class="d7">E o banner do site?</span>
+    <span class="d8 ok">Criou.</span>
   </div>
 </div></section>
 
 <section class="band" id="como-funciona"><div class="wrap">
   <div class="intro">
-    <h2>Do jeito antigo: 7 passos. Com o Criou: 4.</h2>
-    <p class="lead mute">A diferença está em quem toma as decisões de design.</p>
+    <h2>Você decide o que dizer. O Criou decide como apresentar.</h2>
+    <p class="lead mute">Quatro passos, e nenhum deles é sobre design. Veja o Criou montando uma peça de verdade:</p>
   </div>
-  <div class="two">
-    <div class="card"><h3>Jeito antigo <span>você decide tudo</span></h3><ol>
-      <li><b>Escolher um template</b><span>Procurar um modelo parecido com o que você quer.</span></li>
-      <li><b>Adaptar os elementos</b><span>Apagar, mover e trocar o que não serve.</span></li>
-      <li><b>Escolher cores</b><span>Testar até achar uma combinação que dê para ler.</span></li>
-      <li><b>Ajustar fontes</b><span>Decidir tamanhos, pesos e estilos.</span></li>
-      <li><b>Organizar os textos</b><span>Definir o que vem primeiro e o que é destaque.</span></li>
-      <li><b>Corrigir o layout</b><span>Alinhar, dar respiro, consertar o que saiu do lugar.</span></li>
-      <li><b>Adaptar os formatos</b><span>Refazer tudo para story e banner.</span></li></ol></div>
-    <div class="card on"><h3>Com o Criou <span>o sistema decide</span></h3><ol>
-      <li><b>Escolher o formato e o layout</b><span>Instagram, YouTube, LinkedIn ou a campanha completa. Layouts básicos, elaborados e premium.</span></li>
-      <li><b>Contar o recado</b><span>O que você quer dizer, quando e qual a chamada. Nunca sobre design.</span></li>
-      <li><b>Ver o resultado</b><span>Ao vivo, com a explicação de cada decisão visual e avisos sobre o texto.</span></li>
-      <li><b>Baixar as peças</b><span>Em PNG, JPG, PDF ou PowerPoint editável, com o cadastro (em breve).</span></li></ol></div>
+  <div class="demo">
+    <ol class="passos" id="passos">
+      <li data-p="0"><b>Escolha o formato</b><span>Instagram, YouTube, LinkedIn ou a campanha completa.</span></li>
+      <li data-p="1"><b>Conte o recado</b><span>Título, frase de apoio, data e chamada. Só o que você quer dizer.</span></li>
+      <li data-p="2"><b>Escolha o layout e a cor</b><span>A prévia muda na hora. Do básico ao premium.</span></li>
+      <li data-p="3"><b>Registre e baixe</b><span>PNG, JPG, PDF ou PowerPoint, com o cadastro (em breve).</span></li>
+    </ol>
+    <div class="estudio" aria-hidden="true">
+      <div class="est-barra"><i></i><i></i><i></i><span>criou · estúdio</span></div>
+      <div class="est-corpo">
+        <div class="est-form">
+          <small>Formato</small>
+          <div class="est-chips"><em class="f-on">Post</em><em>Story</em><em>LinkedIn</em></div>
+          <small>Recado</small>
+          <div class="est-campo"><span id="digita"></span><b class="cursor"></b></div>
+          <small>Layout</small>
+          <div class="est-chips" id="est-lay"><em data-l="limpo">Limpo</em><em data-l="fundo">Foto de fundo</em><em data-l="gradiente">Gradiente</em><em data-l="manchete">Manchete</em></div>
+          <small>Cor</small>
+          <div class="est-cores" id="est-cor"><i style="background:#E5243B" data-c="0"></i><i style="background:#1F3DFF" data-c="1"></i><i style="background:#0E7C66" data-c="2"></i></div>
+          <div class="est-btn" id="est-btn">Registrar peça</div>
+        </div>
+        <div class="est-palco">
+          <div class="peca camada" data-ex="d-0"></div>
+          <div class="peca camada" data-ex="d-1"></div>
+          <div class="peca camada" data-ex="d-2"></div>
+          <div class="peca camada" data-ex="d-3"></div>
+          <div class="peca camada" data-ex="d-4"></div>
+          <span class="est-ok" id="est-ok">PNG ✓</span>
+        </div>
+      </div>
+    </div>
   </div>
-  <p class="quote">Você não precisa aprender a ferramenta. A ferramenta precisa <em>entender</em> o que você precisa.</p>
-  <a class="btn acc" href="app/">Cria aí</a>
+  <p class="cap" style="margin-top:14px">As peças da animação são geradas pelo próprio motor do Criou.</p>
+</div></section>
+
+<section class="frase"><div class="wrap">
+  <p>Você não precisa aprender a ferramenta. A ferramenta precisa <em>entender</em> o que você precisa.</p>
+  <a class="btn cta escuro" href="app/">Cria aí <span aria-hidden="true">→</span></a>
 </div></section>
 
 <section class="band soft"><div class="wrap">
@@ -259,7 +357,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
     <figure><div class="peca" data-ex="e-ciclo"></div><figcaption><b>Brechó Ciclo</b><span>Gradiente · LinkedIn · Premium</span></figcaption></figure>
   </div>
   <p class="cap" style="margin-top:8px">Marcas fictícias, criadas para demonstração. Fotos do Unsplash.</p>
-  <a class="btn acc" href="app/" style="margin-top:22px">Criar com a minha marca</a>
+  <a class="btn cta" href="app/" style="margin-top:22px">Criar com a minha marca <span aria-hidden="true">→</span></a>
 </div></section>
 
 <section class="band dark"><div class="wrap">
@@ -268,7 +366,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
     <div>
       <h3 style="color:var(--acc)">Sua marca, respeitada</h3>
       <p class="mute">Se a sua marca já tem identidade, o Criou usa o que você informar. Se não tem, basta o nome e uma cor: o resto vem pronto nos layouts.</p>
-      <ul class="list" style="margin:22px 0"><li>Para começar: nome, cor e, se tiver, o logotipo.</li><li>Fontes em combinações prontas do Google Fonts, ou as da sua marca.</li><li>Se quiser, nos ajustes: cores de apoio, rodapé, texto legal obrigatório e palavras que a marca não usa.</li><li>Toda cor passa pelo teste de contraste antes de entrar na peça.</li></ul>
+      <ul class="list" style="margin:22px 0"><li>Para começar: nome, cor e, se tiver, o logotipo em PNG ou SVG. Em fundo escuro, ele entra numa plaquinha branca ou na versão clara que você enviar.</li><li>Fontes em combinações prontas do Google Fonts, ou escolha, entre as disponíveis, as que a sua marca já usa.</li><li>Se quiser, nos ajustes: cores de apoio, forma dos botões e fotos, rodapé, texto legal obrigatório e palavras que a marca não usa.</li><li>Toda cor passa pelo teste de contraste antes de entrar na peça.</li></ul>
       <p style="font-weight:700">Não é você quem precisa lembrar das regras da sua marca. O sistema aplica as regras que foram cadastradas.</p>
     </div>
     <div>
@@ -293,7 +391,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
   <div class="plans">
     <div class="plan"><h3>Gratuito</h3><p class="mute">Conheça a experiência e crie sua primeira campanha.</p><div class="price">R$ 0</div><p class="eco"></p>
       <ul><li>Cadastro gratuito, necessário para baixar.</li><li>Uma marca.</li><li>Até 3 peças por dia.</li><li>Layouts básicos e elaborados.</li><li>Download em PNG com uma marca d'água discreta.</li></ul>
-      <a class="btn acc" href="app/">Cria aí</a>
+      <a class="btn cta" href="app/">Cria aí <span aria-hidden="true">→</span></a>
       <p class="note">Uma conta por pessoa e por empresa, conforme as regras de utilização. No pré-lançamento, você testa sem cadastro; o download abre com o cadastro.</p></div>
     <div class="plan hi"><span class="tag">Para quem publica sempre</span><h3>Essencial</h3><p>Para quem precisa produzir peças continuamente.</p>
       <div class="price" id="preco">R$ 29,90<small>/mês</small></div><p class="eco" id="eco">Cancele quando quiser, pelo painel.</p>
@@ -315,7 +413,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
 <section class="band blue"><div class="wrap" style="text-align:center">
   <h2>Sua próxima peça pode ser muito mais simples.</h2>
   <p class="lead mute" style="margin:0 auto 30px">Você já sabe o que precisa comunicar. Experimente uma maneira diferente de transformar suas ideias em peças visuais.</p>
-  <a class="btn acc" href="app/">Criar minha primeira campanha</a>
+  <a class="btn cta" href="app/">Criar minha primeira campanha <span aria-hidden="true">→</span></a>
   <p style="color:#DCE2FF;margin-top:16px;font-size:14px">Experimente sem cadastro. Conheça o resultado antes de escolher seu plano.</p>
 </div></section>
 </main>
@@ -336,25 +434,31 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
 <script>
 {
 const FAQ=[
-['O Criou é um editor de imagens?','Não. A plataforma não oferece uma tela de edição livre. Você conta o recado e o sistema define a composição visual utilizando as regras da marca cadastrada. Se precisar de um ajuste fino, nos planos pagos a peça também sai em PowerPoint com os textos editáveis.'],
+['O Criou é um editor de imagens?','Não. Não há tela de edição livre. Você informa o que quer comunicar e escolhe entre opções prontas de layout, cor, fonte e posição do texto. O Criou organiza e monta a peça seguindo as regras da sua marca. Nos planos pagos, a peça também sai em PowerPoint com os textos editáveis, para um ajuste fino.'],
 ['Quais formatos posso criar?','Para redes sociais: post quadrado, post retrato e story do Instagram, miniatura de vídeo do YouTube e posts do LinkedIn. Também há banner do site, topo de e-mail, e-mail marketing, cartaz A4 e outdoor. A campanha completa reúne post, story, LinkedIn e banner do site.'],
-['Que layouts existem?','Básicos (Limpo e Só texto), elaborados (Manchete, Bloco de cor e Foto de fundo) e premium (Editorial, Gradiente, Foco, Grade e Meio-tom, com efeitos de luz, desfoque, grade e retícula). Todos seguem a cor e o logotipo da sua marca, e você troca de layout, fonte e cor com um clique, vendo a peça mudar na hora.'],
-['Posso mudar o texto de lugar ou girar o título?','Sim. Em boa parte dos layouts você escolhe se o texto fica no topo, no centro ou na base e o alinhamento. Em alguns, como Manchete, Só texto e Meio-tom, o título também pode ir na vertical.'],
-['Preciso entender de design?','Não. A experiência foi desenvolvida justamente para quem não possui conhecimento técnico de design.'],
-['Preciso ter uma identidade visual?','Não necessariamente. Você pode começar informando o nome da empresa e uma cor de referência. O cadastro de logotipo, fontes e outros elementos pode ser feito posteriormente.'],
-['O sistema cria meu logotipo?','Não. A plataforma utiliza os elementos de identidade visual fornecidos pelo usuário. Ela não cria logotipos nem desenvolve uma identidade visual completa.'],
-['Posso experimentar antes de pagar?','Sim. Você pode acessar a demonstração e visualizar prévias sem realizar cadastro.'],
-['Por que tem marca d\'água?','No plano gratuito, a peça sai com uma marca d\'água discreta: um selo pequeno no canto. No Essencial, ela sai limpa. Para baixar em qualquer plano, é preciso fazer o cadastro e confirmar o e-mail.'],
+['Que layouts existem?','Básicos (Limpo e Só texto), elaborados (Manchete, Bloco de cor e Foto de fundo) e premium (Editorial, Gradiente, Foco, Grade e Meio-tom, com efeitos de luz, desfoque, grade e retícula). Todos seguem a cor e o logotipo da sua marca, e você troca de layout, fonte e cor vendo a peça mudar na hora.'],
+['Posso mudar o texto de lugar ou girar o título?','Sim. Em boa parte dos layouts você escolhe se o texto fica no topo, no centro ou na base, e o alinhamento. Em Manchete, Só texto e Meio-tom, o título também pode ir na vertical.'],
+['Preciso entender de design?','Não. Você decide o que dizer; o Criou decide como apresentar.'],
+['Preciso ter uma identidade visual?','Não. Dá para começar só com o nome da empresa e uma cor. Logotipo, fontes e textos fixos podem ser adicionados depois, nos ajustes da marca.'],
+['Posso usar o logotipo e as fotos da minha empresa?','Sim. O logotipo entra em todas as peças, e você envia e enquadra suas fotos. Use apenas imagens que você tem direito de usar.'],
+['Posso usar a fonte da minha marca?','Você escolhe entre as fontes disponíveis no Criou, todas do Google Fonts. O envio de um arquivo de fonte própria ainda não está disponível.'],
+['Posso usar outros elementos gráficos da marca, como texturas e ícones?','Ainda não. Hoje entram logotipo, cores, fontes, forma dos elementos e textos fixos. Elementos gráficos próprios podem ser configurados no serviço de consultoria e implementação.'],
+['O sistema cria meu logotipo?','Não. O Criou usa o logotipo que você envia. Ele não cria logotipos nem identidades visuais.'],
+['Posso experimentar antes de pagar?','Sim. A versão de teste está aberta: você cria e vê as peças sem cadastro. Para baixar, é preciso o cadastro gratuito, que abre em breve.'],
+['Onde ficam salvas as minhas peças?','Na versão de teste, ficam salvas só no seu aparelho. Com o cadastro, passam a ficar na sua conta.'],
+['Por que tem marca d\'água?','No plano gratuito, a peça sai com uma marca d\'água discreta: um selo pequeno no canto. No Essencial, ela sai limpa. Para baixar em qualquer plano, é preciso o cadastro e a confirmação do e-mail.'],
 ['O que o plano gratuito inclui?','Cadastro, uma marca e até 3 peças por dia nos layouts básicos e elaborados, com download em PNG e uma marca d\'água discreta. Os layouts premium aparecem na prévia, mas ficam para o Essencial.'],
-['Posso criar mais peças de graça?','Sim, até 3 por dia. Uma campanha completa conta como uma. Para criar sem limite no uso normal e baixar sem marca d\'água, é preciso a assinatura Essencial.'],
+['Posso criar mais peças de graça?','Sim, até 3 por dia. Uma campanha completa conta como uma. Para criar sem limite no uso normal, usar os layouts premium e baixar sem marca d\'água, é preciso a assinatura Essencial.'],
 ['Quantas marcas posso cadastrar?','O plano gratuito e o plano Essencial permitem cadastrar uma marca por conta.'],
-['Existe limite de peças?','O plano Essencial não possui um limite fixo de quantidade para o uso normal, sujeito à política de uso razoável e às regras de prevenção de abuso.'],
-['Posso cancelar minha assinatura?','Sim. O cancelamento pode ser realizado pelo próprio painel, sem necessidade de ligação telefônica.'],
-['Recebo reembolso se desistir?','Nas contratações abrangidas pelo direito de arrependimento previsto na legislação brasileira, o consumidor poderá solicitar o cancelamento e a devolução integral dentro do prazo legal de sete dias, observadas as condições aplicáveis.'],
-['Posso usar minhas peças comercialmente?','Você poderá utilizar as peças baixadas conforme as condições dos Termos de Uso, desde que possua os direitos necessários sobre os logotipos, imagens, fontes e demais materiais fornecidos.'],
-['O sistema revisa meus textos?','Em parte. O Criou avisa sobre excesso de exclamações, título todo em maiúsculas, chamadas vagas, estrangeirismos e palavras que a sua marca não usa. Ele não faz revisão ortográfica, jurídica ou técnica do conteúdo.'],
-['O sistema garante vendas ou engajamento?','Não. O produto é uma ferramenta de produção visual. Não garante resultados comerciais, alcance ou desempenho de campanhas.'],
-['Posso contratar uma implantação personalizada?','Sim. Empresas com manuais de identidade visual e necessidades específicas podem contratar o serviço de consultoria e implementação.']];
+['Existe limite de peças no Essencial?','Não há limite fixo de quantidade no uso normal, sujeito à política de uso razoável e às regras de prevenção de abuso.'],
+['Como vou pagar?','As formas de pagamento e as condições completas serão informadas antes da contratação.'],
+['Posso cancelar minha assinatura?','Sim. O cancelamento pode ser feito pelo próprio painel, sem ligação telefônica.'],
+['Recebo reembolso se desistir?','Nas contratações abrangidas pelo direito de arrependimento previsto na legislação brasileira, você pode cancelar e pedir a devolução integral em até sete dias, observadas as condições aplicáveis.'],
+['Posso usar minhas peças comercialmente?','Sim, conforme os Termos de Uso, desde que você tenha os direitos sobre os logotipos, imagens, fontes e demais materiais que enviar.'],
+['O sistema revisa meus textos?','Em parte. O Criou avisa sobre excesso de exclamações, título todo em maiúsculas, chamadas vagas, estrangeirismos e palavras que a sua marca não usa. Ele não faz revisão ortográfica, jurídica ou técnica.'],
+['O sistema garante vendas ou engajamento?','Não. O Criou é uma ferramenta de produção visual. Não garante resultados comerciais, alcance ou desempenho de campanhas.'],
+['Posso contratar uma implantação personalizada?','Sim. Empresas com manual de identidade visual e necessidades específicas podem contratar o serviço de consultoria e implementação.']
+];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 const item=([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`;
 document.getElementById('faq').innerHTML=FAQ.slice(0,8).map(item).join('')+`<details class="more"><summary>Ver todas as dúvidas (${FAQ.length})</summary>${FAQ.slice(8).map(item).join('')}</details>`;

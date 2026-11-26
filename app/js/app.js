@@ -541,7 +541,7 @@
   function registrar(e) {
     e.preventDefault();
     var v = mensagens(true);
-    if (!v.ok) { var p = $('#form-peca .tem-erro input, #form-peca .tem-erro textarea'); if (p) p.focus(); return; }
+    if (!v.ok) { if (window.matchMedia('(max-width:960px)').matches) aba('info'); var p = $('#form-peca .tem-erro input, #form-peca .tem-erro textarea'); if (p) setTimeout(function () { p.focus(); }, 300); return; }
     if (bloqueadoPremium()) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Layout premium.</b> Ele faz parte do plano Essencial. Você pode ver a prévia à vontade; para registrar no gratuito, escolha um layout básico ou elaborado.</div>'); $('#layouts').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     if (PLANO === 'gratuito' && !est.editando && usoHoje() >= LIMITE_DIA) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Limite de hoje.</b> O plano gratuito cria até ' + LIMITE_DIA + ' peças por dia. Amanhã libera de novo, ou conheça o Essencial, sem limite no uso normal.</div>'); return; }
     var fo = formatoAtual(), lista = lerPecas(), codigo = est.editando || codigoNovo();
@@ -620,15 +620,17 @@
     ir('criar');
   });
 
-  /* ---------- Celular: atalho para a prévia ---------- */
-  var atalho = $('#ir-previa');
-  atalho.addEventListener('click', function (e) { e.preventDefault(); $('#palco').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-  $$('.ir-form').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); $('#form-peca').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
-  if (window.IntersectionObserver) {
-    var visivel = false;
-    new IntersectionObserver(function (es) { visivel = es[0].isIntersecting; }).observe($('#palco'));
-    setInterval(function () { atalho.hidden = visivel || $('#vista-criar').hidden || !$('#feito').hidden; }, 400);
+  /* ---------- Celular: abas Informações · Opções · Prévia ---------- */
+  function aba(n) {
+    $('#vista-criar').setAttribute('data-aba', n);
+    $$('.abas [data-aba]').forEach(function (b) { b.setAttribute('aria-selected', String(b.getAttribute('data-aba') === n)); });
+    if (n === 'criacao') atualizarPrevia();
+    if (n === 'opcoes') desenharLayouts();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+  $$('.abas [data-aba]').forEach(function (b) { b.addEventListener('click', function () { aba(b.getAttribute('data-aba')); }); });
+  $$('[data-ir-aba]').forEach(function (b) { b.addEventListener('click', function () { aba(b.getAttribute('data-ir-aba')); }); });
+  $$('.ir-form').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); if (window.matchMedia('(max-width:960px)').matches) aba('info'); else $('#form-peca').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
 
   /* ---------- Início ---------- */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!$('#vista-criar').hidden) { desenharLayouts(); atualizarPrevia(); } });

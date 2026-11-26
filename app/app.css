@@ -175,3 +175,40 @@ details.mais summary .opc{color:var(--suave);font-weight:400}
 .niveis{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,2fr)}
 @media (max-width:560px){.niveis{grid-template-columns:1fr 1fr}.nivel.premium{grid-column:1/-1}.nivel.premium .itens{grid-template-columns:1fr 1fr 1fr}}
 .msg.premium{border-color:var(--ink);background:#f6ffd6;color:#1f2a00}
+
+/* Estúdio em três áreas: informações · criação · opções */
+.grade3{display:grid;grid-template-columns:minmax(300px,1fr) minmax(340px,1.15fr) minmax(300px,1fr);gap:20px;align-items:start}
+.zona{min-width:0}
+.zona-rot{font:400 15px/1 Anton,Impact,sans-serif;text-transform:uppercase;letter-spacing:.04em;margin:0 0 10px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.zona-rot span{font:500 13px Inter,sans-serif;text-transform:none;letter-spacing:0;color:var(--suave)}
+.zona-criacao .previa-col{position:sticky;top:92px}
+.zona-opcoes .cartao{padding:18px}
+.zona-opcoes .secao h2,.zona-info .secao h2{font-size:20px}
+.abas{display:none}
+.ir-aba{display:none}
+.zona-opcoes .niveis{grid-template-columns:1fr 1fr}
+.zona-opcoes .nivel.premium{grid-column:1/-1}
+.zona-opcoes .nivel.premium .itens{grid-template-columns:repeat(3,1fr)}
+.zona-opcoes .nivel .itens{grid-template-columns:1fr 1fr}
+.zona-opcoes .nivel:not(.premium) .itens{grid-template-columns:1fr 1fr}
+@media (max-width:1240px){
+  .grade3{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"info criacao" "opcoes criacao"}
+  .zona-info{grid-area:info}.zona-criacao{grid-area:criacao;align-self:stretch}.zona-opcoes{grid-area:opcoes}
+}
+@media (max-width:960px){
+  .grade3{grid-template-columns:minmax(0,1fr);grid-template-areas:none}
+  .zona-info,.zona-criacao,.zona-opcoes{grid-area:auto}
+  .abas{display:flex;position:sticky;top:64px;z-index:15;background:var(--fundo);padding:8px 0 10px;margin:-8px 0 12px;gap:6px}
+  .abas button{flex:1;min-height:44px;border:1.5px solid #c9c9d4;background:#fff;border-radius:999px;font-weight:700;font-size:13.5px;cursor:pointer}
+  .abas button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  #vista-criar[data-aba=info] .zona-criacao,#vista-criar[data-aba=info] .zona-opcoes,
+  #vista-criar[data-aba=opcoes] .zona-info,#vista-criar[data-aba=opcoes] .zona-criacao,
+  #vista-criar[data-aba=criacao] .zona-info,#vista-criar[data-aba=criacao] .zona-opcoes{display:none}
+  .zona-rot{display:none}
+  .ir-aba{display:flex;width:100%;margin-top:14px}
+  .zona-criacao .previa-col{position:static}
+  .ir-previa{display:none!important}
+}
+
+.registro{margin-top:16px}
+.registro .msgs{margin-top:0}
