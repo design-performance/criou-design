@@ -23,7 +23,7 @@ wrangler.jsonc        Worker da Cloudflare que serve o site (.assetsignore lista
 .nojekyll             Faz o GitHub Pages publicar os arquivos como estão
 ```
 
-O motor (`public/js/motor.js`) é um só para qualquer marca: recebe o pacote de marca, o formato e as respostas, e devolve a peça e as decisões. Os eventos de conversão da Parte 6.3 já são registrados em `window.__eventos`; vão para a API quando o backend existir.
+O motor (`js/motor.js`) é um só para qualquer marca: recebe o pacote de marca, o formato e as respostas, e devolve a peça e as decisões. Os eventos de conversão da Parte 6.3 já são registrados em `window.__eventos`; vão para a API quando o backend existir.
 
 ## Próximos passos (MVP)
 
