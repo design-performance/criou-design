@@ -3,181 +3,210 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Criou · Design por perguntas</title>
-<meta name="description" content="Crie posts, stories, banners, e-mails e campanhas para sua empresa sem precisar entender de design. Cadastre sua marca uma vez, conte o recado e receba as peças prontas, no estilo que você escolher.">
+<title>Criou · Design para redes sociais, sem editor</title>
+<meta name="description" content="Posts, stories, miniaturas e campanhas com a cara da sua marca. Escreva o recado, escolha o layout e o Criou entrega a peça pronta, sem editor.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://images.unsplash.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=DM+Serif+Display&family=Space+Grotesk:wght@500;700&family=Fredoka:wght@600;700&family=Nunito:wght@400;600;800&family=Archivo:wght@500;800&display=swap" rel="stylesheet">
 <style>
 /* VOICE: ousado e próximo ("Cria aí"), sem prometer o que o produto não faz.
-   IDEA: um balcão de pedidos — você diz o que precisa, o sistema entrega a peça.
-   PICTURE: peças reais geradas pelo motor (marcas fictícias), nunca mockups genéricos.
-   COLOUR and TYPE: azul elétrico + ácido (base), pink, amarelo e preto (energia); Anton + Inter.
-   LAYOUT: faixas largas, uma ideia por seção, CTA para a demonstração em todo o caminho. */
-:root{--bg:#FFFFFF;--ink:#111111;--soft:#F2F3F7;--card:#FFFFFF;--line:#E1E3EB;--mute:#4A4F63;--acc:#D4FF3A;--accInk:#1F3DFF;--blue:#1F3DFF;--pink:#FF2E88;--yel:#FFE500}
-.wm{font:400 28px/1 Anton,sans-serif;letter-spacing:.01em;text-transform:uppercase;display:inline-flex;align-items:center}.wm b{font-weight:400;background:var(--acc);color:var(--blue);border-radius:14px 14px 14px 3px;padding:2px 7px 3px;margin-left:1px}
-
+   PICTURE: peças reais desenhadas pelo motor do Criou (marcas fictícias, fotos do Unsplash).
+   COLOUR and TYPE: azul elétrico + ácido, pink, amarelo e preto; Anton + Inter.
+   LAYOUT: faixas largas, uma ideia por seção, respiro generoso. */
+:root{--ink:#111;--soft:#F3F4F8;--line:#E2E4EC;--mute:#4A4F63;--acc:#D4FF3A;--blue:#1F3DFF;--pink:#FF2E88;--yel:#FFE500;--r:28px;--gap:clamp(18px,2.2vw,28px)}
 *{box-sizing:border-box;min-width:0}
-html{scroll-padding-top:80px}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+html{scroll-padding-top:84px;-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
 h1,h2,h3{font-family:Anton,Inter,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:1.02;margin:0;text-wrap:balance}
-h1{font-size:clamp(42px,5.6vw,76px);line-height:1.08}
-h2{font-size:clamp(34px,4.2vw,58px);margin-bottom:16px}
-h3{font-size:22px;margin-bottom:8px}
+h1{font-size:clamp(46px,6.2vw,92px);line-height:.98}
+h2{font-size:clamp(36px,4.6vw,64px);margin-bottom:18px}
+h3{font-size:24px;margin-bottom:10px}
 p{margin:0 0 14px}
 a{color:inherit}
-.wrap{max-width:1200px;margin:0 auto;padding:0 max(4vw,18px)}
-.band{padding:clamp(56px,8vw,104px) 0}
-.dark{background:var(--ink);color:#FFFFFF}.dark .mute{color:#B9BCC8}
-.blue{background:var(--blue);color:#FFFFFF}.blue .mute{color:#DCE2FF}
-.pink{background:var(--pink);color:#111111}.pink .mute{color:#3A0F22}
+.wm{font:400 28px/1 Anton,sans-serif;letter-spacing:.01em;text-transform:uppercase;display:inline-flex;align-items:center}
+.wm b{font-weight:400;background:var(--acc);color:var(--blue);border-radius:14px 14px 14px 3px;padding:2px 7px 3px;margin-left:1px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,40px)}
+.band{padding:clamp(80px,10vw,140px) 0}
+.intro{max-width:760px;margin-bottom:clamp(36px,4.5vw,56px)}
+.dark{background:var(--ink);color:#fff}.dark .mute{color:#B9BCC8}
+.blue{background:var(--blue);color:#fff}.blue .mute{color:#DCE2FF}
+.pink{background:var(--pink);color:#111}.pink .mute{color:#3A0F22}
 .soft{background:var(--soft)}
 .mute{color:var(--mute)}
-.lead{font-size:clamp(18px,1.6vw,21px);max-width:62ch}
-.pre{background:var(--ink);color:#FFFFFF;font-size:14px;text-align:center;padding:8px 16px}
+.lead{font-size:clamp(18px,1.55vw,21px);line-height:1.55;max-width:60ch}
+.pre{background:var(--ink);color:#fff;font-size:14px;text-align:center;padding:9px 16px}
 .pre b{color:var(--acc)}
-header.nav{position:sticky;top:0;z-index:20;background:var(--blue);color:#FFFFFF}
-.nav .wrap{display:flex;align-items:center;gap:20px;min-height:68px;flex-wrap:wrap}
-.logo{text-decoration:none;display:flex;align-items:center;margin-right:auto;color:#FFFFFF}
-.nav nav{display:flex;gap:18px;flex-wrap:wrap}
-.nav nav a{text-decoration:none;font-weight:600;font-size:15px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:12px 24px;border-radius:999px;font:700 15px Inter,sans-serif;text-decoration:none;border:0;cursor:pointer;background:var(--ink);color:#FFFFFF}
-.btn.acc{background:var(--acc);color:var(--blue)}.btn.pk{background:var(--pink);color:#111111}
+header.nav{position:sticky;top:0;z-index:20;background:var(--blue);color:#fff}
+.nav .wrap{display:flex;align-items:center;gap:28px;min-height:72px}
+.logo{text-decoration:none;display:flex;align-items:center;margin-right:auto;color:#fff}
+.nav nav{display:flex;gap:26px}
+.nav nav a{text-decoration:none;font-weight:600;font-size:15px;opacity:.92}
+.nav nav a:hover{opacity:1;text-decoration:underline;text-underline-offset:5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:14px 26px;border-radius:999px;font:700 16px Inter,sans-serif;text-decoration:none;border:0;cursor:pointer;background:var(--ink);color:#fff;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.acc{background:var(--acc);color:var(--blue)}
 .btn.ghost{background:transparent;color:inherit;border:1.5px solid currentColor}
-.btn[disabled]{opacity:.5;cursor:not-allowed}
-.btn:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
-.hero{background:var(--blue);color:#FFFFFF;padding:clamp(40px,6vw,80px) 0 clamp(56px,7vw,104px);position:relative;overflow:hidden}
-.hero .wrap{position:relative}
-.chips-hero{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
-.chips-hero span{font:600 14px Inter,sans-serif;background:#FFFFFF;color:var(--blue);padding:8px 14px;border-radius:999px}
-.chips-hero span.ok{background:var(--acc)}
-.hero .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,4vw,56px);align-items:center}
-.hero h1 em{font-style:normal;background:var(--acc);color:var(--blue);border-radius:.28em .28em .28em .08em;padding:.04em .14em 0;display:inline-block;line-height:1;margin-top:.06em}
-.ctas{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 14px}
-.micro{font-size:14px;color:var(--mute)}
-.hero .micro{color:#DCE2FF}.hero .lead{color:#E9EDFF}
-.hero .btn.ghost{color:#FFFFFF}
-.stage{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1fr);gap:14px;align-items:end;background:var(--pink);border-radius:32px;padding:clamp(16px,2.6vw,28px)}
-.stage::before{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:var(--yel)}
-.stage::after{content:"";position:absolute;left:-30px;bottom:-40px;width:120px;height:120px;background:var(--ink);transform:rotate(18deg)}
-.stage canvas{position:relative;z-index:1}
-.stage canvas{display:block;width:100%;border-radius:6px;box-shadow:0 22px 40px -22px rgba(0,0,0,.5);height:auto}
-.stage .c-banner{grid-column:1/-1}
-.stage+.cap{margin-top:12px}
-.cap{font-size:13px;color:var(--mute);text-align:center}
-.hero .cap{color:#DCE2FF}
-.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px}
+.btn.sm{min-height:44px;padding:10px 20px;font-size:15px}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+.btn:focus-visible,a:focus-visible,summary:focus-visible,button:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+
+/* Topo */
+.hero{background:var(--blue);color:#fff;padding:clamp(56px,7vw,96px) 0 clamp(72px,8vw,120px);overflow:hidden}
+.hero .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(40px,5vw,80px);align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font:700 14px Inter,sans-serif;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:999px;margin-bottom:26px}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--acc);display:block}
+.hero h1 em{font-style:normal;background:var(--acc);color:var(--blue);border-radius:.22em .22em .22em .06em;padding:.04em .14em 0;display:inline-block;line-height:1;margin-top:.06em}
+.hero .lead{color:#E9EDFF;margin-top:26px}
+.ctas{display:flex;flex-wrap:wrap;gap:14px;margin:34px 0 22px}
+.hero .btn.ghost{color:#fff}
+.selos{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:#DCE2FF;list-style:none;padding:0;margin:0}
+.selos li{display:flex;align-items:center;gap:8px}
+.selos li::before{content:"";width:16px;height:16px;border-radius:50%;background:var(--acc) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%231F3DFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
+.mural{position:relative;aspect-ratio:1/1.02;width:100%}
+.mural::before{content:"";position:absolute;right:-4%;bottom:2%;width:34%;aspect-ratio:1;border-radius:50%;background:var(--acc)}
+.mural::after{content:"";position:absolute;left:4%;top:-3%;width:18%;aspect-ratio:1;background:var(--pink);border-radius:24px 24px 24px 6px;transform:rotate(-12deg)}
+.peca{position:relative;overflow:hidden;border-radius:10px;background:#d9dbe6;box-shadow:0 30px 60px -24px rgba(0,0,0,.55),0 8px 18px -8px rgba(0,0,0,.25)}
+.mural .peca{position:absolute;z-index:1}
+.m-story{left:0;top:7%;width:34%;transform:rotate(-3deg)}
+.m-post{left:29%;top:0;width:42%;transform:rotate(1.5deg);z-index:2!important}
+.m-quad{right:0;top:13%;width:31%;transform:rotate(4deg)}
+.m-link{left:20%;top:61%;width:60%;transform:rotate(-1.5deg);z-index:3!important}
+.hero .cap{color:#C9D1FF;font-size:13px;margin-top:18px;text-align:center}
+@media(prefers-reduced-motion:no-preference){.mural .peca{transition:transform .5s ease}.mural:hover .m-post{transform:rotate(0) translateY(-6px)}.mural:hover .m-story{transform:rotate(-5deg) translateX(-6px)}.mural:hover .m-quad{transform:rotate(6deg) translateX(6px)}}
+
+/* Blocos comuns */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:clamp(24px,2.6vw,36px)}
 .dark .card{background:#1C1C1C;border-color:#333}
-.steps{counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;margin:28px 0}
-.steps .card{position:relative;padding-top:58px}
-.steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:18px;left:24px;width:34px;height:34px;border-radius:12px 12px 12px 3px;background:var(--blue);color:var(--acc);font:400 18px Anton,sans-serif;display:grid;place-items:center}
-.list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
-.list li{display:flex;gap:12px;align-items:baseline}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,80px);align-items:start}
+.list{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.list li{display:flex;gap:14px;align-items:baseline}
 .list li::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:var(--pink);transform:translateY(-1px)}
-.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
-.vs ol{margin:0;padding-left:22px;display:grid;gap:8px}
-.vs .card.on{background:var(--blue);color:#FFFFFF;border-color:var(--blue)}
-.quote{font:400 clamp(28px,3vw,40px)/1.1 Anton,sans-serif;text-transform:uppercase;letter-spacing:.01em;margin-top:30px;max-width:30ch}
-.quote em{font-style:normal;background:var(--pink);color:#111111;padding:0 .15em;border-radius:6px}
-.fmt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:end;margin-top:28px}
+.cap{font-size:13px;color:var(--mute)}
+
+/* Como funciona */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+.two .card h3{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:22px}
+.two .card h3 span{font:700 14px Inter,sans-serif;text-transform:none;letter-spacing:0;opacity:.75}
+.two ol{margin:0;padding-left:24px;display:grid;gap:16px}
+.two ol li b{display:block;font-size:17px}
+.two ol li span{font-size:15.5px;opacity:.82}
+.card.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.quote{font:400 clamp(30px,3.4vw,46px)/1.08 Anton,sans-serif;text-transform:uppercase;letter-spacing:.01em;margin:clamp(48px,6vw,72px) 0 26px;max-width:28ch}
+.quote em{font-style:normal;background:var(--pink);color:#111;padding:0 .15em;border-radius:6px}
+
+/* Formatos */
+.fmt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);align-items:end}
 .fmt figure{margin:0}
-.fmt canvas{width:100%;height:auto;display:block;border-radius:6px;box-shadow:0 16px 30px -18px rgba(0,0,0,.45)}
-.fmt figcaption{margin-top:12px}
-.fmt figcaption b{display:block;font:400 20px Anton,sans-serif;text-transform:uppercase;letter-spacing:.02em}
-.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center}
+.fmt canvas{width:100%;height:auto;display:block;border-radius:8px;box-shadow:0 18px 34px -20px rgba(0,0,0,.45)}
+.fmt figcaption{margin-top:16px}
+.fmt figcaption b{display:block;font:400 21px Anton,sans-serif;text-transform:uppercase;letter-spacing:.02em}
+.redes{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(36px,4vw,52px)}
+.redes span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-weight:600;font-size:15px}
+.redes span.extra{background:transparent;color:var(--mute)}
+
+/* Exemplos */
+.galeria{columns:3 300px;column-gap:var(--gap)}
+.galeria figure{break-inside:avoid;margin:0 0 var(--gap)}
+.galeria .peca{border-radius:12px;box-shadow:0 22px 44px -26px rgba(0,0,0,.5)}
+.galeria figcaption{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-top:12px;font-size:14px}
+.galeria figcaption b{font-size:15px}
+.galeria figcaption span{color:var(--mute);text-align:right}
+
+/* Por dentro */
 .why{display:grid;gap:12px}
-.why div{background:#1C1C1C;border:1px solid #333;border-radius:18px 18px 18px 4px;padding:14px 16px}
+.why div{background:#1C1C1C;border:1px solid #333;border-radius:18px 18px 18px 4px;padding:16px 18px}
 .why b{color:var(--acc)}
-.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px;margin-top:28px;align-items:stretch}
-.plan{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px}
-.plan.hi{background:var(--blue);color:#FFFFFF;border-color:var(--blue)}
-.plan .price{font:400 44px/1 Anton,sans-serif;margin:10px 0 6px;white-space:nowrap}
-.plan .price small{font:600 15px Inter,sans-serif}
-.plan ul{margin:16px 0 20px;padding-left:20px;display:grid;gap:6px;font-size:15.5px}
-.plan .btn{margin-top:auto}
-.plan .note{font-size:13px;margin:10px 0 0;opacity:.8}
-.faq details{border-bottom:1px solid var(--line);padding:6px 0}
-.faq summary{cursor:pointer;font:700 17px Inter,sans-serif;padding:14px 0;list-style:none;display:flex;justify-content:space-between;gap:16px}
+
+/* Planos */
+.periodo{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px;margin:0 0 clamp(28px,3vw,40px)}
+.periodo button{border:0;background:transparent;font:700 15px Inter,sans-serif;padding:10px 20px;border-radius:999px;cursor:pointer;min-height:44px;color:var(--ink)}
+.periodo button[aria-pressed=true]{background:var(--ink);color:#fff}
+.periodo button small{font-weight:700;color:var(--pink);margin-left:6px}
+.periodo button[aria-pressed=true] small{color:var(--acc)}
+.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);align-items:stretch}
+.plan{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:clamp(28px,2.8vw,40px)}
+.plan.hi{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 30px 60px -30px rgba(31,61,255,.6)}
+.plan .tag{align-self:flex-start;font:800 12px Inter,sans-serif;text-transform:uppercase;letter-spacing:.08em;background:var(--acc);color:var(--blue);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+.plan h3{margin-bottom:6px}
+.plan .price{font:400 clamp(44px,4vw,56px)/1 Anton,sans-serif;margin:14px 0 4px;white-space:nowrap}
+.plan .price small{font:600 16px Inter,sans-serif;margin-left:4px}
+.plan .eco{font-size:14px;font-weight:700;min-height:22px;margin:0 0 10px}
+.plan.hi .eco{color:var(--acc)}
+.plan ul{margin:18px 0 28px;padding:0;list-style:none;display:grid;gap:11px;font-size:15.5px}
+.plan ul li{display:flex;gap:10px;align-items:baseline}
+.plan ul li::before{content:"✓";font-weight:800;color:var(--blue);flex:none}
+.plan.hi ul li::before{color:var(--acc)}
+.plan .btn{margin-top:auto;width:100%}
+.plan.hi .btn[disabled]{background:rgba(255,255,255,.16);color:#fff;opacity:1;border:1.5px solid rgba(255,255,255,.4)}
+.plan .note{font-size:13px;margin:14px 0 0;opacity:.8;line-height:1.5}
+
+/* Dúvidas */
+.faq-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:clamp(32px,5vw,80px);align-items:start}
+.faq details{border-bottom:1px solid var(--line);padding:4px 0}
+.faq summary{cursor:pointer;font:700 17px Inter,sans-serif;padding:18px 0;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
 .faq summary::after{content:"+";color:var(--blue);font-size:26px;line-height:1;font-weight:700}
 .faq details[open] summary::after{content:"–"}
-.faq details p{max-width:72ch;color:var(--mute)}
-footer{padding:40px 0;font-size:14px}
-footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
-.demo{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:22px 22px 22px 6px;padding:16px;display:grid;gap:12px;margin:22px 0 14px}
-.demo label{font:600 14px Inter,sans-serif;color:#fff}
-.demo input[type=text]{width:100%;font:16px Inter,sans-serif;border:0;border-radius:14px;padding:12px 14px;min-height:48px;color:#111}
-.demo .sw{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.demo .sw button{width:40px;height:40px;border-radius:50%;border:3px solid var(--blue);box-shadow:0 0 0 2px rgba(255,255,255,.5);cursor:pointer}
-.demo .sw button[aria-pressed=true]{box-shadow:0 0 0 3px var(--acc)}
-.live{position:relative;overflow:hidden;background:var(--pink);border-radius:32px;padding:clamp(18px,3vw,32px);display:grid;place-items:center;min-height:360px}
-.live::before{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:var(--yel)}
-.live::after{content:"";position:absolute;left:-30px;bottom:-40px;width:120px;height:120px;background:var(--ink);transform:rotate(18deg)}
-.live canvas{position:relative;z-index:1;max-width:100%;max-height:520px;width:auto;height:auto;border-radius:6px;box-shadow:0 22px 40px -22px rgba(0,0,0,.5)}
-.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
-.two .card h3{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.two .card h3 span{font:700 14px Inter,sans-serif;text-transform:none;letter-spacing:0;opacity:.75}
-.two ol{margin:0;padding-left:22px;display:grid;gap:10px}
-.two ol li b{display:block}
-.two ol li span{font-size:15px;opacity:.8}
-.sits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
-.sits figure{margin:0}
-.sits canvas{width:100%;height:auto;display:block;border-radius:6px;box-shadow:0 16px 30px -18px rgba(0,0,0,.45)}
-.sits figcaption{margin-top:12px}
-.sits figcaption b{display:block;font:400 22px Anton,sans-serif;text-transform:uppercase;letter-spacing:.01em}
-.more{margin-top:8px}
-.more>summary{cursor:pointer;font:700 16px Inter,sans-serif;color:var(--blue);padding:14px 0;list-style:none}
-@media(max-width:860px){.two{grid-template-columns:minmax(0,1fr)}.sits{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:860px){.hero .grid,.split{grid-template-columns:minmax(0,1fr)}.vs{grid-template-columns:minmax(0,1fr)}.nav nav{display:none}.nav .wrap{flex-wrap:nowrap}}
-@media(max-width:600px){.fmt{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fmt figure:last-child{grid-column:1/-1}body{font-size:16px}}
-@media(prefers-reduced-motion:no-preference){.stage canvas{transition:transform .5s}.stage:hover .c-post{transform:translateY(-6px)}}
+.faq details p{max-width:68ch;color:var(--mute);padding-bottom:10px}
+.more>summary{color:var(--blue)}
+
+footer{padding:44px 0;font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between}
+
+@media(max-width:980px){.hero .grid,.split,.faq-grid{grid-template-columns:minmax(0,1fr)}.plans{grid-template-columns:minmax(0,1fr);max-width:560px}.mural{max-width:640px;margin:0 auto}}
+@media(max-width:860px){.two{grid-template-columns:minmax(0,1fr)}.nav nav{display:none}}
+@media(max-width:600px){.fmt{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fmt figure:last-child{grid-column:1/-1}body{font-size:16px}.ctas .btn{flex:1 1 auto}.galeria{columns:2 150px}.galeria figcaption{flex-direction:column;gap:2px}.galeria figcaption span{text-align:left}}
 </style>
 </head>
 <body>
 <div class="pre"><b>Pré-lançamento.</b> A versão de teste já funciona. Cadastro, download sem marca d'água e planos serão liberados em breve.</div>
 <header class="nav"><div class="wrap">
-  <a class="logo" href="#topo"><span class="wm">cri<b>ou</b></span></a>
-  <nav aria-label="Principal"><a href="#como-funciona">Como funciona</a><a href="#para-quem">Para quem é</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a></nav>
-  <a class="btn acc" href="app/">Cria aí</a>
+  <a class="logo" href="#topo" aria-label="Criou, início"><span class="wm">cri<b>ou</b></span></a>
+  <nav aria-label="Principal"><a href="#como-funciona">Como funciona</a><a href="#exemplos">Exemplos</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a></nav>
+  <a class="btn acc sm" href="app/">Cria aí</a>
 </div></header>
 
 <main id="topo">
 <section class="hero"><div class="wrap grid">
   <div>
-    <div class="chips-hero" aria-hidden="true"><span>Pra quem é?</span><span>Qual é o recado?</span><span class="ok">Criou ✓</span></div>
+    <span class="eyebrow"><i></i>Design para redes sociais, sem editor</span>
     <h1>Você manda o recado. A gente faz o <em>design.</em></h1>
-    <p class="lead" style="margin-top:18px">Crie posts, stories, banners, e-mails e campanhas para sua empresa sem precisar entender de design. Cadastre sua marca uma vez, conte o recado e receba as peças prontas, no estilo que você escolher.</p>
-    <form class="demo" id="demo" aria-label="Experimente com a sua marca">
-      <div><label for="dNome">Nome da sua empresa</label><input type="text" id="dNome" maxlength="40" placeholder="Ateliê Lua" autocomplete="organization"></div>
-      <div><label id="dCorL">Cor principal</label><div class="sw" id="dCores" role="group" aria-labelledby="dCorL"></div></div>
-      <div class="ctas" style="margin:4px 0 0"><button class="btn acc" type="submit">Cria aí com a minha marca</button><a class="btn ghost" href="#como-funciona">Entender como funciona</a></div>
-    </form>
-    <p class="micro">Sem cadastro para experimentar. Sem editor. Você só precisa saber o que quer comunicar.</p>
+    <p class="lead">Posts, stories, miniaturas e campanhas com a cara da sua marca. Escreva o que quer dizer, escolha o layout e a peça sai pronta.</p>
+    <div class="ctas"><a class="btn acc" href="app/">Criar minha peça</a><a class="btn ghost" href="#exemplos">Ver exemplos</a></div>
+    <ul class="selos"><li>Grátis para testar</li><li>Sem cadastro para experimentar</li><li>Sem editor</li></ul>
   </div>
   <div>
-    <div class="live"><canvas id="dCv" role="img" aria-label="Prévia de um post com a sua marca"></canvas></div>
-    <p class="cap">Prévia ao vivo: troque o nome e a cor e veja a peça mudar.</p>
+    <div class="mural" aria-label="Exemplos de peças criadas no Criou">
+      <div class="peca m-story" data-ex="h-story"></div>
+      <div class="peca m-post" data-ex="h-post"></div>
+      <div class="peca m-quad" data-ex="h-quad"></div>
+      <div class="peca m-link" data-ex="h-link"></div>
+    </div>
+    <p class="cap">Peças feitas no Criou. Marcas fictícias, fotos do Unsplash.</p>
   </div>
 </div></section>
 
-<section class="band pink"><div class="wrap split" style="align-items:start">
+<section class="band pink"><div class="wrap split">
   <div>
     <h2 style="max-width:18ch">Criar uma arte não deveria ser mais difícil do que pensar no que você quer comunicar.</h2>
     <p class="lead">O problema não é falta de criatividade. É precisar tomar decisões de design sem entender de design.</p>
   </div>
   <div>
-    <ul class="list" style="font-size:18px;margin-top:8px">
+    <ul class="list" style="font-size:19px;margin-top:10px">
       <li>Chega de perder tempo adaptando templates.</li>
       <li>Chega de tentar acertar combinações de cores.</li>
       <li>Chega de peças diferentes a cada publicação.</li>
       <li>Chega de depender de conhecimento técnico para comunicar.</li>
     </ul>
-    <p style="margin-top:22px;font-weight:700">Foi por isso que criamos uma experiência diferente.</p>
+    <p style="margin-top:28px;font-weight:700;font-size:18px">Foi por isso que criamos uma experiência diferente.</p>
   </div>
 </div></section>
 
 <section class="band" id="como-funciona"><div class="wrap">
-  <h2>Do jeito antigo: 7 passos. Com o Criou: 4.</h2>
-  <p class="lead mute">A diferença está em quem toma as decisões de design.</p>
+  <div class="intro">
+    <h2>Do jeito antigo: 7 passos. Com o Criou: 4.</h2>
+    <p class="lead mute">A diferença está em quem toma as decisões de design.</p>
+  </div>
   <div class="two">
     <div class="card"><h3>Jeito antigo <span>você decide tudo</span></h3><ol>
       <li><b>Escolher um template</b><span>Procurar um modelo parecido com o que você quer.</span></li>
@@ -187,51 +216,60 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
       <li><b>Organizar os textos</b><span>Definir o que vem primeiro e o que é destaque.</span></li>
       <li><b>Corrigir o layout</b><span>Alinhar, dar respiro, consertar o que saiu do lugar.</span></li>
       <li><b>Adaptar os formatos</b><span>Refazer tudo para story e banner.</span></li></ol></div>
-    <div class="card on" style="background:var(--blue);color:#fff;border-color:var(--blue)"><h3>Com o Criou <span>o sistema decide</span></h3><ol>
+    <div class="card on"><h3>Com o Criou <span>o sistema decide</span></h3><ol>
       <li><b>Escolher o formato e o layout</b><span>Instagram, YouTube, LinkedIn ou a campanha completa. Layouts básicos, elaborados e premium.</span></li>
       <li><b>Contar o recado</b><span>O que você quer dizer, quando e qual a chamada. Nunca sobre design.</span></li>
       <li><b>Ver o resultado</b><span>Ao vivo, com a explicação de cada decisão visual e avisos sobre o texto.</span></li>
       <li><b>Baixar as peças</b><span>Em PNG, JPG, PDF ou PowerPoint editável, com o cadastro (em breve).</span></li></ol></div>
   </div>
   <p class="quote">Você não precisa aprender a ferramenta. A ferramenta precisa <em>entender</em> o que você precisa.</p>
-  <a class="btn acc" href="app/" style="margin-top:22px">Cria aí</a>
+  <a class="btn acc" href="app/">Cria aí</a>
 </div></section>
 
 <section class="band soft"><div class="wrap">
-  <h2>Sua mensagem merece mais de um formato.</h2>
-  <p class="lead mute">Você escreve o recado uma vez e recebe a campanha completa, com a mesma identidade visual: post, story, LinkedIn e banner do site. Também dá para criar só uma peça.</p>
-  <div class="fmt">
-    <figure><canvas data-marca="ventura" data-fmt="post" data-ex="fmt" role="img" aria-label="Post da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Post · 1080 × 1350 px</b><span class="mute">Para publicações no feed do Instagram.</span></figcaption></figure>
-    <figure><canvas data-marca="ventura" data-fmt="story" data-ex="fmt" role="img" aria-label="Story da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Story · 1080 × 1920 px</b><span class="mute">Para stories e comunicações verticais.</span></figcaption></figure>
-    <figure><canvas data-marca="ventura" data-fmt="banner" data-ex="fmt" role="img" aria-label="Banner da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Banner · 1500 × 500 px</b><span class="mute">Para aplicações horizontais digitais compatíveis com esse formato.</span></figcaption></figure>
+  <div class="intro">
+    <h2>Sua mensagem merece mais de um formato.</h2>
+    <p class="lead mute">Você escreve o recado uma vez e recebe a campanha completa, com a mesma identidade visual: post, story, LinkedIn e banner do site. Também dá para criar só uma peça.</p>
   </div>
-  <p class="cap" style="text-align:left;margin-top:16px">Exemplo com a Clínica Ventura, uma marca fictícia.</p>
-  <p class="lead mute" style="margin-top:22px"><b style="color:var(--ink)">Para redes sociais:</b> posts e stories do Instagram, miniatura de vídeo do YouTube e posts do LinkedIn. E, se precisar, banner do site, e-mail marketing, cartaz e outdoor.</p>
+  <div class="fmt">
+    <figure><canvas data-marca="ventura" data-fmt="post" data-ex2="fmt" role="img" aria-label="Post da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Post · 1080 × 1350 px</b><span class="mute">Para publicações no feed do Instagram.</span></figcaption></figure>
+    <figure><canvas data-marca="ventura" data-fmt="story" data-ex2="fmt" role="img" aria-label="Story da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Story · 1080 × 1920 px</b><span class="mute">Para stories e comunicações verticais.</span></figcaption></figure>
+    <figure><canvas data-marca="ventura" data-fmt="banner" data-ex2="fmt" role="img" aria-label="Banner da Clínica Ventura: Check-up completo em uma manhã"></canvas><figcaption><b>Banner · 1500 × 500 px</b><span class="mute">Para o topo do site e aplicações horizontais.</span></figcaption></figure>
+  </div>
+  <p class="cap" style="margin-top:18px">Exemplo com a Clínica Ventura, uma marca fictícia.</p>
+  <div class="redes" aria-label="Formatos disponíveis"><span>Instagram: post e story</span><span>YouTube: miniatura</span><span>LinkedIn: post</span><span class="extra">+ banner do site, e-mail, cartaz e outdoor</span></div>
 </div></section>
 
-<section class="band" id="para-quem"><div class="wrap">
-  <h2>Feito para quem precisa comunicar, não necessariamente desenhar.</h2>
-  <p class="lead mute">Lojas, prestadores de serviço, autônomos e pequenas empresas. Três situações do dia a dia, três marcas diferentes, o mesmo sistema.</p>
-  <div class="sits">
-    <figure><canvas data-marca="aurora" data-fmt="post" data-ex="aurora" role="img" aria-label="Post da Padaria Aurora: Pão de fermentação natural sai às 7h"></canvas><figcaption><b>Novidade da semana</b><span class="mute">Padaria Aurora</span></figcaption></figure>
-    <figure><canvas data-marca="vento" data-fmt="post" data-ex="vento" role="img" aria-label="Post do Studio Vento: Aula aberta de pilates no sábado"></canvas><figcaption><b>Evento</b><span class="mute">Studio Vento</span></figcaption></figure>
-    <figure><canvas data-marca="bento" data-fmt="post" data-ex="bento" role="img" aria-label="Post do Pet Bento: Banho e tosa com 20% na terça"></canvas><figcaption><b>Promoção</b><span class="mute">Pet Bento</span></figcaption></figure>
+<section class="band" id="exemplos"><div class="wrap">
+  <div class="intro">
+    <h2>Feito para quem precisa comunicar, não necessariamente desenhar.</h2>
+    <p class="lead mute">Padarias, estúdios, lojas, clínicas e pequenas empresas. Cada marca escolhe o layout que combina com o recado: foto de fundo, bloco de cor, editorial, gradiente ou só texto. Nada de peça igual à do vizinho.</p>
   </div>
-  <p class="cap" style="text-align:left;margin-top:16px">Marcas fictícias, criadas para demonstração.</p>
+  <div class="galeria">
+    <figure><div class="peca" data-ex="e-aurora"></div><figcaption><b>Padaria Aurora</b><span>Foto de fundo · Post</span></figcaption></figure>
+    <figure><div class="peca" data-ex="e-verde"></div><figcaption><b>Verde Vivo</b><span>Limpo · Post quadrado</span></figcaption></figure>
+    <figure><div class="peca" data-ex="e-vento"></div><figcaption><b>Studio Vento</b><span>Bloco de cor · Story</span></figcaption></figure>
+    <figure><div class="peca" data-ex="e-lume"></div><figcaption><b>Café Lume</b><span>Foto de fundo · YouTube</span></figcaption></figure>
+    <figure><div class="peca" data-ex="e-bento"></div><figcaption><b>Pet Bento</b><span>Editorial · Post</span></figcaption></figure>
+    <figure><div class="peca" data-ex="e-ventura"></div><figcaption><b>Clínica Ventura</b><span>Só texto · Post quadrado</span></figcaption></figure>
+    <figure><div class="peca" data-ex="e-ciclo"></div><figcaption><b>Brechó Ciclo</b><span>Gradiente · LinkedIn</span></figcaption></figure>
+  </div>
+  <p class="cap" style="margin-top:8px">Marcas fictícias, criadas para demonstração. Fotos do Unsplash.</p>
+  <a class="btn acc" href="app/" style="margin-top:22px">Criar com a minha marca</a>
 </div></section>
 
 <section class="band dark"><div class="wrap">
-  <h2>Por dentro do Criou</h2>
-  <div class="split" style="align-items:start;margin-top:18px">
+  <div class="intro"><h2>Por dentro do Criou</h2></div>
+  <div class="split">
     <div>
       <h3 style="color:var(--acc)">Sua marca, respeitada</h3>
       <p class="mute">Se a sua marca já tem identidade, o Criou usa o que você informar. Se não tem, basta o nome e uma cor: o resto vem pronto nos layouts.</p>
-      <ul class="list" style="margin:14px 0"><li>Para começar: nome, cor e, se tiver, o logotipo.</li><li>Fontes em combinações prontas do Google Fonts, ou as da sua marca.</li><li>Se quiser, nos ajustes: cores de apoio, rodapé, texto legal obrigatório e palavras que a marca não usa.</li><li>Toda cor passa pelo teste de contraste antes de entrar na peça.</li></ul>
+      <ul class="list" style="margin:22px 0"><li>Para começar: nome, cor e, se tiver, o logotipo.</li><li>Fontes em combinações prontas do Google Fonts, ou as da sua marca.</li><li>Se quiser, nos ajustes: cores de apoio, rodapé, texto legal obrigatório e palavras que a marca não usa.</li><li>Toda cor passa pelo teste de contraste antes de entrar na peça.</li></ul>
       <p style="font-weight:700">Não é você quem precisa lembrar das regras da sua marca. O sistema aplica as regras que foram cadastradas.</p>
     </div>
     <div>
       <h3 style="color:var(--acc)">Além de criar, explica</h3>
-      <div class="why" style="margin-top:12px">
+      <div class="why" style="margin-top:16px">
         <div><b>Contraste:</b> a combinação de cores foi selecionada para facilitar a leitura.</div>
         <div><b>Hierarquia:</b> o título recebeu destaque para deixar a mensagem principal mais evidente.</div>
         <div><b>Composição:</b> os elementos foram distribuídos para organizar a informação.</div>
@@ -241,47 +279,55 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
     </div>
   </div>
 </div></section>
+
 <section class="band soft" id="planos"><div class="wrap">
-  <h2>Comece gratuitamente. Continue quando precisar.</h2>
-  <p class="lead mute">Experimente a plataforma, conheça o resultado e escolha o plano que acompanha sua rotina de comunicação.</p>
+  <div class="intro">
+    <h2>Comece gratuitamente. Continue quando precisar.</h2>
+    <p class="lead mute">Experimente a plataforma, conheça o resultado e escolha o plano que acompanha sua rotina de comunicação.</p>
+  </div>
+  <div class="periodo" role="group" aria-label="Período de cobrança do plano Essencial"><button type="button" data-p="mensal" aria-pressed="true">Mensal</button><button type="button" data-p="anual" aria-pressed="false">Anual <small>2 meses de economia</small></button></div>
   <div class="plans">
-    <div class="plan"><h3>Gratuito</h3><div class="price">R$ 0</div><p class="mute">Conheça a experiência e crie sua primeira campanha.</p>
+    <div class="plan"><h3>Gratuito</h3><p class="mute">Conheça a experiência e crie sua primeira campanha.</p><div class="price">R$ 0</div><p class="eco"></p>
       <ul><li>Cadastro gratuito.</li><li>Uma marca.</li><li>Pré-visualizações com marca d'água.</li><li>Uma campanha completa gratuita: post, story, LinkedIn e banner do site.</li><li>Download da primeira campanha sem marca d'água.</li></ul>
       <a class="btn acc" href="app/">Cria aí</a>
       <p class="note">A campanha gratuita é limitada a uma por pessoa e por empresa, conforme as regras de utilização. No pré-lançamento, você testa sem cadastro. O download abre com o cadastro.</p></div>
-    <div class="plan hi"><h3>Essencial mensal</h3><div class="price">R$ 29,90<small>/mês</small></div><p>Para quem precisa produzir peças continuamente.</p>
-      <ul><li>Uma marca cadastrada.</li><li>Todos os formatos disponíveis: Instagram, YouTube, LinkedIn, site, e-mail e impressos.</li><li>Todos os layouts: básicos, elaborados e premium.</li><li>Criação de novas peças.</li><li>Download sem marca d'água em PNG, JPG, PDF e PowerPoint editável.</li><li>Pré-visualizações.</li><li>Sem limite de quantidade no uso normal, sujeito à política de uso razoável.</li><li>Cancelamento pelo próprio painel.</li></ul>
+    <div class="plan hi"><span class="tag">Para quem publica sempre</span><h3>Essencial</h3><p>Para quem precisa produzir peças continuamente.</p>
+      <div class="price" id="preco">R$ 29,90<small>/mês</small></div><p class="eco" id="eco">Cancele quando quiser, pelo painel.</p>
+      <ul><li>Uma marca cadastrada.</li><li>Todos os formatos: Instagram, YouTube, LinkedIn, site, e-mail e impressos.</li><li>Todos os layouts: básicos, elaborados e premium.</li><li>Download sem marca d'água em PNG, JPG, PDF e PowerPoint editável.</li><li>Sem limite de quantidade no uso normal, sujeito à política de uso razoável.</li><li>Cancelamento pelo próprio painel.</li></ul>
       <button class="btn acc" disabled>Em breve</button></div>
-    <div class="plan"><h3>Essencial anual</h3><div class="price">R$ 299<small>/ano</small></div><p class="mute">Para quem já decidiu utilizar a plataforma durante o ano. Inclui os mesmos recursos do plano mensal.</p>
-      <ul><li>Economize R$ 59,80 em comparação com doze mensalidades de R$ 29,90.</li><li>Equivale a aproximadamente dois meses de economia.</li></ul>
-      <button class="btn" disabled>Em breve</button></div>
-    <div class="plan"><h3>Consultoria e implementação</h3><div class="price" style="font-size:26px;white-space:normal">Sob proposta</div><p class="mute">Sua empresa possui um manual de identidade visual e precisa transformar suas regras em um sistema de produção?</p>
-      <ul><li>Diagnóstico da identidade visual.</li><li>Análise do manual da marca.</li><li>Estruturação das regras visuais.</li><li>Configuração de cores e tipografia.</li><li>Definição de elementos gráficos.</li><li>Configuração de formatos específicos.</li><li>Testes e validação.</li><li>Orientação de utilização.</li></ul>
+    <div class="plan"><h3>Consultoria e implementação</h3><p class="mute">Sua empresa tem um manual de identidade visual e precisa transformar as regras em um sistema de produção?</p><div class="price" style="font-size:clamp(34px,3vw,42px)">Sob proposta</div><p class="eco"></p>
+      <ul><li>Diagnóstico da identidade e análise do manual.</li><li>Estruturação das regras visuais.</li><li>Configuração de cores, tipografia e elementos gráficos.</li><li>Formatos específicos da empresa.</li><li>Testes, validação e orientação de uso.</li></ul>
       <a class="btn ghost" href="https://joandersantos.com.br" rel="noopener">Solicitar uma implementação</a>
       <p class="note">Inclui os itens conforme o escopo contratado. O serviço possui proposta comercial, prazo, escopo e contrato próprios.</p></div>
   </div>
-  <p class="cap" style="text-align:left;margin-top:18px">Valores previstos para o lançamento. As condições completas serão apresentadas antes da contratação.</p>
+  <p class="cap" style="margin-top:22px">Valores previstos para o lançamento. As condições completas serão apresentadas antes da contratação.</p>
 </div></section>
 
-<section class="band faq" id="duvidas"><div class="wrap">
-  <h2>Dúvidas frequentes</h2>
-  <div id="faq" style="margin-top:16px"></div>
+<section class="band faq" id="duvidas"><div class="wrap faq-grid">
+  <div><h2>Dúvidas frequentes</h2><p class="lead mute">Não achou o que procurava? A versão de teste é aberta: experimente antes de decidir.</p><a class="btn sm" href="app/" style="margin-top:8px">Abrir o Criou</a></div>
+  <div id="faq"></div>
 </div></section>
 
 <section class="band blue"><div class="wrap" style="text-align:center">
   <h2>Sua próxima peça pode ser muito mais simples.</h2>
-  <p class="lead mute" style="margin:0 auto 26px">Você já sabe o que precisa comunicar. Experimente uma maneira diferente de transformar suas ideias em peças visuais.</p>
+  <p class="lead mute" style="margin:0 auto 30px">Você já sabe o que precisa comunicar. Experimente uma maneira diferente de transformar suas ideias em peças visuais.</p>
   <a class="btn acc" href="app/">Criar minha primeira campanha</a>
-  <p class="micro" style="color:#DCE2FF;margin-top:14px">Experimente sem cadastro. Conheça o resultado antes de escolher seu plano.</p>
+  <p style="color:#DCE2FF;margin-top:16px;font-size:14px">Experimente sem cadastro. Conheça o resultado antes de escolher seu plano.</p>
 </div></section>
 </main>
 
 <footer><div class="wrap">
   <span><span class="wm" style="font-size:20px">cri<b>ou</b></span> · Você pediu, criou. Design por perguntas, não por arrastar.</span>
   <span class="mute">Termos de Uso e Política de Privacidade serão publicados antes da abertura do cadastro.</span>
+  <span class="mute" style="flex-basis:100%;font-size:12.5px">Fotos dos exemplos: Unsplash (Markus Spiske, Roxana Popovici, Ahmet Kurt, Samanta Barba Alcalá, May Gauthier, Александр Гросс, Jeremy Yap, J G e Nicole Baster).</span>
 </div></footer>
 
 <script src="js/motor.js"></script>
+<script src="app/js/marca.js"></script>
+<script src="app/js/formatos.js"></script>
+<script src="app/js/motor.js"></script>
+<script src="app/js/modelos.js"></script>
+<script src="js/vitrine.js"></script>
 <script>
 {
 const FAQ=[
@@ -306,39 +352,16 @@ const FAQ=[
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 const item=([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`;
 document.getElementById('faq').innerHTML=FAQ.slice(0,8).map(item).join('')+`<details class="more"><summary>Ver todas as dúvidas (${FAQ.length})</summary>${FAQ.slice(8).map(item).join('')}</details>`;
-const EX={
-  aurora:{publico:'clientes',assunto:'novidade',titulo:'Pão de fermentação natural sai às 7h',apoio:'Encomende até as 18h do dia anterior.',chamada:'Encomendar'},
-  vento:{publico:'clientes',assunto:'evento',titulo:'Aula aberta de pilates no sábado',apoio:'Traga um amigo. Vagas limitadas.',data:'2026-12-12',hora:'09:00',chamada:'Garantir vaga'},
-  bento:{publico:'clientes',assunto:'promocao',titulo:'Banho e tosa com 20% na terça',apoio:'Válido para agendamentos pelo WhatsApp.',chamada:'Agendar'},
-  hero:{publico:'clientes',assunto:'novidade',titulo:'Pão de fermentação natural sai às 7h',apoio:'Encomende até as 18h do dia anterior.',chamada:'Encomendar'},
-  fmt:{publico:'clientes',campanha:true,assunto:'novidade',titulo:'Check-up completo em uma manhã',apoio:'Exames, consulta e resultado no mesmo dia.',chamada:'Agendar'}
-};
-async function pinta(){
-  for(const k of ['aurora','ventura','vento','bento'])await DPP.fontes(DPP.EXEMPLOS[k]);
-  document.querySelectorAll('canvas[data-marca]').forEach(c=>{
-    const m=DPP.EXEMPLOS[c.dataset.marca],r=EX[c.dataset.ex],out=DPP.desenhar(m,c.dataset.fmt,r);
-    DPP.previa(c,out.canvas,{maxW:c.dataset.fmt==='banner'?900:640,marcaDagua:false});
-  });
-}
-pinta();
+/* Formatos (Clínica Ventura) */
+const FMT={publico:'clientes',campanha:true,assunto:'novidade',titulo:'Check-up completo em uma manhã',apoio:'Exames, consulta e resultado no mesmo dia.',chamada:'Agendar'};
+(async()=>{await DPP.fontes(DPP.EXEMPLOS.ventura);document.querySelectorAll('canvas[data-marca]').forEach(c=>{const out=DPP.desenhar(DPP.EXEMPLOS[c.dataset.marca],c.dataset.fmt,FMT);DPP.previa(c,out.canvas,{maxW:c.dataset.fmt==='banner'?900:640,marcaDagua:false});});})();
 DPP.evento('landing_view');
-/* Demo do topo: nome + cor -> post ao vivo */
-const CORES=['#2F6FEB','#F9541C','#E2A62B','#2BB3A3','#7B4BD6','#D6336C','#1F8A4C','#14120F'];
-let dCor=CORES[5];
-const sw=document.getElementById('dCores');
-sw.innerHTML=CORES.map(c=>`<button type="button" style="background:${c}" aria-label="Cor ${c}" aria-pressed="${c===dCor}" data-c="${c}"></button>`).join('');
-let dp=0;
-async function demo(){
-  const id=++dp,nome=document.getElementById('dNome').value.trim()||'Sua empresa';
-  const m=DPP.marcaDeCor(nome,dCor,{ft:'Archivo',fx:'Inter',en:'cor',forma:'pilula',graf:'vetor'});
-  await DPP.fontes(m);if(id!==dp)return;
-  const o=DPP.desenhar(m,'post',{publico:'clientes',assunto:'novidade',titulo:'Seu recado aqui, do jeito da sua marca'});
-  const c=document.getElementById('dCv');DPP.previa(c,o.canvas,{maxW:520});c.setAttribute('aria-label',`Prévia de um post de ${nome}`);
-}
-sw.addEventListener('click',e=>{const b=e.target.closest('button[data-c]');if(!b)return;dCor=b.dataset.c;sw.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));demo();});
-document.getElementById('dNome').addEventListener('input',demo);
-document.getElementById('demo').addEventListener('submit',e=>{e.preventDefault();const n=document.getElementById('dNome').value.trim();location.href='app/?'+new URLSearchParams({nome:n,cor:dCor}).toString();});
-demo();
+/* Planos: mensal ou anual */
+const per=document.querySelector('.periodo');
+per.addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b)return;per.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const anual=b.dataset.p==='anual';
+  document.getElementById('preco').innerHTML=anual?'R$ 299<small>/ano</small>':'R$ 29,90<small>/mês</small>';
+  document.getElementById('eco').textContent=anual?'Economize R$ 59,80 em relação a 12 mensalidades.':'Cancele quando quiser, pelo painel.';});
 }
 </script>
 </body>

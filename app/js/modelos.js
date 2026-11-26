@@ -82,7 +82,7 @@
   }
 
   /* Script que encaixa o título: reduz até a pilha de texto caber na área. */
-  var ENCAIXE = '<script>(function(){function fit(){document.querySelectorAll("[data-pilha]").forEach(function(p){var mi=p.firstElementChild,t=p.querySelector("[data-fit]");if(!mi||!t)return;var base=parseFloat(t.getAttribute("data-fit")),k=1;t.style.fontSize=base+"px";mi.style.zoom="";while(mi.offsetHeight>p.clientHeight+1&&k>0.46){k-=0.03;t.style.fontSize=(base*k)+"px";}if(mi.offsetHeight>p.clientHeight+1){var z=p.clientHeight/mi.offsetHeight;mi.style.transformOrigin=p.style.justifyContent==="flex-start"?"0 0":"0 100%";mi.style.transform="scale("+z+")";mi.style.width=(100/z)+"%";}});document.body.setAttribute("data-pronto","1");}if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}fit();})();<\/script>';
+  var ENCAIXE = '<script>(function(){function fit(){document.querySelectorAll("[data-pilha]").forEach(function(p){var mi=p.firstElementChild,t=p.querySelector("[data-fit]");if(!mi||!t)return;var base=parseFloat(t.getAttribute("data-fit")),k=1;t.style.fontSize=base+"px";mi.style.zoom="";while((mi.offsetHeight>p.clientHeight+1||t.offsetWidth>p.clientWidth+1)&&k>0.46){k-=0.03;t.style.fontSize=(base*k)+"px";}if(mi.offsetHeight>p.clientHeight+1){var z=p.clientHeight/mi.offsetHeight;mi.style.transformOrigin=p.style.justifyContent==="flex-start"?"0 0":"0 100%";mi.style.transform="scale("+z+")";mi.style.width=(100/z)+"%";}});document.body.setAttribute("data-pronto","1");}if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}fit();})();<\/script>';
 
   function documento(marca, W, H, fundo, corpo, opts) {
     opts = opts || {};
