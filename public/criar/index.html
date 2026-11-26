@@ -5,39 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Criar · Criou</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800;900&family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=DM+Serif+Display&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
 /* VOICE: um atendente calmo que pergunta uma coisa de cada vez.
    IDEA: balcão de pedidos — perguntas de um lado, a peça pronta do outro.
    PICTURE: a peça (ou a campanha) ao vivo, com marca d'água de prévia.
    COLOUR and TYPE: creme, quase preto e laranja; Bricolage e Figtree.
    LAYOUT: perguntas à esquerda, peça à direita; no celular, peça primeiro. */
-:root{--bg:#F3F0E7;--ink:#14120F;--soft:#E7E2D6;--card:#FBF9F4;--line:#D6CFBF;--mute:#5E584D;--acc:#F9541C;--accInk:#B83A0E}
+:root{--bg:#FFFFFF;--ink:#111111;--soft:#F2F3F7;--card:#FFFFFF;--line:#E1E3EB;--mute:#4A4F63;--acc:#D4FF3A;--accInk:#1F3DFF;--blue:#1F3DFF;--pink:#FF2E88;--yel:#FFE500}
+.wm{font:900 22px/1 Unbounded,sans-serif;letter-spacing:-.03em;display:inline-flex;align-items:center}.wm b{font-weight:900;background:var(--acc);color:var(--blue);border-radius:14px 14px 14px 3px;padding:2px 7px 3px;margin-left:1px}
+
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
-h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,sans-serif;line-height:1.08;margin:0;text-wrap:balance}
-.pre{background:var(--ink);color:#F3F0E7;font-size:13.5px;text-align:center;padding:7px 16px}
-.top{display:flex;align-items:center;gap:16px;padding:14px max(4vw,16px);border-bottom:1px solid var(--line);flex-wrap:wrap}
-.logo{font:800 16px "Bricolage Grotesque",sans-serif;text-decoration:none;color:inherit;display:flex;align-items:center;gap:9px;margin-right:auto}
-.logo i{width:11px;height:11px;border-radius:50%;background:var(--acc)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Unbounded,Inter,sans-serif;line-height:1.08;margin:0;text-wrap:balance}
+.pre{background:var(--ink);color:#FFFFFF;font-size:13.5px;text-align:center;padding:7px 16px}
+.top{display:flex;align-items:center;gap:16px;padding:14px max(4vw,16px);background:var(--blue);color:#FFFFFF;flex-wrap:wrap}
+.logo{text-decoration:none;color:#FFFFFF;display:flex;align-items:center;margin-right:auto}
 .prog{display:flex;gap:6px;font-size:13.5px;font-weight:600}
-.prog span{padding:6px 12px;border-radius:999px;background:var(--soft);color:var(--mute)}
-.prog span.on{background:var(--ink);color:#F3F0E7}
+.prog span{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.14);color:#DCE2FF}
+.prog span.on{background:var(--acc);color:var(--blue)}
 .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;padding:22px max(4vw,16px) 56px;max-width:1320px;margin:0 auto;align-items:start}
 .panel{display:grid;gap:14px}
-.panel>h1{font-size:clamp(26px,3vw,36px)}
+.panel>h1{font-size:clamp(22px,2.6vw,32px);font-weight:900;letter-spacing:-.02em}
 .panel>p{margin:0;color:var(--mute)}
 .q{border:1px solid var(--line);background:var(--card);border-radius:22px;padding:16px 18px 18px;margin:0}
-.q legend{float:left;width:100%;font:700 17px "Bricolage Grotesque",sans-serif;margin-bottom:10px}
+.q legend{float:left;width:100%;font:600 15px Unbounded,sans-serif;margin-bottom:12px}
 .q .help{clear:both;color:var(--mute);font-size:14px;margin:8px 0 0}
 .chips{clear:both;display:flex;flex-wrap:wrap;gap:8px}
 .chips label{position:relative}
 .chips input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
 .chips span{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-weight:600;font-size:15px}
 .chips small{font-weight:400;color:var(--mute)}
-.chips input:checked+span{background:var(--ink);color:#F3F0E7;border-color:var(--ink)}
+.chips input:checked+span{background:var(--blue);color:#FFFFFF;border-color:var(--blue)}
 .chips input:checked+span small{color:inherit;opacity:.75}
-.chips input:focus-visible+span,button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.chips input:focus-visible+span,button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
 .f{clear:both;display:grid;gap:6px;margin-top:10px}
 .f label{font-size:14px;font-weight:600}
 input[type=text],input[type=date],input[type=time],textarea{width:100%;font:16px Figtree,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:11px 14px;min-height:46px}
@@ -46,10 +47,10 @@ textarea{resize:vertical;min-height:72px}
 .count{font-size:13px;color:var(--mute);justify-self:end}.count.bad{color:var(--accInk);font-weight:700}
 .colors{clear:both;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .colors button{width:44px;height:44px;border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--line);cursor:pointer}
-.colors button[aria-pressed=true]{box-shadow:0 0 0 3px var(--ink)}
+.colors button[aria-pressed=true]{box-shadow:0 0 0 3px var(--blue)}
 input[type=color]{width:56px;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:3px;cursor:pointer}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:999px;font:700 15px Figtree,sans-serif;text-decoration:none;border:0;cursor:pointer;background:var(--ink);color:#F3F0E7}
-.btn.acc{background:var(--acc);color:#14120F}.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:999px;font:700 15px Inter,sans-serif;text-decoration:none;border:0;cursor:pointer;background:var(--ink);color:#FFFFFF}
+.btn.acc{background:var(--acc);color:var(--blue)}.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .status{font-size:14px;color:var(--mute)}
 .out{position:sticky;top:12px;display:grid;gap:14px}
@@ -58,12 +59,12 @@ input[type=color]{width:56px;height:44px;border:1px solid var(--line);border-rad
 .stage.camp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.75fr);align-items:end}
 .stage.camp canvas{width:100%;max-height:none}
 .stage.camp canvas.b{grid-column:1/-1}
-.nudge{background:var(--ink);color:#F3F0E7;border-radius:22px;padding:16px 18px;display:grid;gap:10px}
+.nudge{background:var(--blue);color:#FFFFFF;border-radius:22px 22px 22px 6px;padding:16px 18px;display:grid;gap:10px}
 .nudge p{margin:0;font-weight:600}
 .why{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 20px}
 .why h2{font-size:19px;margin-bottom:10px}
 .why ol{margin:0;padding-left:20px;display:grid;gap:7px;font-size:15px}
-.why li::marker{color:var(--accInk);font-weight:700}
+.why li::marker{color:var(--blue);font-weight:700}
 .warn{display:grid;gap:6px;margin:0 0 12px;padding:0;list-style:none}
 .warn li{background:#FDE4D9;border-radius:12px;padding:8px 12px;font-size:14px}
 dialog{border:0;border-radius:26px;padding:26px;background:var(--card);color:var(--ink);max-width:min(92vw,520px)}
@@ -76,12 +77,12 @@ dialog h2{font-size:24px;margin-bottom:10px}
 </head>
 <body>
 <div class="pre">Pré-lançamento: a demonstração funciona sem cadastro. Salvar e baixar será liberado com a abertura do cadastro.</div>
-<header class="top"><a class="logo" href="../"><i></i>CRIOU</a>
+<header class="top"><a class="logo" href="../"><span class="wm">cri<b>ou</b></span></a>
   <div class="prog" aria-label="Etapas"><span id="p1" class="on">1 · Sua empresa</span><span id="p2">2 · O que você precisa</span></div></header>
 
 <main class="grid">
   <section class="panel" id="etapa1" aria-label="Sua empresa">
-    <h1>Vamos começar pela sua empresa.</h1>
+    <h1>E aí, cria? Vamos começar pela sua empresa.</h1>
     <p>Três respostas e o sistema já sabe como suas peças devem parecer.</p>
     <fieldset class="q"><legend>Qual é o nome da sua empresa?</legend>
       <div class="f"><input type="text" id="nome" maxlength="40" placeholder="Ex.: Ateliê Lua" autocomplete="organization"></div></fieldset>
@@ -94,7 +95,7 @@ dialog h2{font-size:24px;margin-bottom:10px}
   </section>
 
   <section class="panel" id="etapa2" aria-label="O que você precisa" hidden>
-    <h1>O que você precisa comunicar?</h1>
+    <h1>Qual é o recado de hoje?</h1>
     <p>Responda sobre o conteúdo. As decisões de design ficam com o sistema.</p>
     <fieldset class="q"><legend>O que você precisa criar?</legend><div class="chips" id="q-formato"></div></fieldset>
     <fieldset class="q"><legend>Para quem é essa comunicação?</legend><div class="chips" id="q-publico"></div></fieldset>
@@ -188,7 +189,7 @@ async function render(){
   $('motivos').innerHTML=d.motivos.map(([a,b])=>`<li><b>${esc(a)}:</b> ${esc(b)}</li>`).join('');
   $('avisos').innerHTML=d.avisos.map(a=>`<li>${esc(a)}</li>`).join('');
 }
-function nudge(txt,btns){$('nudge').hidden=false;$('nudgeTxt').textContent=txt;$('nudgeAct').innerHTML='';btns.forEach(([t,cls,fn])=>{const b=document.createElement('button');b.className='btn '+(cls==='acc'?'acc':'ghost');if(cls!=='acc')b.style.cssText='color:#F3F0E7;border-color:#5E584D';b.textContent=t;b.onclick=fn;$('nudgeAct').appendChild(b);});}
+function nudge(txt,btns){$('nudge').hidden=false;$('nudgeTxt').textContent=txt;$('nudgeAct').innerHTML='';btns.forEach(([t,cls,fn])=>{const b=document.createElement('button');b.className='btn '+(cls==='acc'?'acc':'ghost');if(cls!=='acc')b.style.cssText='color:#FFFFFF;border-color:rgba(255,255,255,.5)';b.textContent=t;b.onclick=fn;$('nudgeAct').appendChild(b);});}
 function abrirCadastro(){DPP.evento('signup_started');$('dlg').showModal();}
 $('fechar').onclick=()=>$('dlg').close();
 /* Botão direito e arrastar ficam desligados na prévia: ela é para visualizar. */
