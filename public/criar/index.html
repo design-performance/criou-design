@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criar · Design por Perguntas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+/* VOICE: um atendente calmo que pergunta uma coisa de cada vez.
+   IDEA: balcão de pedidos — perguntas de um lado, a peça pronta do outro.
+   PICTURE: a peça (ou a campanha) ao vivo, com marca d'água de prévia.
+   COLOUR and TYPE: creme, quase preto e laranja; Bricolage e Figtree.
+   LAYOUT: perguntas à esquerda, peça à direita; no celular, peça primeiro. */
+:root{--bg:#F3F0E7;--ink:#14120F;--soft:#E7E2D6;--card:#FBF9F4;--line:#D6CFBF;--mute:#5E584D;--acc:#F9541C;--accInk:#B83A0E}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,sans-serif;line-height:1.08;margin:0;text-wrap:balance}
+.pre{background:var(--ink);color:#F3F0E7;font-size:13.5px;text-align:center;padding:7px 16px}
+.top{display:flex;align-items:center;gap:16px;padding:14px max(4vw,16px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{font:800 16px "Bricolage Grotesque",sans-serif;text-decoration:none;color:inherit;display:flex;align-items:center;gap:9px;margin-right:auto}
+.logo i{width:11px;height:11px;border-radius:50%;background:var(--acc)}
+.prog{display:flex;gap:6px;font-size:13.5px;font-weight:600}
+.prog span{padding:6px 12px;border-radius:999px;background:var(--soft);color:var(--mute)}
+.prog span.on{background:var(--ink);color:#F3F0E7}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;padding:22px max(4vw,16px) 56px;max-width:1320px;margin:0 auto;align-items:start}
+.panel{display:grid;gap:14px}
+.panel>h1{font-size:clamp(26px,3vw,36px)}
+.panel>p{margin:0;color:var(--mute)}
+.q{border:1px solid var(--line);background:var(--card);border-radius:22px;padding:16px 18px 18px;margin:0}
+.q legend{float:left;width:100%;font:700 17px "Bricolage Grotesque",sans-serif;margin-bottom:10px}
+.q .help{clear:both;color:var(--mute);font-size:14px;margin:8px 0 0}
+.chips{clear:both;display:flex;flex-wrap:wrap;gap:8px}
+.chips label{position:relative}
+.chips input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chips span{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-weight:600;font-size:15px}
+.chips small{font-weight:400;color:var(--mute)}
+.chips input:checked+span{background:var(--ink);color:#F3F0E7;border-color:var(--ink)}
+.chips input:checked+span small{color:inherit;opacity:.75}
+.chips input:focus-visible+span,button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.f{clear:both;display:grid;gap:6px;margin-top:10px}
+.f label{font-size:14px;font-weight:600}
+input[type=text],input[type=date],input[type=time],textarea{width:100%;font:16px Figtree,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:11px 14px;min-height:46px}
+textarea{resize:vertical;min-height:72px}
+.row{clear:both;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.count{font-size:13px;color:var(--mute);justify-self:end}.count.bad{color:var(--accInk);font-weight:700}
+.colors{clear:both;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.colors button{width:44px;height:44px;border-radius:50%;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--line);cursor:pointer}
+.colors button[aria-pressed=true]{box-shadow:0 0 0 3px var(--ink)}
+input[type=color]{width:56px;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:3px;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:999px;font:700 15px Figtree,sans-serif;text-decoration:none;border:0;cursor:pointer;background:var(--ink);color:#F3F0E7}
+.btn.acc{background:var(--acc);color:#14120F}.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.status{font-size:14px;color:var(--mute)}
+.out{position:sticky;top:12px;display:grid;gap:14px}
+.stage{background:var(--soft);border-radius:28px;padding:clamp(14px,2.4vw,26px);display:flex;gap:12px;align-items:flex-end;justify-content:center;min-height:340px}
+.stage canvas{max-width:100%;max-height:64vh;width:auto;height:auto;border-radius:6px;box-shadow:0 18px 40px -18px rgba(0,0,0,.45)}
+.stage.camp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.75fr);align-items:end}
+.stage.camp canvas{width:100%;max-height:none}
+.stage.camp canvas.b{grid-column:1/-1}
+.nudge{background:var(--ink);color:#F3F0E7;border-radius:22px;padding:16px 18px;display:grid;gap:10px}
+.nudge p{margin:0;font-weight:600}
+.why{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 20px}
+.why h2{font-size:19px;margin-bottom:10px}
+.why ol{margin:0;padding-left:20px;display:grid;gap:7px;font-size:15px}
+.why li::marker{color:var(--accInk);font-weight:700}
+.warn{display:grid;gap:6px;margin:0 0 12px;padding:0;list-style:none}
+.warn li{background:#FDE4D9;border-radius:12px;padding:8px 12px;font-size:14px}
+dialog{border:0;border-radius:26px;padding:26px;background:var(--card);color:var(--ink);max-width:min(92vw,520px)}
+dialog::backdrop{background:rgba(20,18,15,.6)}
+dialog h2{font-size:24px;margin-bottom:10px}
+[hidden]{display:none!important}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.out{position:static;order:-1}.stage canvas{max-height:42vh}.stage.camp canvas{max-height:none}}
+@media(max-width:520px){.row{grid-template-columns:minmax(0,1fr)}.prog{display:none}}
+</style>
+</head>
+<body>
+<div class="pre">Pré-lançamento: a demonstração funciona sem cadastro. Salvar e baixar será liberado com a abertura do cadastro.</div>
+<header class="top"><a class="logo" href="../"><i></i>DESIGN POR PERGUNTAS</a>
+  <div class="prog" aria-label="Etapas"><span id="p1" class="on">1 · Sua empresa</span><span id="p2">2 · O que você precisa</span></div></header>
+
+<main class="grid">
+  <section class="panel" id="etapa1" aria-label="Sua empresa">
+    <h1>Vamos começar pela sua empresa.</h1>
+    <p>Três respostas e o sistema já sabe como suas peças devem parecer.</p>
+    <fieldset class="q"><legend>Qual é o nome da sua empresa?</legend>
+      <div class="f"><input type="text" id="nome" maxlength="40" placeholder="Ex.: Ateliê Lua" autocomplete="organization"></div></fieldset>
+    <fieldset class="q"><legend>Você possui logotipo?</legend>
+      <div class="actions" style="clear:both"><label class="btn ghost" for="logo">Enviar logotipo (PNG)</label><input type="file" id="logo" accept="image/png,image/jpeg,image/webp" hidden><button class="btn ghost" id="semLogo" hidden>Remover</button><span class="status" id="logoNome">Sem logotipo: usamos o nome da empresa.</span></div></fieldset>
+    <fieldset class="q"><legend>Qual é a cor principal da sua marca?</legend>
+      <div class="colors" id="cores"></div>
+      <p class="help">Não sabe o código? Escolha a mais próxima. O sistema monta as outras cores e só usa combinações que passam no teste de contraste.</p></fieldset>
+    <div class="actions"><button class="btn acc" id="ir2">Continuar</button><span class="status" id="st1"></span></div>
+  </section>
+
+  <section class="panel" id="etapa2" aria-label="O que você precisa" hidden>
+    <h1>O que você precisa comunicar?</h1>
+    <p>Responda sobre o conteúdo. As decisões de design ficam com o sistema.</p>
+    <fieldset class="q"><legend>O que você precisa criar?</legend><div class="chips" id="q-formato"></div></fieldset>
+    <fieldset class="q"><legend>Para quem é essa comunicação?</legend><div class="chips" id="q-publico"></div></fieldset>
+    <fieldset class="q"><legend>Qual é o assunto?</legend><div class="chips" id="q-assunto"></div></fieldset>
+    <fieldset class="q"><legend>Qual é a mensagem principal?</legend>
+      <div class="f"><label for="titulo">Título</label><input type="text" id="titulo" maxlength="90"><span class="count" id="c-titulo"></span></div>
+      <div class="f"><label for="apoio">Frase de apoio <small>(opcional)</small></label><textarea id="apoio" maxlength="140"></textarea><span class="count" id="c-apoio"></span></div></fieldset>
+    <fieldset class="q"><legend>Existe uma data ou local?</legend>
+      <div class="row"><div class="f"><label for="data">Data</label><input type="date" id="data"></div><div class="f"><label for="hora">Horário</label><input type="time" id="hora"></div><div class="f"><label for="local">Local</label><input type="text" id="local" maxlength="28" placeholder="Ex.: Online"></div></div></fieldset>
+    <fieldset class="q"><legend>Você deseja que o público realize alguma ação?</legend>
+      <div class="f"><label for="chamada">Texto do botão <small>(opcional)</small></label><input type="text" id="chamada" maxlength="24" placeholder="Ex.: Fale com a gente"></div></fieldset>
+    <fieldset class="q"><legend>Você possui alguma fotografia para utilizar?</legend>
+      <div class="actions" style="clear:both"><label class="btn ghost" for="foto">Enviar foto</label><input type="file" id="foto" accept="image/*" hidden><button class="btn ghost" id="semFoto" hidden>Tirar foto</button><span class="status" id="fotoNome">Sem foto</span></div></fieldset>
+    <div class="actions"><button class="btn ghost" id="volta1">Voltar para a empresa</button></div>
+  </section>
+
+  <aside class="out" aria-label="Prévia">
+    <div class="stage" id="stage"><canvas id="cv1" role="img" aria-label="Prévia da peça"></canvas></div>
+    <div class="nudge" id="nudge" hidden><p id="nudgeTxt"></p><div class="actions" id="nudgeAct"></div></div>
+    <div class="why"><ul class="warn" id="avisos"></ul><h2>Por que ficou assim</h2><ol id="motivos"><li>Responda as perguntas e o sistema explica cada decisão.</li></ol></div>
+  </aside>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlgT">
+  <h2 id="dlgT">Crie sua conta gratuita para salvar e baixar sua primeira campanha completa.</h2>
+  <p>Estamos finalizando o cadastro. Quando ele abrir, você vai poder salvar esta marca e baixar a primeira campanha (post, story e banner) sem marca d'água, depois de confirmar o seu e-mail.</p>
+  <p class="status">Por enquanto, a demonstração funciona sem conta e nenhum dado seu é guardado.</p>
+  <div class="actions" style="margin-top:14px"><button class="btn" id="fechar">Continuar experimentando</button></div>
+</dialog>
+
+<script src="../js/motor.js"></script>
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const CORES=['#F9541C','#E2A62B','#2BB3A3','#2F6FEB','#7B4BD6','#D6336C','#1F8A4C','#14120F'];
+const st={nome:'',logo:null,cor:'#F9541C',formato:'post',publico:'clientes',assunto:'novidade',titulo:'',apoio:'',data:'',hora:'',local:'',chamada:'',foto:null,campanha:false,viuPrevia:false};
+let marca=DPP.marcaDeCor('Sua empresa',st.cor);
+DPP.evento('demo_started');
+
+/* ---------- etapa 1 ---------- */
+$('cores').innerHTML=CORES.map(c=>`<button type="button" style="background:${c}" aria-label="Cor ${c}" aria-pressed="${c===st.cor}" data-c="${c}"></button>`).join('')+`<label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600">Outra<input type="color" id="corLivre" value="${st.cor}"></label>`;
+const setCor=c=>{st.cor=c;document.querySelectorAll('#cores button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===c));$('corLivre').value=c;atualizaMarca();};
+$('cores').addEventListener('click',e=>{const b=e.target.closest('button[data-c]');if(b)setCor(b.dataset.c);});
+$('corLivre').addEventListener('input',e=>setCor(e.target.value));
+$('nome').addEventListener('input',()=>{st.nome=$('nome').value;atualizaMarca();});
+const lerImg=(file,cb)=>{if(file.size>8e6){alertar('Imagem muito grande. Use um arquivo de até 8 MB.');return;}const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>cb(im);im.src=fr.result;};fr.readAsDataURL(file);};
+const alertar=t=>{$('st1').textContent=t;};
+$('logo').onchange=e=>{const f=e.target.files[0];if(!f)return;lerImg(f,im=>{st.logo=im;$('logoNome').textContent=f.name;$('semLogo').hidden=false;atualizaMarca();});};
+$('semLogo').onclick=()=>{st.logo=null;$('logo').value='';$('logoNome').textContent='Sem logotipo: usamos o nome da empresa.';$('semLogo').hidden=true;atualizaMarca();};
+function atualizaMarca(){marca=DPP.marcaDeCor(st.nome||'Sua empresa',st.cor,{logo:st.logo});render();}
+$('ir2').onclick=()=>{if(!st.nome.trim()){alertar('Escreva o nome da empresa para continuar.');$('nome').focus();return;}
+  DPP.evento('brand_completed');$('etapa1').hidden=true;$('etapa2').hidden=false;$('p1').classList.remove('on');$('p2').classList.add('on');
+  if(!st.titulo){st.titulo='Novidade fresquinha para você';$('titulo').value=st.titulo;cont('titulo',45,90);}render();window.scrollTo({top:0,behavior:'smooth'});};
+$('volta1').onclick=()=>{$('etapa2').hidden=true;$('etapa1').hidden=false;$('p2').classList.remove('on');$('p1').classList.add('on');};
+
+/* ---------- etapa 2 ---------- */
+function chips(el,name,ops,val,on){el.innerHTML=Object.entries(ops).map(([k,v])=>`<label><input type="radio" name="${name}" value="${esc(k)}" ${k===val?'checked':''}><span>${v}</span></label>`).join('');el.onchange=e=>on(e.target.value);}
+chips($('q-formato'),'formato',{post:'Post <small>1080 × 1350</small>',story:'Story <small>1080 × 1920</small>',banner:'Banner <small>1500 × 500</small>',campanha:'Campanha completa <small>os três</small>'},st.formato,v=>{if(v==='campanha'){st.campanha=true;DPP.evento('campaign_started');}else{st.campanha=false;st.formato=v;}render();});
+chips($('q-publico'),'publico',DPP.PUBLICOS,st.publico,v=>{st.publico=v;render();});
+chips($('q-assunto'),'assunto',DPP.ASSUNTOS,st.assunto,v=>{st.assunto=v;render();});
+const cont=(id,ideal,max)=>{const n=$(id).value.length,c=$('c-'+id);c.textContent=`${n} de ${max}${ideal?` · ideal até ${ideal}`:''}`;c.classList.toggle('bad',!!ideal&&n>ideal);};
+[['titulo',45,90],['apoio',0,140]].forEach(([id,i,mx])=>{cont(id,i,mx);$(id).addEventListener('input',()=>{st[id]=$(id).value;cont(id,i,mx);render();});});
+['data','hora','local','chamada'].forEach(id=>$(id).addEventListener('input',()=>{st[id]=$(id).value;render();}));
+$('foto').onchange=e=>{const f=e.target.files[0];if(!f)return;lerImg(f,im=>{st.foto=im;$('fotoNome').textContent=f.name;$('semFoto').hidden=false;render();});};
+$('semFoto').onclick=()=>{st.foto=null;$('foto').value='';$('fotoNome').textContent='Sem foto';$('semFoto').hidden=true;render();};
+
+/* ---------- prévia ---------- */
+let pend=0;
+async function render(){
+  const id=++pend;await DPP.fontes(marca);if(id!==pend)return;
+  const r={publico:st.publico,assunto:st.assunto,titulo:st.titulo||(st.nome?`${st.nome}: sua mensagem aqui`:'Sua mensagem aqui'),apoio:st.apoio,data:st.data,hora:st.hora,local:st.local,chamada:st.chamada,foto:st.foto};
+  const stage=$('stage');let d;
+  if(st.campanha){
+    stage.classList.add('camp');
+    const outs=['post','story','banner'].map(f=>DPP.desenhar(marca,f,r));
+    stage.innerHTML='<canvas class="p" role="img" aria-label="Prévia do post"></canvas><canvas class="s" role="img" aria-label="Prévia do story"></canvas><canvas class="b" role="img" aria-label="Prévia do banner"></canvas>';
+    const cs=stage.querySelectorAll('canvas');outs.forEach((o,i)=>DPP.previa(cs[i],o.canvas,{maxW:i===2?760:420}));
+    d=outs[0].decisao;d={...d,motivos:[['Campanha','a mesma mensagem foi adaptada para post, story e banner, com a mesma identidade visual.'],...d.motivos.filter(x=>x[0]!=='Formato')]};
+    nudge('Você acabou de criar uma campanha com três formatos, sem precisar editar uma única peça.',[['Salvar e baixar minha campanha','acc',abrirCadastro]]);
+    DPP.evento('campaign_completed');
+  }else{
+    stage.classList.remove('camp');
+    if(!stage.querySelector('#cv1')){stage.innerHTML='<canvas id="cv1" role="img" aria-label="Prévia da peça"></canvas>';}
+    const o=DPP.desenhar(marca,st.formato,r);DPP.previa($('cv1'),o.canvas,{maxW:st.formato==='banner'?820:520});d=o.decisao;
+    if(!$('etapa2').hidden){
+      if(!st.viuPrevia){st.viuPrevia=true;DPP.evento('first_preview');}
+      nudge('Sua primeira peça está pronta. Vamos transformar essa mensagem em uma campanha completa?',[['Gerar campanha completa','acc',()=>{document.querySelector('input[name=formato][value=campanha]').checked=true;st.campanha=true;DPP.evento('campaign_started');render();}],['Salvar e baixar','ghost',abrirCadastro]]);
+    }else $('nudge').hidden=true;
+  }
+  $('motivos').innerHTML=d.motivos.map(([a,b])=>`<li><b>${esc(a)}:</b> ${esc(b)}</li>`).join('');
+  $('avisos').innerHTML=d.avisos.map(a=>`<li>${esc(a)}</li>`).join('');
+}
+function nudge(txt,btns){$('nudge').hidden=false;$('nudgeTxt').textContent=txt;$('nudgeAct').innerHTML='';btns.forEach(([t,cls,fn])=>{const b=document.createElement('button');b.className='btn '+(cls==='acc'?'acc':'ghost');if(cls!=='acc')b.style.cssText='color:#F3F0E7;border-color:#5E584D';b.textContent=t;b.onclick=fn;$('nudgeAct').appendChild(b);});}
+function abrirCadastro(){DPP.evento('signup_started');$('dlg').showModal();}
+$('fechar').onclick=()=>$('dlg').close();
+/* Botão direito e arrastar ficam desligados na prévia: ela é para visualizar. */
+$('stage').addEventListener('contextmenu',e=>e.preventDefault());
+$('stage').addEventListener('dragstart',e=>e.preventDefault());
+render();
+}
+</script>
+</body>
+</html>

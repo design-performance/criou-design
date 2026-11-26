@@ -6,25 +6,32 @@ Não é um editor. Não tem tela de edição livre: só aparecem escolhas segura
 
 > Protótipo. A marca de exemplo é a JS® (Joander Santos). Padaria Aurora e Clínica Ventura são marcas fictícias, usadas para mostrar a troca de marca.
 
-## O que já funciona
+## O que está no ar
 
-- **Criar peça:** 8 perguntas → post do feed (1080×1350), story (1080×1920) ou banner do site (1500×500).
-- **Por que ficou assim:** cada decisão do sistema explicada em linguagem simples.
-- **Avisos de texto:** título longo, tudo em maiúsculas, excesso de "!", "clique aqui".
-- **Marca:** nome, logo (texto ou PNG), 3 cores por papel, fontes, forma (pílula, arredondado, reto) e grafismo (vetor, pontos, faixa).
-- **Contraste:** o sistema testa cada combinação de cores e esconde as que não passam em 4,5:1.
-- **Pacote de marca:** tudo o que a marca define sai num JSON. O motor é o mesmo para qualquer empresa.
-- **Baixar PNG** no tamanho exato do formato.
+- **Página de venda** (`/`): textos do documento-base (Parte 2), com peças reais geradas pelo motor (marcas fictícias), planos e dúvidas frequentes. Faixa de pré-lançamento: cadastro, download e planos ainda não estão abertos.
+- **Demonstração sem cadastro** (`/criar/`): etapa 1 (nome, logotipo opcional, cor principal) e etapa 2 (formato, público, assunto, mensagem, data, ação, foto). Prévia com marca d'água em resolução de tela, campanha completa (post, story e banner), "Por que ficou assim" e os gatilhos comerciais da Parte 6.2. "Salvar e baixar" abre o aviso de cadastro (nenhum dado é coletado ainda).
+- **Protótipo original** (`/prototipo/`): a primeira versão, com a aba Marca, troca de marcas e o pacote de marca em JSON.
 
 ## Como está organizado
 
 ```
 public/
-  index.html          Protótipo completo (interface, motor de decisões e desenho em canvas)
-wrangler.jsonc        Configuração do Worker da Cloudflare que serve o site
+  index.html          Página de venda
+  criar/index.html    Demonstração sem cadastro
+  prototipo/          Protótipo original
+  js/motor.js         Motor: decisões (com o porquê), desenho em canvas, prévia com marca d'água, eventos
+wrangler.jsonc        Worker da Cloudflare que serve o site
 ```
 
-Próximo passo de código: separar `public/index.html` em `motor.js` (decisões), `desenho.js` (canvas), `marcas/*.json` (pacotes de marca) e `formatos/*.json`, seguindo o modelo do Sistema de Marketing.
+O motor (`public/js/motor.js`) é um só para qualquer marca: recebe o pacote de marca, o formato e as respostas, e devolve a peça e as decisões. Os eventos de conversão da Parte 6.3 já são registrados em `window.__eventos`; vão para a API quando o backend existir.
+
+## Próximos passos (MVP)
+
+1. Cadastro por código (Brevo), Turnstile e bloqueio de e-mail temporário.
+2. Banco D1 (contas, marcas, peças, aceite dos termos) e R2 (logos, fotos).
+3. Download da primeira campanha sem marca d'água, uma por pessoa e por empresa.
+4. Assinatura mensal e anual pelo Asaas, com cancelamento no painel.
+5. Termos de Uso e Política de Privacidade revisados por advogado e publicados.
 
 ## Testar no computador
 
