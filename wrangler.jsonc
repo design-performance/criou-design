@@ -1,0 +1,9 @@
+{
+  // Site estático servido por um Worker da Cloudflare.
+  // Tudo o que está em public/ vai para o ar.
+  "name": "design-por-pergunta",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./public"
+  }
+}
