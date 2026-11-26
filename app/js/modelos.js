@@ -1,0 +1,382 @@
+/* ============================================================
+   Criou · Modelos
+   Um desenho por estilo (Simples, Sofisticado, Robusto) que se adapta
+   à proporção do formato: horizontal, quadrado ou vertical.
+   Cada peça é um HTML do tamanho exato, com as partes marcadas para a
+   exportação (data-x="peca|caixa|img|texto"): a mesma marcação vira
+   PNG, PDF e PowerPoint com texto editável.
+   ============================================================ */
+(function (raiz) {
+  'use strict';
+
+  var M = raiz.CriouMarca, C = M.cor;
+  var MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+  var DIAS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function limpar(v) { return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); }
+  function px(n) { return Math.round(n) + 'px'; }
+
+  /* Texto com marcas → HTML. realce: como o ==destaque== aparece neste estilo. */
+  function rico(t, realce) {
+    var s = esc(t);
+    s = s.replace(/==\(([a-z0-9-]+)\)([\s\S]+?)==/gi, function (_, id, x) { return realce(x, id); })
+      .replace(/==([\s\S]+?)==/g, function (_, x) { return realce(x, 'destaque'); })
+      .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/(^|[^*\w])\*(?=\S)([^*\n]+?)\*(?!\*)/g, '$1<em>$2</em>');
+    return s;
+  }
+
+  function dataTexto(d, hora, local) {
+    if (!d) return limpar([hora, local].filter(Boolean).join(' · '));
+    var p = String(d).split('-'); if (p.length !== 3) return '';
+    var dt = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    var partes = [Number(p[2]) + ' ' + MESES[dt.getMonth()], DIAS[dt.getDay()]];
+    if (hora) partes.push(hora.replace(/^(\d\d):00$/, '$1h').replace(':', 'h'));
+    if (local) partes.push(local);
+    return partes.join(' · ');
+  }
+
+  /* ---------- Peças: primitivas ---------- */
+  function caixa(st, extra) { return '<div data-x="caixa" style="' + st + '"' + (extra || '') + '></div>'; }
+  function abs(x, y, w, h) { return 'position:absolute;left:' + px(x) + ';top:' + px(y) + ';width:' + px(w) + ';' + (h != null ? 'height:' + px(h) + ';' : ''); }
+
+  /* Logotipo: imagem cadastrada ou o nome escrito na fonte de título.
+     Sobre fundo escuro, sem versão clara, o logo entra numa plaquinha branca. */
+  function logo(marca, P, h, fundo, maxW) {
+    if (fundo === 'foto') {
+      // Sobre foto: sempre numa plaquinha branca, para ler em qualquer imagem.
+      var dentro = marca.logo ? '<img data-x="img" src="' + marca.logo + '" alt="' + esc(marca.nome) + '" style="height:' + px(h * 0.8) + ';max-width:' + px(maxW) + ';object-fit:contain;display:block">'
+        : '<span data-x="texto" style="font-family:' + M.pilha(marca.fontes.titulo) + ';font-weight:800;font-size:' + px(h * 0.5) + ';line-height:1;color:' + P.escura + ';white-space:nowrap">' + esc(marca.nome) + '</span>';
+      var pd = Math.round(h * 0.3);
+      return '<div data-x="caixa" style="background:#fff;border-radius:' + px(h * 0.25) + ';padding:' + px(pd) + ' ' + px(pd * 1.3) + ';display:inline-flex;align-items:center">' + dentro + '</div>';
+    }
+    var escuro = C.lum(fundo) < 0.4;
+    if (marca.logoClaro && escuro) return '<img data-x="img" src="' + marca.logoClaro + '" alt="' + esc(marca.nome) + '" style="height:' + px(h) + ';max-width:' + px(maxW) + ';object-fit:contain;display:block">';
+    if (marca.logo) {
+      var img = '<img data-x="img" src="' + marca.logo + '" alt="' + esc(marca.nome) + '" style="height:' + px(h) + ';max-width:' + px(maxW) + ';object-fit:contain;display:block">';
+      if (!escuro) return img;
+      var pad = Math.round(h * 0.32);
+      return '<div data-x="caixa" style="background:#fff;border-radius:' + px(h * 0.25) + ';padding:' + px(pad) + ' ' + px(pad * 1.3) + ';display:inline-flex">' + img.replace('height:' + px(h), 'height:' + px(h * 0.8)) + '</div>';
+    }
+    var cor = escuro ? '#ffffff' : P.escura;
+    return '<div data-x="texto" style="font-family:' + M.pilha(marca.fontes.titulo) + ';font-weight:800;font-size:' + px(h * 0.62) + ';line-height:1;color:' + cor + ';letter-spacing:-0.01em;white-space:nowrap">' + esc(marca.nome) + '</div>';
+  }
+
+  /* Botão na cor de ação; se ela some no fundo, cai para uma cor que aparece. */
+  function corBotao(P, fundo) {
+    var bg = P.acao;
+    if (C.contraste(bg, fundo) < 1.8) bg = C.lum(fundo) < 0.4 ? P.destaque : P.escura;
+    if (C.contraste(bg, fundo) < 1.8) bg = C.lum(fundo) < 0.4 ? '#ffffff' : '#111111';
+    return { bg: bg, tx: C.sobre(bg, P.escura) };
+  }
+  function botao(texto, marca, P, fundo, tam, alinhar) {
+    if (!limpar(texto)) return '';
+    var b = corBotao(P, fundo), alt = tam * 2.6, raio = M.FORMAS[marca.forma] ? M.FORMAS[marca.forma].raio(alt) : [8, 8, 8, 8];
+    return '<div style="display:flex;justify-content:' + (alinhar === 'center' ? 'center' : 'flex-start') + ';margin-top:' + px(tam * 1.1) + '"><div data-x="caixa" style="background:' + b.bg + ';border-radius:' + M.raioCss(raio) + ';height:' + px(alt) + ';padding:0 ' + px(tam * 1.3) + ';display:inline-flex;align-items:center">' +
+      '<span data-x="texto" data-forma="botao" style="font-family:' + M.pilha(marca.fontes.texto) + ';font-weight:700;font-size:' + px(tam) + ';line-height:1.1;color:' + b.tx + ';white-space:nowrap">' + esc(texto) + '</span></div></div>';
+  }
+  function foto(src, x, y, w, h) {
+    if (!src) return caixa(abs(x, y, w, h) + 'background:#d9d9de');
+    return '<img data-x="img" src="' + src + '" alt="" style="' + abs(x, y, w, h) + 'display:block;object-fit:cover">';
+  }
+
+  /* Script que encaixa o título: reduz até a pilha de texto caber na área. */
+  var ENCAIXE = '<script>(function(){function fit(){document.querySelectorAll("[data-pilha]").forEach(function(p){var mi=p.firstElementChild,t=p.querySelector("[data-fit]");if(!mi||!t)return;var base=parseFloat(t.getAttribute("data-fit")),k=1;t.style.fontSize=base+"px";mi.style.zoom="";while(mi.offsetHeight>p.clientHeight+1&&k>0.46){k-=0.03;t.style.fontSize=(base*k)+"px";}if(mi.offsetHeight>p.clientHeight+1){var z=p.clientHeight/mi.offsetHeight;mi.style.transformOrigin=p.style.justifyContent==="flex-start"?"0 0":"0 100%";mi.style.transform="scale("+z+")";mi.style.width=(100/z)+"%";}});document.body.setAttribute("data-pronto","1");}if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}fit();})();<\/script>';
+
+  function documento(marca, W, H, fundo, corpo, opts) {
+    opts = opts || {};
+    var fontes = M.urlFontes([marca.fontes.titulo, marca.fontes.texto]);
+    var marcaDagua = '';
+    if (opts.previa) {
+      var linhas = '', tam = Math.round(Math.min(W, H) * 0.075);
+      for (var i = -2; i < Math.ceil(H / (tam * 3)) + 2; i++) linhas += '<div style="white-space:nowrap;margin-left:' + px((i % 2) * tam * 2 - tam * 3) + '">' + new Array(14).join('PRÉVIA · CRIOU &nbsp;&nbsp; ') + '</div>';
+      marcaDagua = '<div aria-hidden="true" style="position:absolute;inset:-20%;transform:rotate(-24deg);font:800 ' + px(tam) + '/' + px(tam * 3) + ' Arial,sans-serif;color:rgba(128,128,128,.28);pointer-events:none;z-index:50">' + linhas + '</div>';
+    }
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><link rel="stylesheet" href="' + fontes + '">' +
+      '<style>html,body{margin:0;padding:0;background:#fff}*{box-sizing:border-box}strong{font-weight:800}em{font-style:italic}</style></head><body>' +
+      '<div data-x="peca" style="position:relative;width:' + px(W) + ';height:' + px(H) + ';overflow:hidden;background:' + fundo + '">' + corpo + marcaDagua + '</div>' + ENCAIXE + '</body></html>';
+  }
+
+  /* ---------- Contexto comum ---------- */
+  function contexto(formato, dados, marca, dec) {
+    var W = formato.largura, H = formato.altura, m = formato.margem;
+    var mg = formato.margens || {}, mt = mg.topo != null ? mg.topo : m, mb = mg.base != null ? mg.base : m;
+    var tipo = dec.tipo, U = tipo === 'largo' ? H * 1.55 : W;
+    if (tipo === 'alto' && H / W < 1.5) U = W * 1.04;
+    return {
+      W: W, H: H, m: m, mt: mt, mb: mb, tipo: tipo, U: U, P: dec.paleta, marca: marca, dados: dados, dec: dec,
+      foto: dados._foto || '', temFoto: dec.temFoto,
+      titulo: limpar(dados.titulo) || 'Seu recado aqui', vazio: !limpar(dados.titulo),
+      apoio: limpar(dados.apoio), data: dataTexto(dados.data, dados.hora, dados.local),
+      chamada: limpar(dados.chamada), selo: dec.assunto.selo,
+      rodape: [limpar(marca.rodape.site), limpar(marca.rodape.social)].filter(Boolean).join('   ·   '),
+      legal: limpar(marca.legal),
+      fT: M.pilha(marca.fontes.titulo), fX: M.pilha(marca.fontes.texto)
+    };
+  }
+
+  function rodapeHtml(c, cor, alinhar, y) {
+    var t = c.U * 0.02, partes = '';
+    if (c.rodape) partes += '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:600;font-size:' + px(t) + ';line-height:1.3;color:' + cor + ';text-align:' + alinhar + '">' + esc(c.rodape) + '</div>';
+    if (c.legal) partes += '<div data-x="texto" style="font-family:' + c.fX + ';font-size:' + px(t * 0.78) + ';line-height:1.3;color:' + cor + ';opacity:1;text-align:' + alinhar + ';margin-top:' + px(t * 0.35) + '">' + esc(c.legal) + '</div>';
+    if (!partes) return { html: '', h: 0 };
+    var h = (c.rodape ? t * 1.3 : 0) + (c.legal ? t * 0.78 * 1.3 * (c.legal.length > 90 ? 2 : 1) + t * 0.35 : 0);
+    return { html: '<div style="' + abs(c.m, c.H - c.mb - h, c.W - 2 * c.m) + '">' + partes + '</div>', h: h };
+  }
+
+  function pilha(x, y, w, h, conteudo, alinhar, justificar) {
+    var ai = alinhar === 'center' ? 'center' : 'flex-start';
+    return '<div data-pilha style="' + abs(x, y, w, h) + 'display:flex;flex-direction:column;justify-content:' + (justificar || 'flex-end') + ';overflow:hidden">' +
+      '<div style="display:flex;flex-direction:column;align-items:' + ai + ';text-align:' + (alinhar || 'left') + ';flex:none">' + conteudo + '</div></div>';
+  }
+  /* Data e botão: empilhados; lado a lado nos formatos horizontais (economiza altura). */
+  function acoes(dataHtml, botHtml, largo, gap) {
+    if (!largo || !dataHtml || !botHtml) return dataHtml + botHtml;
+    return '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:' + px(gap) + ';margin-top:' + px(gap) + ';flex:none">' +
+      dataHtml.replace(/margin-top:[0-9.]+px;/, '') + botHtml.replace(/margin-top:[0-9.]+px/, 'margin-top:0') + '</div>';
+  }
+
+  /* =========================================================
+     SIMPLES · fundo claro, respiro, uma cor de destaque
+     ========================================================= */
+  function simples(c) {
+    var P = c.P, fundo = P.fundo, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U;
+    var logoH = U * 0.055, topo = c.mt;
+    var realce = function (x) { return '<span style="color:' + P.principalLegivel + '">' + x + '</span>'; };
+    corpo += '<div style="' + abs(m, topo, W * 0.5) + '">' + logo(c.marca, P, logoH, fundo, W * 0.4) + '</div>';
+    if (c.selo) corpo += '<div style="position:absolute;right:' + px(m) + ';top:' + px(topo + logoH / 2 - U * 0.024) + ';display:flex;align-items:center;gap:' + px(U * 0.012) + '">' + caixa('width:' + px(U * 0.014) + ';height:' + px(U * 0.014) + ';border-radius:50%;background:' + P.principal) + '<span data-x="texto" style="font-family:' + c.fX + ';font-weight:700;font-size:' + px(U * 0.024) + ';line-height:2;color:' + P.escura + ';text-transform:uppercase;letter-spacing:.12em">' + esc(c.selo) + '</span></div>';
+    var rod = rodapeHtml(c, P.suave, 'left');
+    var fimTexto = H - c.mb - (rod.h ? rod.h + U * 0.03 : 0);
+    var tam = U * (c.tipo === 'largo' ? 0.1 : 0.098) * c.dec.escala * (c.temFoto ? 1 : 1.18);
+
+    var px0 = m, pw = W - 2 * m, py, ph, alinhar = 'left';
+    if (c.tipo === 'largo') {
+      var cortaX = c.temFoto ? Math.round(W * 0.6) : Math.round(W * 0.72);
+      if (c.temFoto) {
+        var r = M.FORMAS[c.marca.forma].raio(H * 0.6);
+        corpo += '<div style="' + abs(cortaX, 0, W - cortaX, H) + 'overflow:hidden;border-radius:' + px(r[0]) + ' 0 0 ' + px(r[3]) + '"><img data-x="img" src="' + (c.foto || '') + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div>';
+      } else {
+        var d = H * 1.15;
+        corpo += caixa(abs(W - d * 0.62, H * 0.5 - d / 2, d, d) + 'border-radius:50%;background:' + P.apoio);
+        corpo += caixa(abs(W - d * 0.62 + d * 0.32, H * 0.5 - d * 0.18, d * 0.36, d * 0.36) + 'border-radius:50%;background:' + P.principal);
+      }
+      py = topo + logoH + U * 0.03; ph = fimTexto - py; pw = cortaX - m - m * 0.9;
+    } else if (c.temFoto) {
+      var fy = topo + logoH + U * 0.05, fh = fotoAltura('simples', c.tipo, W, H, c.mt, c.mb, c.dec.extras);
+      var rr = M.FORMAS[c.marca.forma].raio(Math.min(fh, W) * 0.5);
+      corpo += '<div style="' + abs(m, fy, W - 2 * m, fh) + 'overflow:hidden;border-radius:' + M.raioCss(rr) + '">' + '<img data-x="img" src="' + (c.foto || '') + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block">' + '</div>';
+      py = fy + fh + U * 0.05; ph = fimTexto - py;
+    } else {
+      var dd = W * 0.62;
+      corpo += caixa(abs(W - dd * 0.58, -dd * 0.38, dd, dd) + 'border-radius:50%;background:' + P.apoio);
+      py = topo + logoH + U * 0.12; ph = fimTexto - py;
+    }
+    var bloco = caixa('width:' + px(U * 0.07) + ';height:' + px(U * 0.012) + ';background:' + P.principal + ';margin-bottom:' + px(U * 0.028) + ';flex:none') +
+      '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:800;font-size:' + px(tam) + ';line-height:1.06;letter-spacing:-0.015em;color:' + (c.vazio ? P.suave : P.escura) + ';flex:none">' + rico(c.titulo, realce) + '</div>' +
+      (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-size:' + px(U * 0.034) + ';line-height:1.35;color:' + P.texto + ';margin-top:' + px(U * 0.024) + ';flex:none">' + rico(c.apoio, realce) + '</div>' : '') +
+      acoes((c.data ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:700;font-size:' + px(U * 0.03) + ';line-height:1.3;color:' + P.principalLegivel + ';margin-top:' + px(U * 0.026) + ';text-transform:uppercase;letter-spacing:.04em;flex:none">' + esc(c.data) + '</div>' : ''), botao(c.chamada, c.marca, P, fundo, U * 0.03, alinhar), c.tipo === 'largo', U * 0.022);
+    corpo += pilha(px0, py, pw, ph, bloco, alinhar, c.tipo === 'largo' || (c.tipo === 'alto' && c.temFoto) ? 'center' : 'flex-end');
+    corpo += rod.html;
+    return { fundo: fundo, corpo: corpo };
+  }
+
+  /* =========================================================
+     SOFISTICADO · fundo profundo, linhas finas, editorial
+     ========================================================= */
+  function sofisticado(c) {
+    var P = c.P, fundo = P.escura, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U;
+    var ac = C.garantir(P.destaque, fundo, 4.5), claro = C.mix('#ffffff', fundo, 0.16);
+    var realce = function (x) { return '<em style="color:' + ac + ';font-style:italic">' + x + '</em>'; };
+    var logoH = U * 0.05, topo = c.mt, centro = c.tipo !== 'largo' && !(c.tipo === 'quadrado' && c.temFoto);
+    var serif = M.serifada(c.marca.fontes.titulo);
+    // Moldura fina
+    var ins = m * 0.45;
+    if (c.tipo !== 'largo') corpo += '<div style="' + abs(ins, ins, W - 2 * ins, H - 2 * ins) + 'border:' + px(Math.max(1.5, U * 0.0022)) + ' solid ' + C.mix(ac, fundo, 0.5) + '"></div>';
+    var rod = rodapeHtml(c, C.mix('#ffffff', fundo, 0.4), centro ? 'center' : 'left');
+    var fimTexto = H - c.mb - (rod.h ? rod.h + U * 0.03 : 0);
+    var tam = U * (c.tipo === 'largo' ? 0.092 : 0.09) * c.dec.escala * (c.temFoto ? 1 : 1.2);
+    var chapeu = c.selo ? '<div style="display:flex;align-items:center;gap:' + px(U * 0.018) + ';margin-bottom:' + px(U * 0.03) + ';flex:none">' + caixa('width:' + px(U * 0.05) + ';height:' + px(Math.max(1.5, U * 0.0025)) + ';background:' + ac) +
+      '<span data-x="texto" style="font-family:' + c.fX + ';font-weight:600;font-size:' + px(U * 0.022) + ';line-height:1.4;color:' + ac + ';text-transform:uppercase;letter-spacing:.32em">' + esc(c.selo) + '</span>' + (centro ? caixa('width:' + px(U * 0.05) + ';height:' + px(Math.max(1.5, U * 0.0025)) + ';background:' + ac) : '') + '</div>' : '';
+    var bloco = chapeu +
+      '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:' + (serif ? 600 : 500) + ';font-size:' + px(tam) + ';line-height:1.1;letter-spacing:' + (serif ? '0' : '-0.02em') + ';color:' + (c.vazio ? C.mix('#ffffff', fundo, 0.45) : '#ffffff') + ';flex:none">' + rico(c.titulo, realce) + '</div>' +
+      caixa('width:' + px(U * 0.08) + ';height:' + px(Math.max(1.5, U * 0.0025)) + ';background:' + ac + ';margin:' + px(U * 0.032) + ' 0 0;flex:none') +
+      (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:300;font-size:' + px(U * 0.032) + ';line-height:1.45;color:' + claro + ';margin-top:' + px(U * 0.026) + ';flex:none">' + rico(c.apoio, realce) + '</div>' : '') +
+      acoes((c.data ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:600;font-size:' + px(U * 0.024) + ';line-height:1.4;color:' + ac + ';margin-top:' + px(U * 0.026) + ';text-transform:uppercase;letter-spacing:.2em;flex:none">' + esc(c.data) + '</div>' : ''), botao(c.chamada, c.marca, P, fundo, U * 0.028, centro ? 'center' : 'left'), c.tipo === 'largo', U * 0.022);
+
+    if (c.tipo === 'largo') {
+      var fw = c.temFoto ? Math.round(W * 0.38) : 0;
+      if (c.temFoto) corpo += foto(c.foto, 0, 0, fw, H);
+      else corpo += '<div style="' + abs(W - H * 0.78, H * 0.15, H * 0.7, H * 0.7) + 'border-radius:50%;border:' + px(Math.max(1.5, U * 0.0025)) + ' solid ' + C.mix(ac, fundo, 0.4) + '"></div>';
+      var tx = fw ? fw + m * 1.1 : m;
+      corpo += '<div style="' + abs(tx, topo, W * 0.4) + '">' + logo(c.marca, P, logoH, fundo, W * 0.3) + '</div>';
+      corpo += pilha(tx, topo + logoH + U * 0.02, W - tx - m - (fw ? 0 : H * 0.95), fimTexto - topo - logoH - U * 0.02, bloco, 'left', 'center');
+      corpo += rod.html.replace('left:' + px(m), 'left:' + px(tx));
+    } else if (c.tipo === 'quadrado' && c.temFoto) {
+      var aw = Math.round(W * 0.4), ax = m, ay = topo + logoH + U * 0.06, ah = fimTexto - ay;
+      corpo += '<div style="' + abs(m, topo, W * 0.5) + '">' + logo(c.marca, P, logoH, fundo, W * 0.35) + '</div>';
+      corpo += '<div style="' + abs(ax, ay, aw, ah) + 'overflow:hidden;border-radius:' + px(aw / 2) + ' ' + px(aw / 2) + ' 0 0"><img data-x="img" src="' + (c.foto || '') + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div>';
+      var tx2 = ax + aw + m * 0.7;
+      corpo += pilha(tx2, ay, W - tx2 - m, ah, bloco, 'left', 'flex-end');
+      corpo += rod.html;
+    } else {
+      corpo += '<div style="position:absolute;left:0;right:0;top:' + px(topo) + ';display:flex;justify-content:center">' + logo(c.marca, P, logoH, fundo, W * 0.4) + '</div>';
+      var y0 = topo + logoH + U * 0.06;
+      if (c.temFoto) {
+        var aw2 = Math.round(W * 0.58), ah2 = Math.round((fimTexto - y0) * (0.56 - 0.04 * c.dec.extras));
+        corpo += '<div style="' + abs((W - aw2) / 2, y0, aw2, ah2) + 'overflow:hidden;border-radius:' + px(aw2 / 2) + ' ' + px(aw2 / 2) + ' 0 0"><img data-x="img" src="' + (c.foto || '') + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div>';
+        y0 += ah2 + U * 0.05;
+      }
+      corpo += pilha(m * 1.4, y0, W - m * 2.8, fimTexto - y0, bloco, 'center', 'center');
+      corpo += rod.html;
+    }
+    return { fundo: fundo, corpo: corpo };
+  }
+
+  /* =========================================================
+     ROBUSTO · cor chapada, título grande, formas fortes
+     ========================================================= */
+  function robusto(c) {
+    var P = c.P, fundo = P.principal, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U;
+    var tx = P.sobrePrincipal, hl = P.destaque;
+    if (C.contraste(hl, fundo) < 1.6) hl = C.lum(fundo) < 0.4 ? '#ffffff' : P.escura;
+    var hlTx = C.sobre(hl, P.escura);
+    var realce = function (x) { return '<span style="background:' + hl + ';color:' + hlTx + ';padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone">' + x + '</span>'; };
+    var logoH = U * 0.055, topo = c.mt;
+    var rod = rodapeHtml(c, tx, 'left');
+    var fimTexto = H - c.mb - (rod.h ? rod.h + U * 0.03 : 0);
+    var tam = U * (c.tipo === 'largo' ? 0.112 : 0.118) * c.dec.escala * (c.temFoto ? 1 : 1.2);
+    var seloH = U * 0.05;
+    var seloBg = hl === P.escura ? '#ffffff' : P.escura;
+    var selo = c.selo ? '<div data-x="caixa" style="background:' + seloBg + ';border-radius:' + M.raioCss(M.FORMAS[c.marca.forma].raio(seloH)) + ';height:' + px(seloH) + ';padding:0 ' + px(U * 0.022) + ';display:inline-flex;align-items:center"><span data-x="texto" style="font-family:' + c.fX + ';font-weight:800;font-size:' + px(U * 0.022) + ';line-height:1;color:' + C.sobre(seloBg, P.escura) + ';text-transform:uppercase;letter-spacing:.1em;white-space:nowrap">' + esc(c.selo) + '</span></div>' : '';
+
+    var bloco = '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:900;font-size:' + px(tam) + ';line-height:.98;letter-spacing:-0.02em;text-transform:uppercase;color:' + tx + ';flex:none' + (c.vazio ? ';opacity:.55' : '') + '">' + rico(c.titulo, realce) + '</div>' +
+      (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:600;font-size:' + px(U * 0.034) + ';line-height:1.3;color:' + tx + ';margin-top:' + px(U * 0.026) + ';flex:none">' + rico(c.apoio, realce) + '</div>' : '') +
+      acoes((c.data ? '<div style="margin-top:' + px(U * 0.026) + ';flex:none;display:flex"><div data-x="caixa" style="background:' + hl + ';display:inline-flex;align-items:center;height:' + px(U * 0.054) + ';padding:0 ' + px(U * 0.018) + '"><span data-x="texto" style="font-family:' + c.fX + ';font-weight:800;font-size:' + px(U * 0.028) + ';line-height:1.2;color:' + hlTx + ';text-transform:uppercase;letter-spacing:.03em;white-space:nowrap">' + esc(c.data) + '</span></div></div>' : ''), botao(c.chamada, c.marca, P, fundo, U * 0.032, 'left'), c.tipo === 'largo', U * 0.022);
+
+    if (c.tipo === 'largo') {
+      var fx = Math.round(W * (c.temFoto ? 0.62 : 0.74));
+      if (c.temFoto) { corpo += foto(c.foto, fx, 0, W - fx, H); corpo += caixa(abs(fx - U * 0.018, 0, U * 0.018, H) + 'background:' + hl); }
+      else { var d = H * 1.3; corpo += caixa(abs(fx, H - d * 0.62, d, d) + 'border-radius:50%;background:' + hl); corpo += caixa(abs(fx + d * 0.42, -d * 0.35, d * 0.55, d * 0.55) + 'border-radius:50%;background:' + P.escura); }
+      corpo += '<div style="' + abs(m, topo, fx - 2 * m) + 'display:flex;align-items:center;justify-content:space-between">' + logo(c.marca, P, logoH, fundo, W * 0.3) + selo + '</div>';
+      corpo += pilha(m, topo + logoH + U * 0.025, fx - m * 1.8, fimTexto - topo - logoH - U * 0.025, bloco, 'left', 'center');
+      corpo += rod.html;
+    } else {
+      var yTexto;
+      if (c.temFoto) {
+        var fh = fotoAltura('robusto', c.tipo, W, H, c.mt, c.mb, c.dec.extras);
+        corpo += foto(c.foto, 0, 0, W, fh);
+        corpo += caixa(abs(0, fh, W, U * 0.018) + 'background:' + hl);
+        corpo += '<div style="' + abs(m, topo, W - 2 * m) + 'display:flex;align-items:center;justify-content:space-between">' + logo(c.marca, P, logoH, 'foto', W * 0.4) + selo + '</div>';
+        yTexto = fh + U * 0.06;
+      } else {
+        var d2 = W * 0.86;
+        corpo += caixa(abs(W - d2 * 0.62, -d2 * 0.36, d2, d2) + 'border-radius:50%;background:' + hl);
+        corpo += caixa(abs(W * 0.8, H - W * 0.13, W * 0.34, W * 0.34) + 'border-radius:50%;background:' + P.escura + ';opacity:1');
+        corpo += '<div style="' + abs(m, topo, W - 2 * m) + 'display:flex;align-items:center;justify-content:space-between">' + logo(c.marca, P, logoH, fundo, W * 0.4) + selo + '</div>';
+        yTexto = topo + logoH + U * 0.2;
+      }
+      corpo += pilha(m, yTexto, W - 2 * m, fimTexto - yTexto, bloco, 'left', c.temFoto ? (c.tipo === 'alto' ? 'center' : 'flex-start') : 'flex-end');
+      corpo += rod.html;
+    }
+    return { fundo: fundo, corpo: corpo };
+  }
+
+  function fotoAltura(estilo, tipo, W, H, mt, mb, extras) {
+    extras = extras || 0;
+    if (estilo === 'simples') return Math.round(tipo === 'alto' ? (H - mt - mb) * (0.5 - 0.035 * extras) : H * (0.42 - 0.04 * extras));
+    return Math.round(H * (tipo === 'alto' ? 0.48 - 0.03 * extras : 0.46 - 0.04 * extras));
+  }
+
+  var ESTILOS = { simples: simples, sofisticado: sofisticado, robusto: robusto };
+
+  /* Tamanho do quadro da foto em cada estilo (para o recorte). */
+  function slot(formato, dec) {
+    var W = formato.largura, H = formato.altura, m = formato.margem, mg = formato.margens || {};
+    var mt = mg.topo != null ? mg.topo : m, mb = mg.base != null ? mg.base : m;
+    if (formato.email) return { w: 600, h: 320 };
+    var U = dec.tipo === 'largo' ? H * 1.55 : W; if (dec.tipo === 'alto' && H / W < 1.5) U = W * 1.04;
+    if (dec.estilo === 'simples') {
+      if (dec.tipo === 'largo') return { w: W - Math.round(W * 0.6), h: H };
+      return { w: W - 2 * m, h: fotoAltura('simples', dec.tipo, W, H, mt, mb, dec.extras) };
+    }
+    if (dec.estilo === 'sofisticado') {
+      if (dec.tipo === 'largo') return { w: Math.round(W * 0.38), h: H };
+      var logoH = U * 0.05, y0 = mt + logoH + U * 0.06, fim = H - mb - U * 0.08;
+      if (dec.tipo === 'quadrado') return { w: Math.round(W * 0.4), h: Math.round(fim - y0) };
+      return { w: Math.round(W * 0.58), h: Math.round((fim - y0) * (0.56 - 0.04 * dec.extras)) };
+    }
+    if (dec.tipo === 'largo') return { w: W - Math.round(W * 0.62), h: H };
+    return { w: W, h: fotoAltura('robusto', dec.tipo, W, H, mt, mb, dec.extras) };
+  }
+
+  function peca(formato, dados, marca, dec, opts) {
+    var c = contexto(formato, dados, marca, dec);
+    var r = ESTILOS[dec.estilo](c);
+    return documento(marca, c.W, c.H, r.fundo, r.corpo, opts);
+  }
+
+  /* =========================================================
+     E-MAIL · HTML em tabelas (Gmail e Outlook), 600 px
+     ========================================================= */
+  function paragrafos(texto, P, fX, realce) {
+    var blocos = String(texto || '').replace(/\r/g, '').split(/\n\s*\n/).filter(function (p) { return p.trim(); });
+    return blocos.map(function (b) {
+      var box = /^>>\(([a-z0-9-]+)\)\s?/i.exec(b.trim());
+      if (box) b = b.trim().slice(box[0].length);
+      var linhas = b.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+      var html;
+      if (linhas.every(function (l) { return /^- /.test(l); })) {
+        html = '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px">' + linhas.map(function (l) {
+          return '<tr><td valign="top" style="padding:0 10px 8px 0;color:' + P.principalLegivel + ';font:700 16px/24px ' + fX + '">•</td><td data-x="texto" style="padding:0 0 8px;font:400 16px/24px ' + fX + ';color:' + P.texto + '">' + rico(l.slice(2), realce) + '</td></tr>';
+        }).join('') + '</table>';
+      } else if (linhas.length === 1 && linhas[0].length <= 60 && !/[.!?:]$/.test(linhas[0]) && blocos.length > 2) {
+        html = '<h2 data-x="texto" style="margin:8px 0 10px;font:700 20px/28px ' + fX + ';color:' + P.escura + '">' + rico(linhas[0], realce) + '</h2>';
+      } else {
+        html = '<p data-x="texto" style="margin:0 0 16px;font:400 16px/26px ' + fX + ';color:' + P.texto + '">' + rico(linhas.join(' '), realce) + '</p>';
+      }
+      if (box) html = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px"><tr><td data-x="caixa" style="background:' + P.fundo + ';border-radius:12px;padding:18px 20px 2px">' + html + '</td></tr></table>';
+      return html;
+    }).join('');
+  }
+
+  function email(formato, dados, marca, dec, opts) {
+    var P = dec.paleta, est = dec.estilo, fT = M.pilha(marca.fontes.titulo), fX = M.pilha(marca.fontes.texto);
+    var titulo = limpar(dados.titulo) || 'Seu recado aqui', apoio = limpar(dados.apoio), data = dataTexto(dados.data, dados.hora, dados.local);
+    var cab = est === 'simples' ? '#ffffff' : est === 'sofisticado' ? P.escura : P.principal;
+    var ac = C.garantir(P.destaque, P.escura, 4.5);
+    var realce = est === 'sofisticado' ? function (x) { return '<em style="color:' + P.principalLegivel + '">' + x + '</em>'; }
+      : est === 'robusto' ? function (x) { return '<span style="background:' + P.destaque + ';color:' + P.sobreDestaque + ';padding:0 4px">' + x + '</span>'; }
+        : function (x) { return '<span style="color:' + P.principalLegivel + '">' + x + '</span>'; };
+    var tamT = Math.round((dec.extensao === 'curto' ? 40 : 32) * (titulo.length > 60 ? 0.8 : 1));
+    var b = corBotao(P, '#ffffff'), raio = M.FORMAS[marca.forma].raio(50);
+    var selo = dec.assunto.selo;
+    var linhaSelo = selo ? '<p data-x="texto" style="margin:0 0 12px;font:700 13px/18px ' + fX + ';letter-spacing:' + (est === 'sofisticado' ? '.3em' : '.12em') + ';text-transform:uppercase;color:' + P.principalLegivel + '">' + esc(selo) + '</p>' : '';
+    var html = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:' + P.fundo + '"><tr><td align="center" style="padding:24px 12px">' +
+      '<table data-x="email" role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:100%;background:#ffffff">' +
+      '<tr><td data-x="caixa" align="' + (est === 'sofisticado' ? 'center' : 'left') + '" style="background:' + cab + ';padding:' + (est === 'simples' ? '28px 40px 8px' : '26px 40px') + '">' + logo(marca, P, 40, cab, 260).replace(/display:block/, 'display:inline-block') + '</td></tr>' +
+      (est === 'simples' ? '<tr><td style="padding:0 40px"><div data-x="caixa" style="height:4px;width:56px;background:' + P.principal + '"></div></td></tr>' : '') +
+      (dados._foto ? '<tr><td style="padding:' + (est === 'simples' ? '24px 40px 0' : '0') + '"><img data-x="img" src="' + dados._foto + '" alt="" width="' + (est === 'simples' ? 520 : 600) + '" style="display:block;width:100%;height:auto;' + (est === 'simples' ? 'border-radius:' + M.raioCss(M.FORMAS[marca.forma].raio(60)) : '') + '"></td></tr>' : '') +
+      '<tr><td align="' + (est === 'sofisticado' ? 'center' : 'left') + '" style="padding:32px 40px 8px">' + linhaSelo +
+      '<h1 data-x="texto" style="margin:0 0 14px;font:' + (est === 'robusto' ? 900 : est === 'sofisticado' ? 500 : 800) + ' ' + tamT + 'px/1.12 ' + fT + ';color:' + P.escura + ';' + (est === 'robusto' ? 'text-transform:uppercase;' : '') + 'letter-spacing:-0.01em">' + rico(titulo, realce) + '</h1>' +
+      (apoio ? '<p data-x="texto" style="margin:0 0 18px;font:400 18px/27px ' + fX + ';color:' + P.suave + '">' + rico(apoio, realce) + '</p>' : '') +
+      (data ? '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px ' + (est === 'sofisticado' ? 'auto' : '0') + ' 22px"><tr><td data-x="caixa" style="background:' + (est === 'robusto' ? P.destaque : P.fundo) + ';border-radius:10px;padding:12px 18px"><span data-x="texto" style="font:800 15px/20px ' + fX + ';letter-spacing:.04em;text-transform:uppercase;color:' + (est === 'robusto' ? P.sobreDestaque : P.escura) + '">' + esc(data) + '</span></td></tr></table>' : '') +
+      '</td></tr>' +
+      (limpar(dados.texto) ? '<tr><td align="left" style="padding:0 40px 8px">' + paragrafos(dados.texto, P, fX, realce) + '</td></tr>' : '') +
+      (limpar(dados.chamada) ? '<tr><td align="' + (est === 'sofisticado' ? 'center' : 'left') + '" style="padding:8px 40px 36px"><a href="' + esc(limpar(dados.link) || '#') + '" style="text-decoration:none;display:inline-block"><span data-x="caixa" style="display:inline-block;background:' + b.bg + ';border-radius:' + M.raioCss(raio) + ';padding:15px 30px"><span data-x="texto" data-forma="botao" style="font:700 16px/20px ' + fX + ';color:' + b.tx + '">' + esc(dados.chamada) + '</span></span></a></td></tr>' : '<tr><td style="height:20px"></td></tr>') +
+      '<tr><td data-x="caixa" align="' + (est === 'sofisticado' ? 'center' : 'left') + '" style="background:' + (est === 'simples' ? P.fundo : P.escura) + ';padding:24px 40px">' +
+      (marca.rodape.frase ? '<p data-x="texto" style="margin:0 0 6px;font:700 15px/22px ' + fT + ';color:' + (est === 'simples' ? P.escura : ac) + '">' + esc(marca.rodape.frase) + '</p>' : '') +
+      '<p data-x="texto" style="margin:0;font:400 13px/20px ' + fX + ';color:' + (est === 'simples' ? P.suave : C.mix('#ffffff', P.escura, 0.3)) + '">' + esc([marca.nome, marca.rodape.site, marca.rodape.social].filter(function (x) { return limpar(x); }).join(' · ')) + '</p>' +
+      (marca.legal ? '<p data-x="texto" style="margin:8px 0 0;font:400 11px/16px ' + fX + ';color:' + (est === 'simples' ? P.suave : C.mix('#ffffff', P.escura, 0.4)) + '">' + esc(marca.legal) + '</p>' : '') +
+      '</td></tr></table></td></tr></table>';
+    var fontes = M.urlFontes([marca.fontes.titulo, marca.fontes.texto]);
+    var agua = opts && opts.previa ? '<div aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;font:900 72px Arial,sans-serif;color:rgba(128,128,128,.22);transform:rotate(-24deg)">PRÉVIA · CRIOU</div>' : '';
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + esc(titulo) + '</title><link rel="stylesheet" href="' + fontes + '"><style>body{margin:0;padding:0}strong{font-weight:800}</style></head><body data-pronto="1">' + html + agua + '</body></html>';
+  }
+
+  function html(formato, dados, marca, dec, opts) {
+    return formato.email ? email(formato, dados, marca, dec, opts) : peca(formato, dados, marca, dec, opts);
+  }
+
+  raiz.CriouModelos = { html: html, slot: slot, dataTexto: dataTexto };
+})(window);

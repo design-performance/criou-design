@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estúdio · Criou</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<p class="aviso-topo"><b>Versão de teste.</b> Sua marca e suas peças ficam salvas só neste aparelho. Os downloads saem com marca d'água até o cadastro abrir.</p>
+<header class="topo">
+  <a class="wm" href="../" aria-label="Criou, voltar para a página inicial">CRI<span>OU</span></a>
+  <nav aria-label="Estúdio">
+    <button type="button" data-ir="criar">Criar</button>
+    <button type="button" data-ir="marca">Minha marca</button>
+    <button type="button" data-ir="pecas">Minhas peças</button>
+  </nav>
+</header>
+
+<main id="conteudo">
+  <!-- ============ MINHA MARCA ============ -->
+  <section class="vista" id="vista-marca" hidden aria-labelledby="t-marca">
+    <div class="cab">
+      <div>
+        <h1 id="t-marca">Sua marca, <em>suas regras</em></h1>
+        <p class="lede">Conte uma vez como é a sua marca. Toda peça segue isso sozinha: cores, fontes, logotipo, formas e o jeito de escrever.</p>
+      </div>
+    </div>
+    <div class="grade">
+      <form class="cartao" id="form-marca" novalidate>
+        <div class="secao">
+          <h2>Identidade</h2>
+          <div class="campo"><label for="m-nome">Nome da marca</label><input id="m-nome" type="text" maxlength="40" autocomplete="organization" placeholder="Ex.: Studio Vento"></div>
+          <div class="campo">
+            <span class="rot" id="r-logo">Logotipo <span class="opc">· PNG ou SVG, de preferência com fundo transparente</span></span>
+            <div class="upload">
+              <div class="ver" id="m-logo-ver" aria-hidden="true">sem logo</div>
+              <input id="m-logo" type="file" accept="image/png,image/svg+xml,image/jpeg,image/webp" aria-labelledby="r-logo">
+              <button class="btn-mini" type="button" id="m-logo-tirar" hidden>Tirar</button>
+            </div>
+            <p class="ajuda">Sem logotipo, o nome entra escrito na fonte de título.</p>
+          </div>
+          <div class="campo">
+            <span class="rot" id="r-logo2">Versão para fundo escuro <span class="opc">· opcional</span></span>
+            <div class="upload">
+              <div class="ver escuro" id="m-logo2-ver" aria-hidden="true"></div>
+              <input id="m-logo2" type="file" accept="image/png,image/svg+xml,image/webp" aria-labelledby="r-logo2">
+              <button class="btn-mini" type="button" id="m-logo2-tirar" hidden>Tirar</button>
+            </div>
+            <p class="ajuda">Se não tiver, o logo entra numa plaquinha branca quando o fundo for escuro.</p>
+          </div>
+        </div>
+
+        <div class="secao">
+          <h2>Cores</h2>
+          <p class="ajuda">Só a principal é obrigatória. As outras saem dela e passam pelo teste de contraste; troque se a sua marca já tiver.</p>
+          <div class="cores" id="m-cores"></div>
+          <button class="link" type="button" id="m-cores-auto">Voltar às cores automáticas</button>
+        </div>
+
+        <div class="secao">
+          <h2>Tipografia e forma</h2>
+          <div class="linha2">
+            <div class="campo"><label for="m-ft">Fonte dos títulos</label><select id="m-ft"></select></div>
+            <div class="campo"><label for="m-fx">Fonte dos textos</label><select id="m-fx"></select></div>
+          </div>
+          <div class="campo">
+            <span class="rot" id="r-forma">Forma dos botões, fotos e selos</span>
+            <div class="chips" id="m-forma" role="group" aria-labelledby="r-forma"></div>
+          </div>
+          <div class="campo">
+            <span class="rot" id="r-estilo">Estilo preferido</span>
+            <div class="chips" id="m-estilo" role="group" aria-labelledby="r-estilo"></div>
+            <p class="ajuda">Dá para trocar em cada peça.</p>
+          </div>
+        </div>
+
+        <div class="secao">
+          <h2>Rodapé e textos fixos</h2>
+          <div class="linha2">
+            <div class="campo"><label for="m-site">Site <span class="opc">· opcional</span></label><input id="m-site" type="text" maxlength="60" placeholder="studiovento.com.br"></div>
+            <div class="campo"><label for="m-social">Rede social <span class="opc">· opcional</span></label><input id="m-social" type="text" maxlength="40" placeholder="@studiovento"></div>
+          </div>
+          <div class="campo"><label for="m-frase">Assinatura ou slogan <span class="opc">· opcional, entra no e-mail</span></label><input id="m-frase" type="text" maxlength="60" placeholder="Ex.: Movimento que faz bem"></div>
+          <div class="campo"><label for="m-legal">Texto legal obrigatório <span class="opc">· opcional, entra no rodapé de todas as peças</span></label><input id="m-legal" type="text" maxlength="160" placeholder="Ex.: CNPJ, registro profissional ou aviso exigido pelo seu setor"></div>
+        </div>
+
+        <div class="secao">
+          <h2>Jeito de escrever</h2>
+          <div class="campo"><label for="m-proibidas">Palavras que a marca não usa <span class="opc">· separe por vírgula</span></label><input id="m-proibidas" type="text" maxlength="300" placeholder="Ex.: barato, imperdível"></div>
+          <div class="linha2">
+            <div class="campo"><label for="m-excl">Pontos de exclamação por peça</label><select id="m-excl"><option value="0">Nenhum</option><option value="1">Até 1</option><option value="2">Até 2</option><option value="9">Sem limite</option></select></div>
+            <div class="campo"><label for="m-estr">Estrangeirismos</label><select id="m-estr"><option value="1">Avisar e sugerir em português</option><option value="0">Liberados</option></select></div>
+          </div>
+          <div class="campo"><label><input type="checkbox" id="m-caixa"> A marca usa títulos em caixa alta</label></div>
+        </div>
+
+        <div class="acoes">
+          <button class="btn" type="submit">Salvar minha marca</button>
+          <span class="ajuda" id="m-salvo" role="status"></span>
+        </div>
+      </form>
+
+      <aside class="previa-col" aria-labelledby="t-amostra">
+        <h2 id="t-amostra" style="font-size:22px;margin-bottom:10px">Como a sua marca aparece</h2>
+        <div class="estilos" id="m-amostras"></div>
+        <ul class="porque" id="m-contraste"></ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ CRIAR ============ -->
+  <section class="vista" id="vista-criar" hidden aria-labelledby="t-criar">
+    <div id="escolha">
+      <div class="cab">
+        <div>
+          <h1 id="t-criar">O que você <em>precisa criar?</em></h1>
+          <p class="lede">Escolha o formato e o estilo. Depois é só contar o recado.</p>
+        </div>
+      </div>
+      <div class="formatos" id="formatos" role="group" aria-label="Formatos"></div>
+      <h2 style="font-size:24px;margin:26px 0 10px" id="t-estilo">Com qual cara?</h2>
+      <div class="estilos" id="estilos" role="group" aria-labelledby="t-estilo"></div>
+      <div class="acoes"><button class="btn" type="button" id="seguir">Seguir com este formato</button></div>
+    </div>
+
+    <div id="editor" hidden>
+      <div class="passos"><button class="link" type="button" id="voltar">← Trocar formato ou estilo</button><span id="ed-resumo"></span></div>
+      <div class="grade">
+        <div>
+          <form class="cartao" id="form-peca" novalidate>
+            <h2 style="font-size:28px" id="ed-titulo">Conteúdo</h2>
+            <div id="campos"></div>
+            <div class="msgs" id="msgs" aria-live="polite"></div>
+            <div class="acoes"><button class="btn" type="submit" id="registrar">Registrar peça</button><span class="ajuda" id="pendencia"></span></div>
+          </form>
+          <div class="feito" id="feito" hidden tabindex="-1">
+            <h2>Criou. <span id="feito-sub">Peça registrada.</span></h2>
+            <div class="codigo" id="codigo"></div>
+            <p class="ajuda" id="feito-ajuda">O código identifica esta versão da peça em "Minhas peças".</p>
+            <div id="baixar"></div>
+            <div class="acoes"><button class="btn sec" type="button" id="editar">Editar esta peça</button><button class="link" type="button" id="nova">Começar outra peça</button></div>
+          </div>
+        </div>
+        <aside class="previa-col" aria-label="Prévia">
+          <div class="palco" id="palco"></div>
+          <p class="legenda" id="legenda"></p>
+          <p class="legenda"><a href="#form-peca" class="ir-form">Voltar a editar ↑</a></p>
+          <details class="porque-caixa" open><summary>Por que ficou assim?</summary><ul class="porque" id="porque"></ul></details>
+        </aside>
+      </div>
+    </div>
+    <a class="btn esc ir-previa" href="#palco" id="ir-previa">Ver prévia ↓</a>
+  </section>
+
+  <!-- ============ MINHAS PEÇAS ============ -->
+  <section class="vista" id="vista-pecas" hidden aria-labelledby="t-pecas">
+    <div class="cab"><div><h1 id="t-pecas">Minhas <em>peças</em></h1><p class="lede">Tudo o que você registrou neste aparelho. As fotos não ficam guardadas: ao reabrir, escolha a foto de novo.</p></div></div>
+    <div class="lista-pecas" id="lista-pecas"></div>
+  </section>
+</main>
+
+<script src="js/marca.js"></script>
+<script src="js/formatos.js"></script>
+<script src="js/motor.js"></script>
+<script src="js/modelos.js"></script>
+<script src="js/recorte.js"></script>
+<script src="js/formatacao.js"></script>
+<script src="js/exportar.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

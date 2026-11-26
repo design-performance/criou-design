@@ -1,0 +1,172 @@
+/* ============================================================
+   Criou · Minha marca
+   A marca de cada cliente: cores, fontes, logo, forma, rodapé e
+   regras de linguagem. Enquanto o cadastro não abre, fica guardada
+   neste aparelho (localStorage). Tudo o que as peças usam sai daqui.
+   ============================================================ */
+(function (raiz) {
+  'use strict';
+
+  var CHAVE = 'criou.marca.v1';
+
+  /* ---------- Cores ---------- */
+  function hexRgb(h) {
+    h = String(h || '').replace('#', '');
+    if (h.length === 3) h = h.split('').map(function (c) { return c + c; }).join('');
+    var n = parseInt(h, 16);
+    if (isNaN(n) || h.length !== 6) return [0, 0, 0];
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function rgbHex(r) { return '#' + r.map(function (v) { return ('0' + Math.round(Math.max(0, Math.min(255, v))).toString(16)).slice(-2); }).join(''); }
+  function mix(a, b, t) { var x = hexRgb(a), y = hexRgb(b); return rgbHex([0, 1, 2].map(function (i) { return x[i] + (y[i] - x[i]) * t; })); }
+  function lum(h) {
+    return hexRgb(h).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); })
+      .reduce(function (s, v, i) { return s + v * [0.2126, 0.7152, 0.0722][i]; }, 0);
+  }
+  function contraste(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  /* Texto que lê bem sobre um fundo: branco ou a cor escura da marca. */
+  function sobre(fundo, escuro) { return contraste(fundo, '#ffffff') >= contraste(fundo, escuro || '#111111') ? '#ffffff' : (escuro || '#111111'); }
+  /* Escurece (ou clareia) até chegar no contraste pedido. */
+  function garantir(cor, fundo, alvo) {
+    var c = cor, passos = 0, clarear = lum(fundo) < 0.35;
+    while (contraste(c, fundo) < alvo && passos < 30) { c = mix(c, clarear ? '#ffffff' : '#000000', 0.08); passos++; }
+    return c;
+  }
+  function girar(h, graus) {
+    var r = hexRgb(h).map(function (v) { return v / 255; });
+    var max = Math.max.apply(null, r), min = Math.min.apply(null, r), l = (max + min) / 2, s = 0, hh = 0, d = max - min;
+    if (d) {
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      hh = max === r[0] ? (r[1] - r[2]) / d + (r[1] < r[2] ? 6 : 0) : max === r[1] ? (r[2] - r[0]) / d + 2 : (r[0] - r[1]) / d + 4;
+      hh /= 6;
+    }
+    hh = (hh + graus / 360) % 1; if (hh < 0) hh += 1;
+    function f(p, q, t) { if (t < 0) t += 1; if (t > 1) t -= 1; if (t < 1 / 6) return p + (q - p) * 6 * t; if (t < 1 / 2) return q; if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6; return p; }
+    if (!s) return rgbHex([l * 255, l * 255, l * 255]);
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+    return rgbHex([f(p, q, hh + 1 / 3) * 255, f(p, q, hh) * 255, f(p, q, hh - 1 / 3) * 255]);
+  }
+
+  /* ---------- Fontes (Google Fonts, pesos válidos por família) ---------- */
+  var FONTES = {
+    'Inter': { pesos: '400;500;600;700;800;900', tipo: 'Sem serifa neutra' },
+    'Montserrat': { pesos: '400;500;600;700;800;900', tipo: 'Sem serifa geométrica' },
+    'Poppins': { pesos: '400;500;600;700;800;900', tipo: 'Sem serifa redonda' },
+    'Archivo': { pesos: '400;500;600;700;800;900', tipo: 'Sem serifa firme' },
+    'Figtree': { pesos: '400;500;600;700;800;900', tipo: 'Sem serifa amigável' },
+    'Space Grotesk': { pesos: '400;500;600;700', tipo: 'Sem serifa técnica' },
+    'Bricolage Grotesque': { pesos: '400;500;600;700;800', tipo: 'Sem serifa com personalidade' },
+    'Unbounded': { pesos: '400;500;600;700;800;900', tipo: 'Larga e expressiva' },
+    'Nunito': { pesos: '400;600;700;800;900', tipo: 'Arredondada' },
+    'Fredoka': { pesos: '400;500;600;700', tipo: 'Arredondada divertida' },
+    'Playfair Display': { pesos: '400;600;700;800', ital: true, tipo: 'Serifa elegante' },
+    'DM Serif Display': { pesos: '400', ital: true, tipo: 'Serifa de destaque' }
+  };
+  function urlFontes(lista) {
+    var vistas = {};
+    var partes = lista.filter(function (f) { if (!FONTES[f] || vistas[f]) return false; vistas[f] = 1; return true; }).map(function (f) {
+      var d = FONTES[f], nome = 'family=' + f.replace(/ /g, '+');
+      if (d.ital) {
+        var p = d.pesos.split(';');
+        return nome + ':ital,wght@' + p.map(function (w) { return '0,' + w; }).concat(p.map(function (w) { return '1,' + w; })).join(';');
+      }
+      return nome + ':wght@' + d.pesos;
+    });
+    return 'https://fonts.googleapis.com/css2?' + partes.join('&') + '&display=swap';
+  }
+  function serifada(f) { return /Playfair|Serif/.test(f); }
+  function pilha(f) { return "'" + f + "', " + (serifada(f) ? "Georgia, 'Times New Roman', serif" : 'Arial, Helvetica, sans-serif'); }
+
+  /* ---------- Formas ---------- */
+  var FORMAS = {
+    reta: { nome: 'Reta', raio: function () { return [0, 0, 0, 0]; } },
+    suave: { nome: 'Cantos suaves', raio: function (h) { var r = Math.round(h * 0.16); return [r, r, r, r]; } },
+    pilula: { nome: 'Pílula', raio: function (h) { var r = Math.round(h / 2); return [r, r, r, r]; } },
+    folha: { nome: 'Folha (cantos opostos)', raio: function (h) { var r = Math.round(h * 0.34); return [r, 0, r, 0]; } }
+  };
+  function raioCss(r) { return r.map(function (v) { return v + 'px'; }).join(' '); }
+
+  /* ---------- Estilos de template ---------- */
+  var ESTILOS = {
+    simples: { nome: 'Simples', frase: 'Limpo, com bastante respiro e uma cor de destaque.' },
+    sofisticado: { nome: 'Sofisticado', frase: 'Fundo profundo, linhas finas e composição editorial.' },
+    robusto: { nome: 'Robusto', frase: 'Cor chapada, título grande e formas fortes.' }
+  };
+
+  /* ---------- Marca padrão (exemplo fictício) ---------- */
+  function padrao() {
+    return {
+      nome: 'Sua marca',
+      logo: '', logoClaro: '',
+      cores: { principal: '#1F3DFF', escura: '', acao: '', destaque: '', fundo: '' },
+      fontes: { titulo: 'Archivo', texto: 'Inter' },
+      forma: 'suave',
+      estilo: 'simples',
+      rodape: { site: '', social: '', frase: '' },
+      legal: '',
+      linguagem: { tom: 'proximo', proibidas: '', estrangeirismos: true, maxExclamacoes: 1, caixaAltaTitulo: false },
+      configurada: false
+    };
+  }
+
+  function ler() {
+    try {
+      var s = raiz.localStorage.getItem(CHAVE);
+      if (!s) return padrao();
+      var m = JSON.parse(s), p = padrao();
+      Object.keys(p).forEach(function (k) {
+        if (m[k] == null) m[k] = p[k];
+        else if (typeof p[k] === 'object' && !Array.isArray(p[k])) m[k] = Object.assign({}, p[k], m[k]);
+      });
+      return m;
+    } catch (e) { return padrao(); }
+  }
+  function salvar(m) {
+    try { raiz.localStorage.setItem(CHAVE, JSON.stringify(m)); return true; }
+    catch (e) { return false; } // logo grande demais para o aparelho
+  }
+
+  /* ---------- Paleta derivada, sempre com contraste conferido ---------- */
+  function paleta(m) {
+    var c = m.cores || {}, P = c.principal || '#1F3DFF';
+    var escura = c.escura || mix(P, '#0b0b14', 0.62);
+    if (contraste(escura, '#ffffff') < 7) escura = garantir(escura, '#ffffff', 7);
+    var fundo = c.fundo || mix(P, '#ffffff', 0.93);
+    var destaque = c.destaque || (function () {
+      var d = girar(P, 150); d = mix(d, '#ffffff', 0.25);
+      return contraste(d, escura) >= 4.5 ? d : mix(P, '#ffffff', 0.7);
+    })();
+    var acao = c.acao || P;
+    var porque = [];
+    // Ação precisa ler com texto em cima (botão).
+    var txtAcao = sobre(acao, escura);
+    if (contraste(acao, txtAcao) < 4.5) { acao = garantir(acao, txtAcao, 4.5); porque.push('A cor do botão foi ajustada para o texto ficar legível.'); }
+    var txtP = sobre(P, escura);
+    var apoio = mix(P, '#ffffff', 0.8);
+    return {
+      principal: P, escura: escura, fundo: fundo, destaque: destaque, acao: acao, apoio: apoio,
+      branco: '#ffffff', texto: mix(escura, '#333333', 0.35), suave: mix(escura, '#ffffff', 0.42), linha: mix(escura, '#ffffff', 0.85),
+      sobrePrincipal: txtP, sobreEscura: '#ffffff', sobreAcao: sobre(acao, escura), sobreDestaque: sobre(destaque, escura),
+      // Principal como texto sobre fundo claro (ex.: palavra em destaque).
+      principalLegivel: contraste(P, '#ffffff') >= 4.5 ? P : garantir(P, '#ffffff', 4.5),
+      porque: porque
+    };
+  }
+
+  /* Realces da barra de formatação (cores de fundo sob o texto). */
+  function realces(m) {
+    var p = paleta(m);
+    return [
+      { id: 'destaque', nome: 'destaque', fundo: p.destaque, texto: p.sobreDestaque },
+      { id: 'apoio', nome: 'apoio', fundo: p.apoio, texto: p.escura },
+      { id: 'marca', nome: 'da marca', fundo: p.principal, texto: p.sobrePrincipal }
+    ];
+  }
+
+  raiz.CriouMarca = {
+    ler: ler, salvar: salvar, padrao: padrao, paleta: paleta, realces: realces,
+    FONTES: FONTES, urlFontes: urlFontes, pilha: pilha, serifada: serifada,
+    FORMAS: FORMAS, raioCss: raioCss, ESTILOS: ESTILOS,
+    cor: { mix: mix, contraste: contraste, sobre: sobre, garantir: garantir, lum: lum, girar: girar }
+  };
+})(window);
