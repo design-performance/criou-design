@@ -15,12 +15,12 @@ Não é um editor. Não tem tela de edição livre: só aparecem escolhas segura
 ## Como está organizado
 
 ```
-public/
-  index.html          Página de venda
-  criar/index.html    Demonstração sem cadastro
-  prototipo/          Protótipo original
-  js/motor.js         Motor: decisões (com o porquê), desenho em canvas, prévia com marca d'água, eventos
-wrangler.jsonc        Worker da Cloudflare que serve o site
+index.html            Página de venda
+criar/index.html      Demonstração sem cadastro
+prototipo/            Protótipo original
+js/motor.js           Motor: decisões (com o porquê), desenho em canvas, prévia com marca d'água, eventos
+wrangler.jsonc        Worker da Cloudflare que serve o site (.assetsignore lista o que não vai para o ar)
+.nojekyll             Faz o GitHub Pages publicar os arquivos como estão
 ```
 
 O motor (`public/js/motor.js`) é um só para qualquer marca: recebe o pacote de marca, o formato e as respostas, e devolve a peça e as decisões. Os eventos de conversão da Parte 6.3 já são registrados em `window.__eventos`; vão para a API quando o backend existir.
@@ -36,7 +36,6 @@ O motor (`public/js/motor.js`) é um só para qualquer marca: recebe o pacote de
 ## Testar no computador
 
 ```
-cd public
 python3 -m http.server 8000
 ```
 
@@ -44,7 +43,7 @@ Depois acesse `http://localhost:8000`.
 
 ## Publicar
 
-A publicação é automática pelo **Workers Builds** da Cloudflare, ligado a este repositório: todo push na `main` publica o Worker `design-por-pergunta` (configurado em `wrangler.jsonc`, servindo a pasta `public/`).
+A publicação é automática pelo **Workers Builds** da Cloudflare, ligado a este repositório: todo push na `main` publica o Worker `design-por-pergunta` (configurado em `wrangler.jsonc`, servindo a raiz do repositório). O mesmo conteúdo também sai no GitHub Pages: design-performance.github.io/design-por-pergunta/.
 
 Para ligar (uma vez só): Cloudflare → **Workers & Pages → Create → Import a repository** → escolher `design-performance/design-por-pergunta` → **Save and Deploy**. Não precisa de token.
 
