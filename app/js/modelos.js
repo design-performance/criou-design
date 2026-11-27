@@ -498,7 +498,8 @@
     corpo += '<img data-x="img" src="' + grao(W, H, 0.1) + '" alt="" style="' + abs(0, 0, W, H) + 'display:block">';
     var j = janelaFoco(c.tipo, W, H, U), b = Math.max(2, Math.round(U * 0.003));
     if (c.temFoto && c.foto) corpo += '<div data-x="caixa" style="' + abs(j.x - b, j.y - b, j.w + 2 * b, j.h + 2 * b) + 'background:#ffffff"></div>' + img(c.foto, j.x, j.y, j.w, j.h);
-    else corpo += '<div style="' + abs(j.x, j.y, j.w, j.h) + 'border:' + px(b) + ' solid #ffffff"></div>';
+    else corpo += '<div data-x="caixa" style="' + abs(j.x, j.y, j.w, j.h) + 'border:' + px(b) + ' solid #ffffff;background:' + C.mix(P.principal, '#ffffff', 0.35) + '"></div>' +
+      '<img data-x="img" src="' + luzes(Math.round(j.w), Math.round(j.h), P, 3, true) + '" alt="" style="' + abs(j.x + b, j.y + b, j.w - 2 * b, j.h - 2 * b) + 'display:block;opacity:.85">';
     var et = U * 0.021;
     corpo += '<div style="' + abs(m, c.mt, W - 2 * m) + 'display:flex;justify-content:space-between;align-items:center">' + marcaOuLogo(c, '#ffffff', U * 0.05, base) + etiqueta(c.selo, c, '#ffffff', et) + '</div>';
     var temRealce = /==/.test(c.titulo);

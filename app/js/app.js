@@ -445,8 +445,10 @@
   };
   function desenharControles() {
     var L = M.LAYOUTS[M.layout(est.layout)];
-    $('#ctl-posicao').hidden = !L.posicao; $('#ctl-alinhamento').hidden = !L.posicao; $('#ctl-girar').hidden = !L.girar;
-    $('#ctl-nota').textContent = !L.posicao ? 'O layout ' + L.nome + ' tem composição fixa' + (L.girar ? ': dá para escolher só a direção do título.' : '.') : '';
+    var girado = L.girar && (est.dados.girar == null ? !!L.giradoPadrao : !!est.dados.girar);
+    /* Com o título na vertical, a posição não muda a composição: o controle sai para não parecer quebrado. */
+    $('#ctl-posicao').hidden = !L.posicao || girado; $('#ctl-alinhamento').hidden = !L.posicao; $('#ctl-girar').hidden = !L.girar;
+    $('#ctl-nota').textContent = !L.posicao ? 'O layout ' + L.nome + ' tem composição fixa' + (L.girar ? ': dá para escolher só a direção do título.' : '.') : girado ? 'Com o título na vertical, ele ocupa a altura da peça; a posição volta quando ele fica na horizontal.' : '';
     $$('#secao-texto [data-ctl]').forEach(function (g) {
       var k = g.getAttribute('data-ctl'), atual = k === 'girar' ? (est.dados.girar == null ? (L.giradoPadrao ? '1' : '0') : (est.dados.girar ? '1' : '0')) : (est.dados[k] || '');
       g.innerHTML = OPCOES[k].map(function (o) { return '<button type="button" class="chip" role="radio" data-v="' + o[0] + '" aria-checked="' + (o[0] === atual) + '">' + o[1] + '</button>'; }).join('');
@@ -458,6 +460,7 @@
       var k = g.getAttribute('data-ctl');
       if (k === 'girar') est.dados.girar = b.dataset.v === '1'; else est.dados[k] = b.dataset.v;
       $$('[data-v]', g).forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
+      if (k === 'girar') desenharControles();
       mudou(); mudouMinis();
     });
     $('#formatos').addEventListener('click', function (e) {
@@ -573,7 +576,7 @@
   function registrar(e) {
     e.preventDefault();
     var v = mensagens(true);
-    if (!v.ok) { if (window.matchMedia('(max-width:960px)').matches) aba('info'); var p = $('#form-peca .tem-erro input, #form-peca .tem-erro textarea'); if (p) setTimeout(function () { p.focus(); }, 300); return; }
+    if (!v.ok) { if (window.matchMedia('(max-width:760px)').matches) aba('info'); var p = $('#form-peca .tem-erro input, #form-peca .tem-erro textarea'); if (p) setTimeout(function () { p.focus(); }, 300); return; }
     if (bloqueadoPremium()) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Layout premium.</b> Ele faz parte do plano Essencial. Você pode ver a prévia à vontade; para registrar no gratuito, escolha um layout básico ou elaborado.</div>'); $('#layouts').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     /* Editar uma peça é livre até EDICOES_LIVRES vezes; depois disso conta como peça nova no gratuito. */
     var antiga = est.editando ? lerPecas().filter(function (x) { return x.codigo === est.editando; })[0] : null;
@@ -665,7 +668,7 @@
   }
   $$('.abas [data-aba]').forEach(function (b) { b.addEventListener('click', function () { aba(b.getAttribute('data-aba')); }); });
   $$('[data-ir-aba]').forEach(function (b) { b.addEventListener('click', function () { aba(b.getAttribute('data-ir-aba')); }); });
-  $$('.ir-form').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); if (window.matchMedia('(max-width:960px)').matches) aba('info'); else $('#form-peca').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+  $$('.ir-form').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); if (window.matchMedia('(max-width:760px)').matches) aba('info'); else $('#form-peca').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
 
   /* ---------- Início ---------- */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!$('#vista-criar').hidden) { desenharLayouts(); atualizarPrevia(); } });
@@ -674,7 +677,7 @@
      se for mais alta, rola junto, para nenhum botão ficar escondido embaixo dela. */
   function ajustarFixa() {
     var c = $('.zona-criacao .previa-col'); if (!c) return;
-    c.classList.toggle('fixa', window.innerWidth > 960 && c.offsetHeight < window.innerHeight - 110);
+    c.classList.toggle('fixa', window.innerWidth > 760 && c.offsetHeight < window.innerHeight - 110);
   }
   if (window.ResizeObserver) new ResizeObserver(ajustarFixa).observe($('.zona-criacao .previa-col'));
   window.addEventListener('resize', ajustarFixa);
