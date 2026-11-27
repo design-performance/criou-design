@@ -1,0 +1,161 @@
+{
+  "_sobre": "Personas do enxame de teste do Criou. Cada agente sorteia variações (aparelho, ritmo, textos) a partir da semente, como uma pequena população simulada.",
+  "personas": {
+    "iniciante": {
+      "nome": "Dona Lúcia",
+      "quem": "62 anos, padaria do bairro, primeira vez numa ferramenta de design",
+      "aparelhos": [
+        [
+          390,
+          844,
+          true
+        ],
+        [
+          360,
+          640,
+          true
+        ],
+        [
+          412,
+          915,
+          true
+        ]
+      ],
+      "paciencia_ms": [
+        900,
+        1800
+      ],
+      "titulos": [
+        "Pão de queijo saindo às 16h",
+        "Bolo de fubá quentinho 🍰",
+        "Encomendas para o Natal",
+        "Café + pão na chapa por R$ 9,90"
+      ]
+    },
+    "apressado": {
+      "nome": "Rafa",
+      "quem": "lojista, quer story e post da promoção em menos de um minuto",
+      "aparelhos": [
+        [
+          1366,
+          768,
+          false
+        ],
+        [
+          1280,
+          800,
+          false
+        ],
+        [
+          1440,
+          900,
+          false
+        ]
+      ],
+      "paciencia_ms": [
+        80,
+        250
+      ],
+      "titulos": [
+        "Black Friday: 40% em toda a loja",
+        "Só hoje: frete grátis",
+        "Liquida de verão",
+        "Compre 2, leve 3"
+      ]
+    },
+    "designer": {
+      "nome": "Bia",
+      "quem": "designer exigente, procura texto cortado e contraste ruim em todos os formatos e layouts",
+      "aparelhos": [
+        [
+          1920,
+          1080,
+          false
+        ],
+        [
+          1600,
+          1000,
+          false
+        ]
+      ],
+      "paciencia_ms": [
+        350,
+        500
+      ],
+      "titulos": [
+        "Ok",
+        "Aula aberta de ==pilates== no sábado com a turma toda e café da manhã no jardim do estúdio"
+      ]
+    },
+    "hacker": {
+      "nome": "Zé Malandro",
+      "quem": "tenta injetar código, burlar o plano e quebrar uploads",
+      "aparelhos": [
+        [
+          1280,
+          900,
+          false
+        ]
+      ],
+      "paciencia_ms": [
+        150,
+        300
+      ]
+    },
+    "teclado": {
+      "nome": "Caio",
+      "quem": "usa só teclado; precisa de foco visível e ordem lógica",
+      "aparelhos": [
+        [
+          1280,
+          900,
+          false
+        ]
+      ],
+      "paciencia_ms": [
+        60,
+        120
+      ]
+    },
+    "lenta": {
+      "nome": "Seu Antônio",
+      "quem": "interior, 3G fraco, celular antigo",
+      "aparelhos": [
+        [
+          360,
+          740,
+          true
+        ]
+      ],
+      "paciencia_ms": [
+        400,
+        800
+      ]
+    },
+    "caotico": {
+      "nome": "Gremlin",
+      "quem": "clica em tudo, digita qualquer coisa, gira o celular",
+      "aparelhos": [
+        [
+          390,
+          844,
+          true
+        ],
+        [
+          820,
+          1180,
+          true
+        ],
+        [
+          1280,
+          800,
+          false
+        ]
+      ],
+      "paciencia_ms": [
+        30,
+        120
+      ]
+    }
+  }
+}

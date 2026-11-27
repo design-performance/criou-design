@@ -18,6 +18,10 @@ Não é um editor. Não tem tela de edição livre: só aparecem escolhas segura
 index.html            Página de venda
 criar/index.html      Demonstração sem cadastro
 prototipo/            Protótipo original
+testes/enxame/        Enxame de agentes que testam o site (personas.json + enxame.py)
+testes/seguranca/     Conferência da CSP
+_headers              Cabeçalhos de segurança no Worker
+SECURITY.md           O que protege o Criou e o plano do backend
 js/motor.js           Motor: decisões (com o porquê), desenho em canvas, prévia com marca d'água, eventos
 wrangler.jsonc        Worker da Cloudflare que serve o site (.assetsignore lista o que não vai para o ar)
 .nojekyll             Faz o GitHub Pages publicar os arquivos como estão
@@ -40,6 +44,26 @@ python3 -m http.server 8000
 ```
 
 Depois acesse `http://localhost:8000`.
+
+## Testar com o enxame de agentes
+
+Inspirado em simuladores de população como o MiroFish: vários agentes com perfis diferentes usam o site ao mesmo tempo e o relatório soma o que cada um encontrou.
+
+| Persona | O que testa |
+|---|---|
+| Dona Lúcia (iniciante) | Celular, primeira vez: chega na prévia, registra e entende o download? |
+| Rafa (apressado) | Troca layout e cor sem parar, mede a velocidade, baixa em menos de 1 minuto |
+| Bia (designer) | Todos os formatos × layouts com título curto e longo, texto girado: algo sai da peça ou corta? |
+| Zé Malandro (hacker) | Injeção de código nos campos, na URL e nos dados do aparelho, SVG com script, arquivo falso ou gigante, burla do plano |
+| Caio (teclado) | Só Tab e Enter: foco visível e caminho até registrar |
+| Seu Antônio (3G) | Rede lenta e celular fraco: quanto demora a primeira tela e a prévia |
+| Gremlin (caótico) | Cliques e textos aleatórios, gira o celular, volta a página |
+
+```bash
+pip install playwright && python3 -m playwright install chromium
+python3 testes/enxame/enxame.py --agentes 21 --semente 7
+# relatório em testes/enxame/saida/relatorio.html
+```
 
 ## Publicar
 

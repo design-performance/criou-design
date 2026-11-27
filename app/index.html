@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9AM6paihtnwQApjrUzBjeLBjvSbLAgLLjI2O3hOPSOw='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://images.unsplash.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://images.unsplash.com data: blob:; frame-src 'self' blob: data:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Estúdio · Criou</title>
 <meta name="robots" content="noindex">
@@ -11,6 +13,7 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 <p class="aviso-topo"><b>Versão de teste.</b> Sua marca e suas peças ficam salvas só neste aparelho. O download abre com o cadastro gratuito, em breve.</p>
 <header class="topo">
   <a class="wm" href="../" aria-label="Criou, voltar para a página inicial">CRI<span>OU</span></a>
@@ -72,7 +75,6 @@
             <span class="rot" id="r-forma">Forma dos botões, fotos e selos</span>
             <div class="chips" id="m-forma" role="group" aria-labelledby="r-forma"></div>
           </div>
-</div>
         </div>
 
         <div class="secao">
@@ -165,9 +167,6 @@
       <div class="previa-col" aria-label="Prévia">
         <div class="palco" id="palco"></div>
         <p class="legenda" id="legenda"></p>
-        <p class="legenda"><a href="#form-peca" class="ir-form">Voltar a editar ↑</a></p>
-        <details class="porque-caixa"><summary>Por que ficou assim?</summary><ul class="porque" id="porque"></ul></details>
-      </div>
         <div class="registro">
           <div class="msgs" id="msgs" aria-live="polite"></div>
           <div class="acoes"><button class="btn" type="submit" form="form-peca" id="registrar">Registrar peça</button><span class="ajuda" id="pendencia"></span></div>
@@ -180,6 +179,9 @@
           <div class="acoes"><button class="btn sec" type="button" id="editar">Editar esta peça</button><button class="link" type="button" id="nova">Começar outra peça</button></div>
         </div>
         </div>
+        <p class="legenda"><a href="#form-peca" class="ir-form">Voltar a editar ↑</a></p>
+        <details class="porque-caixa"><summary>Por que ficou assim?</summary><ul class="porque" id="porque"></ul></details>
+      </div>
       </div>
       <div class="zona zona-opcoes">
         <p class="zona-rot">Opções <span>como apresentar</span></p>

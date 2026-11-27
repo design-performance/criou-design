@@ -95,6 +95,7 @@
     f.setAttribute('title', m.nome + ': ' + MO.semMarcas(d.titulo));
     f.setAttribute('tabindex', '-1');
     f.setAttribute('loading', 'lazy');
+    f.setAttribute('sandbox', 'allow-scripts');
     f.style.cssText = 'position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none;width:' + fo.largura + 'px;height:' + fo.altura + 'px';
     f.srcdoc = MD.html(fo, d, m, dec);
     el.style.aspectRatio = fo.largura + ' / ' + fo.altura;

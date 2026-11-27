@@ -190,7 +190,8 @@ details.mais summary .opc{color:var(--suave);font-weight:400}
 .zona{min-width:0}
 .zona-rot{font:400 15px/1 Anton,Impact,sans-serif;text-transform:uppercase;letter-spacing:.04em;margin:0 0 10px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .zona-rot span{font:500 13px Inter,sans-serif;text-transform:none;letter-spacing:0;color:var(--suave)}
-.zona-criacao .previa-col{position:sticky;top:92px}
+.zona-criacao .previa-col{position:static}
+.zona-criacao .previa-col.fixa{position:sticky;top:92px}
 .zona-opcoes .cartao{padding:18px}
 .zona-opcoes .secao h2,.zona-info .secao h2{font-size:20px}
 .abas{display:none}
@@ -221,3 +222,8 @@ details.mais summary .opc{color:var(--suave);font-weight:400}
 
 .registro{margin-top:16px}
 .registro .msgs{margin-top:0}
+@media(max-width:380px){.topo .wm{font-size:20px}.topo nav button{font-size:13px;padding:8px 7px}.topo{gap:4px;padding:10px 8px}}
+input[type=file]{min-height:44px;font-size:15px}
+
+.pular-conteudo{position:absolute;left:12px;top:-60px;z-index:100;background:#111;color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;text-decoration:none}.pular-conteudo:focus{top:12px}
+#feito{scroll-margin-top:140px}

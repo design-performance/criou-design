@@ -74,8 +74,8 @@
     if (!limpar(texto)) return '';
     var b = corBotao(P, fundo), alt = tam * 2.6, raio = M.FORMAS[marca.forma] ? M.FORMAS[marca.forma].raio(alt) : [8, 8, 8, 8];
     var al = POS.a || alinhar;
-    return '<div style="display:flex;justify-content:' + (al === 'center' ? 'center' : al === 'right' ? 'flex-end' : 'flex-start') + ';margin-top:' + px(tam * 1.1) + '"><div data-x="caixa" style="background:' + b.bg + ';border-radius:' + M.raioCss(raio) + ';height:' + px(alt) + ';padding:0 ' + px(tam * 1.3) + ';display:inline-flex;align-items:center">' +
-      '<span data-x="texto" data-forma="botao" style="font-family:' + M.pilha(marca.fontes.texto) + ';font-weight:700;font-size:' + px(tam) + ';line-height:1.1;color:' + b.tx + ';white-space:nowrap">' + esc(texto) + '</span></div></div>';
+    return '<div style="display:flex;justify-content:' + (al === 'center' ? 'center' : al === 'right' ? 'flex-end' : 'flex-start') + ';margin-top:' + px(tam * 1.1) + '"><div data-x="caixa" style="background:' + b.bg + ';border-radius:' + M.raioCss(raio) + ';min-height:' + px(alt) + ';max-width:100%;padding:' + px(tam * 0.5) + ' ' + px(tam * 1.3) + ';display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">' +
+      '<span data-x="texto" data-forma="botao" style="font-family:' + M.pilha(marca.fontes.texto) + ';font-weight:700;font-size:' + px(tam) + ';line-height:1.1;color:' + b.tx + ';text-align:center">' + esc(texto) + '</span></div></div>';
   }
   function foto(src, x, y, w, h) {
     if (!src) return caixa(abs(x, y, w, h) + 'background:#d9d9de');
@@ -83,7 +83,9 @@
   }
 
   /* Script que encaixa o título: reduz até a pilha de texto caber na área. */
-  var ENCAIXE = '<script>(function(){function fit(){document.querySelectorAll("[data-pilha]").forEach(function(p){var mi=p.firstElementChild,t=p.querySelector("[data-fit]");if(!mi||!t)return;var base=parseFloat(t.getAttribute("data-fit")),k=1;t.style.fontSize=base+"px";mi.style.zoom="";while((mi.offsetHeight>p.clientHeight+1||t.offsetWidth>p.clientWidth+1)&&k>0.46){k-=0.03;t.style.fontSize=(base*k)+"px";}if(mi.offsetHeight>p.clientHeight+1||t.offsetWidth>p.clientWidth+1){var z=Math.min(p.clientHeight/mi.offsetHeight,p.clientWidth/Math.max(t.offsetWidth,1),1);mi.style.transformOrigin=p.style.justifyContent==="flex-start"?"0 0":"0 100%";mi.style.transform="scale("+z+")";mi.style.width=(100/z)+"%";}});document.body.setAttribute("data-pronto","1");}if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}fit();})();<\/script>';
+  /* Se mudar este script, rode node testes/seguranca/conferir.mjs: o hash dele está na CSP. */
+  var CSP_PECA = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'sha256-9AM6paihtnwQApjrUzBjeLBjvSbLAgLLjI2O3hOPSOw=\'; style-src \'unsafe-inline\' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src data: blob: https:">';
+  var ENCAIXE = '<script>(function(){function fit(){document.querySelectorAll("[data-pilha]").forEach(function(p){var mi=p.firstElementChild,t=p.querySelector("[data-fit]");if(!mi||!t)return;var base=parseFloat(t.getAttribute("data-fit")),k=1;t.style.fontSize=base+"px";mi.style.zoom="";function L(){return Math.max(t.offsetWidth,mi.scrollWidth)}while((mi.offsetHeight>p.clientHeight+1||L()>p.clientWidth+1)&&k>0.46){k-=0.03;t.style.fontSize=(base*k)+"px";}if(mi.offsetHeight>p.clientHeight+1||L()>p.clientWidth+1){var z=Math.min(p.clientHeight/mi.offsetHeight,p.clientWidth/Math.max(L(),1),1);var jc=p.style.justifyContent;mi.style.transformOrigin=jc==="flex-start"?"0 0":jc==="center"?"0 50%":"0 100%";mi.style.transform="scale("+z+")";mi.style.width=(100/z)+"%";}});document.body.setAttribute("data-pronto","1");}if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}fit();})();<\/script>';
 
   function documento(marca, W, H, fundo, corpo, opts) {
     opts = opts || {};
@@ -93,10 +95,10 @@
       // Discreta: selo pequeno no canto e um padrão bem leve. Some no plano pago.
       var u = Math.min(W, H), tm = Math.max(12, Math.round(u * 0.019)), linhas = '', tl = Math.round(u * 0.05);
       for (var i = -2; i < Math.ceil(H / (tl * 4)) + 2; i++) linhas += '<div style="white-space:nowrap;margin-left:' + px((i % 2) * tl * 3 - tl * 4) + '">' + new Array(12).join('criou &nbsp;&nbsp;&nbsp;&nbsp; ') + '</div>';
-      marcaDagua = '<div aria-hidden="true" style="position:absolute;inset:-20%;transform:rotate(-24deg);font:700 ' + px(tl) + '/' + px(tl * 4) + ' Arial,sans-serif;color:rgba(128,128,128,.07);pointer-events:none;z-index:50">' + linhas + '</div>' +
+      marcaDagua = '<div aria-hidden="true" style="position:absolute;inset:-20%;transform:rotate(-24deg);font:700 ' + px(tl) + '/' + px(tl * 4) + ' Arial,sans-serif;color:rgba(128,128,128,.045);pointer-events:none;z-index:50">' + linhas + '</div>' +
         '<div aria-hidden="true" style="position:absolute;right:' + px(u * 0.025) + ';bottom:' + px(u * 0.025) + ';z-index:51;background:rgba(255,255,255,.88);color:#111;font:700 ' + px(tm) + '/1 Arial,sans-serif;padding:' + px(tm * 0.55) + ' ' + px(tm * 0.9) + ';border-radius:999px">feito no Criou</div>';
     }
-    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><link rel="stylesheet" href="' + fontes + '">' +
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">' + CSP_PECA + '<link rel="stylesheet" href="' + fontes + '">' +
       '<style>html,body{margin:0;padding:0;background:#fff}*{box-sizing:border-box}strong{font-weight:800}em{font-style:italic}</style></head><body>' +
       '<div data-x="peca" style="position:relative;width:' + px(W) + ';height:' + px(H) + ';overflow:hidden;background:' + fundo + '">' + corpo + marcaDagua + '</div>' + ENCAIXE + '</body></html>';
   }
@@ -267,7 +269,7 @@
 
     var bloco = '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:900;font-size:' + px(tam) + ';line-height:.98;letter-spacing:-0.02em;text-transform:uppercase;color:' + tx + ';flex:none' + (c.vazio ? ';opacity:.55' : '') + '">' + rico(c.titulo, realce) + '</div>' +
       (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:600;font-size:' + px(U * 0.034) + ';line-height:1.3;color:' + tx + ';margin-top:' + px(U * 0.026) + ';flex:none">' + rico(c.apoio, realce) + '</div>' : '') +
-      acoes((c.data ? '<div style="margin-top:' + px(U * 0.026) + ';flex:none;display:flex"><div data-x="caixa" style="background:' + hl + ';display:inline-flex;align-items:center;height:' + px(U * 0.054) + ';padding:0 ' + px(U * 0.018) + '"><span data-x="texto" style="font-family:' + c.fX + ';font-weight:800;font-size:' + px(U * 0.028) + ';line-height:1.2;color:' + hlTx + ';text-transform:uppercase;letter-spacing:.03em;white-space:nowrap">' + esc(c.data) + '</span></div></div>' : ''), botao(c.chamada, c.marca, P, fundo, U * 0.032, 'left'), c.tipo === 'largo', U * 0.022);
+      acoes((c.data ? '<div style="margin-top:' + px(U * 0.026) + ';flex:none;display:flex"><div data-x="caixa" style="background:' + hl + ';display:inline-flex;align-items:center;min-height:' + px(U * 0.054) + ';max-width:100%;box-sizing:border-box;padding:' + px(U * 0.008) + ' ' + px(U * 0.018) + '"><span data-x="texto" style="font-family:' + c.fX + ';font-weight:800;font-size:' + px(U * 0.028) + ';line-height:1.2;color:' + hlTx + ';text-transform:uppercase;letter-spacing:.03em">' + esc(c.data) + '</span></div></div>' : ''), botao(c.chamada, c.marca, P, fundo, U * 0.032, 'left'), c.tipo === 'largo', U * 0.022);
 
     if (c.tipo === 'largo') {
       var fx = Math.round(W * (c.temFoto ? 0.62 : 0.74));
@@ -529,28 +531,39 @@
     corpo += caixa(abs(largo ? cel * 1 : cel * (cols - 1), largo ? cel * (lin - 2) : cel * (lin - 3), cel, cel) + 'background:' + cor);
     var bb = Math.max(2, Math.round(U * 0.0035));
     corpo += '<div style="' + abs(cel * (cols - 3), 0, cel, cel) + 'border:' + px(bb) + ' solid ' + cor + ';display:flex;align-items:center;justify-content:center"><span data-x="texto" style="font:300 ' + px(cel * 0.62) + '/1 ' + c.fX + ';color:#ffffff">↙</span></div>';
-    var nomeT = U * (largo ? 0.06 : 0.055);
-    if (c.marca.logo || c.marca.logoClaro) corpo += '<div style="' + abs(m, c.mt, W * 0.4) + '">' + logo(c.marca, P, U * 0.05, base, W * 0.3) + '</div>';
-    else corpo += '<div style="' + abs(m, c.mt - nomeT * 1.3, W * 0.5) + 'font-family:' + c.fT + ';font-weight:600;font-size:' + px(nomeT) + ';line-height:.86;letter-spacing:-0.02em">' +
+    var livreNome = cel * (cols - 3) - m - U * 0.025;
+    var nomeT = Math.min(U * (largo ? 0.06 : 0.055), livreNome / (Math.max(4, c.marca.nome.length) * 0.56));
+    if (c.marca.logo || c.marca.logoClaro) corpo += '<div style="' + abs(m, c.mt, Math.min(W * 0.4, livreNome)) + '">' + logo(c.marca, P, U * 0.05, base, Math.min(W * 0.3, livreNome)) + '</div>';
+    else corpo += '<div style="' + abs(m, Math.max(m * 0.4, c.mt - nomeT * 1.3), livreNome) + 'white-space:nowrap;font-family:' + c.fT + ';font-weight:600;font-size:' + px(nomeT) + ';line-height:.86;letter-spacing:-0.02em">' +
       '<div style="color:' + C.mix(claro, base, 0.7) + '">' + esc(c.marca.nome) + '</div><div style="color:' + C.mix(claro, base, 0.45) + '">' + esc(c.marca.nome) + '</div><div data-x="texto" style="color:' + claro + '">' + esc(c.marca.nome) + '</div></div>';
-    var palavras = MO_sem(c.titulo).split(/\s+/), meio = Math.ceil(palavras.length / 2);
-    var l1 = palavras.slice(0, meio).join(' '), l2 = palavras.slice(meio).join(' ');
-    var maior = Math.max(l1.length, l2.length) || 1;
-    var tam = Math.min(U * (largo ? 0.12 : 0.2) * c.dec.escala, (W - 2 * m) / (maior * 0.58), largo ? H * 0.2 : 9999);
-    var y1 = largo ? H * 0.34 : H * 0.42, x2 = Math.round(W * (largo ? 0.3 : 0.36));
+    /* Título em degraus: 1 a 4 linhas, alternando a margem e o recuo; cada linha cabe na sua largura. */
+    var sem = MO_sem(c.titulo), palavras = sem.split(/\s+/).filter(Boolean);
+    var nl = Math.max(1, Math.min(4, palavras.length, sem.length <= 22 ? 2 : Math.ceil(sem.length / (largo ? 22 : 15))));
+    var linhas = [], alvo = sem.length / nl, atual = '';
+    palavras.forEach(function (w) { if (atual && (atual + ' ' + w).length > alvo * 1.15 && linhas.length < nl - 1) { linhas.push(atual); atual = w; } else atual = atual ? atual + ' ' + w : w; });
+    if (atual) linhas.push(atual);
+    var fimMarca = (c.marca.logo || c.marca.logoClaro) ? c.mt + U * 0.05 : Math.max(m * 0.4, c.mt - nomeT * 1.3) + nomeT * 2.6;
+    var y1 = Math.max(largo ? H * (linhas.length > 2 ? 0.24 : 0.34) : H * (linhas.length > 2 ? 0.34 : 0.42), fimMarca + U * 0.04), x2 = Math.round(W * (largo ? 0.3 : 0.36));
     var yLim = H - c.mb - cel * 0.8 - (c.apoio ? U * 0.07 : 0);
-    if (!largo) tam = Math.min(tam, (yLim - y1) / (l2 ? 2.3 : 1.35));
+    var tam = U * (largo ? 0.12 : 0.2) * c.dec.escala;
+    var degrau = linhas.length <= 2; // com 3 ou 4 linhas, o degrau embaralha a leitura: alinha tudo à esquerda
+    linhas.forEach(function (l, i) { var x = degrau && i % 2 ? x2 : m; tam = Math.min(tam, (W - x - m) / (Math.max(1, l.length) * 0.6)); });
+    tam = Math.min(tam, (yLim - y1) / (linhas.length * 1.04 + 0.3), largo ? H * 0.2 : 9999);
     var estilo = 'font-family:' + c.fT + ';font-weight:400;font-size:' + px(tam) + ';line-height:1;letter-spacing:-0.01em;text-transform:uppercase;white-space:nowrap;position:absolute;';
     var realceG = function (t) { return /==/.test(c.titulo) && palavrasRealce(c.titulo).indexOf(t) >= 0 ? ac : null; };
-    corpo += '<div data-x="texto" style="' + estilo + 'left:' + px(m) + ';top:' + px(y1) + ';color:' + (realceG(l1) || '#ffffff') + '">' + esc(l1) + '</div>';
-    if (l2) corpo += '<div data-x="texto" style="' + estilo + 'left:' + px(x2) + ';top:' + px(y1 + tam * 1.02) + ';color:' + (realceG(l2) || claro) + '">' + esc(l2) + '</div>';
-    var et = U * 0.024, yb = y1 + tam * (l2 ? 2.25 : 1.3);
+    linhas.forEach(function (l, i) {
+      corpo += '<div data-x="texto" style="' + estilo + 'left:' + px(degrau && i % 2 ? x2 : m) + ';top:' + px(y1 + tam * (degrau ? 1.02 : 1.08) * i) + ';color:' + (realceG(l) || (i % 2 ? claro : '#ffffff')) + '">' + esc(l) + '</div>';
+    });
+    var l2 = linhas.length > 1;
+    var et = U * 0.024, yb = y1 + tam * (linhas.length * 1.04 + 0.2);
     if (c.apoio) corpo += '<div data-x="texto" style="' + abs(x2, yb, W - x2 - m) + 'font-family:' + c.fX + ';font-size:' + px(et * 1.15) + ';line-height:1.4;color:' + C.mix('#ffffff', base, 0.2) + '">' + esc(c.apoio) + '</div>';
     var yRod = H - c.mb - cel * 0.6;
-    if (c.data) corpo += '<div data-x="texto" style="' + abs(m, yRod, W * 0.45) + 'font-family:' + c.fT + ';font-size:' + px(et * 1.6) + ';line-height:1.1;color:#ffffff">' + esc(c.data) + '</div>';
+    var xBotao = cel * (largo ? cols - 3 : 2.5), largData = c.chamada ? xBotao - m - U * 0.02 : W * 0.6;
+    if (c.data) corpo += '<div data-x="texto" style="' + abs(m, yRod, largData) + 'font-family:' + c.fT + ';font-size:' + px(Math.min(et * 1.6, largData / (c.data.length * 0.5))) + ';line-height:1.1;color:#ffffff">' + esc(c.data) + '</div>';
     if (c.chamada) corpo += '<div style="' + abs(cel * (largo ? cols - 3 : 2.5), yRod - cel * 0.2, cel * (largo ? 2 : 1.6), cel * 0.62) + 'border:' + px(bb) + ' solid ' + cor + ';display:flex;align-items:center;justify-content:center"><span data-x="texto" style="font:700 ' + px(et) + '/1.1 ' + c.fX + ';color:#ffffff;text-align:center">' + esc(c.chamada) + '</span></div>';
     corpo += '<div data-x="texto" style="position:absolute;right:' + px(m) + ';bottom:' + px(c.mb) + ';font:300 ' + px(cel * 0.5) + '/1 ' + c.fX + ';color:#ffffff">✕</div>';
-    if (c.rodape || c.selo) corpo += '<div data-x="texto" style="' + abs(m, yRod + et * 2.4, W * 0.6) + 'font-family:' + c.fX + ';font-size:' + px(et * 0.8) + ';color:' + C.mix('#ffffff', base, 0.4) + ';text-transform:uppercase;letter-spacing:.1em">' + esc([c.selo, c.rodape].filter(Boolean).join(' · ')) + '</div>';
+    var yRodape = Math.max(yRod + et * 2.4, c.chamada && !largo ? yRod + cel * 0.42 + et * 0.8 : 0);
+    if (c.rodape || c.selo) corpo += '<div data-x="texto" style="' + abs(m, yRodape, W * 0.6) + 'font-family:' + c.fX + ';font-size:' + px(et * 0.8) + ';color:' + C.mix('#ffffff', base, 0.4) + ';text-transform:uppercase;letter-spacing:.1em">' + esc([c.selo, c.rodape].filter(Boolean).join(' · ')) + '</div>';
     return { fundo: base, corpo: corpo };
   }
   function MO_sem(t) { return String(t || '').replace(/==\([a-z0-9-]+\)([\s\S]+?)==/gi, '$1').replace(/==([\s\S]+?)==/g, '$1').replace(/\*\*([\s\S]+?)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1').trim(); }
@@ -578,10 +591,14 @@
     if (J.b) corpo += janela(J.b, c.temFoto ? c.dados._fotoB : '');
     var et = U * 0.02;
     // meta na lateral esquerda, girada
-    corpo += girarBloco(Math.round(m * 0.35), m, et * 2.6, H * 0.36, -90, etiqueta([c.marca.nome, c.data || c.selo].filter(Boolean).join(' — '), c, tx, et, 'white-space:nowrap'), 'right', 'center');
+    var nSelo = [c.selo, c.rodape].filter(Boolean).length;
+    var meta = [c.marca.nome, c.data || c.selo].filter(Boolean).join(' — ');
+    var altMeta = largo ? H - m - c.mb * 0.6 - nSelo * et * 1.3 - U * 0.06 : H * 0.5;
+    var etM = Math.min(et, altMeta / (Math.max(8, meta.length) * 0.62));
+    corpo += girarBloco(Math.round(m * 0.35), m, etM * 2.6, altMeta, -90, etiqueta(meta, c, tx, etM, 'white-space:nowrap'), 'right', 'center');
     var realce = function (x) { return '<span style="color:' + C.garantir(P.destaque, '#555555', 3) + '">' + x + '</span>'; };
     var n = MO_sem(c.titulo).length || 1;
-    if (c.girado && !largo) {
+    if (c.girado && !largo && n <= 34) {
       var col = { x: J.a.x + J.a.w + Math.round(W * 0.06), y: J.a.y, w: Math.round(W * 0.24), h: (J.b ? J.b.y - J.a.y - U * 0.03 : J.a.h) };
       var tamV = Math.min(col.w * 0.9, col.h / (n * 0.82)) * (n > 16 ? 1.7 : 1);
       corpo += girarBloco(col.x, col.y, col.w, col.h, 90, '<div data-x="texto" data-fit="' + tamV.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:500;font-size:' + px(tamV) + ';line-height:.95;letter-spacing:.02em;text-transform:uppercase;color:' + tx + ';flex:none">' + rico(c.titulo, realce) + '</div>', 'left', 'flex-start');
@@ -652,7 +669,7 @@
     var c = contexto(formato, dados, marca, dec);
     var L = M.LAYOUTS[dec.estilo] || {};
     POS = L.posicao ? { j: { topo: 'flex-start', centro: 'center', base: 'flex-end' }[dados.posicao], a: { esquerda: 'left', centro: 'center', direita: 'right' }[dados.alinhamento] } : {};
-    c.girado = L.girar ? (dados.girar == null ? !!L.giradoPadrao : !!dados.girar) : false;
+    c.girado = L.girar ? (dados.girar == null ? !!L.giradoPadrao && MO_sem(c.titulo).length <= 28 : !!dados.girar) : false;
     var r = ESTILOS[dec.desenho || 'simples'](c);
     POS = {};
     return documento(marca, c.W, c.H, r.fundo, r.corpo, opts);
@@ -705,7 +722,7 @@
       (data ? '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px ' + (est === 'sofisticado' ? 'auto' : '0') + ' 22px"><tr><td data-x="caixa" style="background:' + (est === 'robusto' ? P.destaque : P.fundo) + ';border-radius:10px;padding:12px 18px"><span data-x="texto" style="font:800 15px/20px ' + fX + ';letter-spacing:.04em;text-transform:uppercase;color:' + (est === 'robusto' ? P.sobreDestaque : P.escura) + '">' + esc(data) + '</span></td></tr></table>' : '') +
       '</td></tr>' +
       (limpar(dados.texto) ? '<tr><td align="left" style="padding:0 40px 8px">' + paragrafos(dados.texto, P, fX, realce) + '</td></tr>' : '') +
-      (limpar(dados.chamada) ? '<tr><td align="' + (est === 'sofisticado' ? 'center' : 'left') + '" style="padding:8px 40px 36px"><a href="' + esc(limpar(dados.link) || '#') + '" style="text-decoration:none;display:inline-block"><span data-x="caixa" style="display:inline-block;background:' + b.bg + ';border-radius:' + M.raioCss(raio) + ';padding:15px 30px"><span data-x="texto" data-forma="botao" style="font:700 16px/20px ' + fX + ';color:' + b.tx + '">' + esc(dados.chamada) + '</span></span></a></td></tr>' : '<tr><td style="height:20px"></td></tr>') +
+      (limpar(dados.chamada) ? '<tr><td align="' + (est === 'sofisticado' ? 'center' : 'left') + '" style="padding:8px 40px 36px"><a href="' + esc(/^https:\/\/[^\s"'<>]+$/i.test(limpar(dados.link)) ? limpar(dados.link) : '#') + '" style="text-decoration:none;display:inline-block"><span data-x="caixa" style="display:inline-block;background:' + b.bg + ';border-radius:' + M.raioCss(raio) + ';padding:15px 30px"><span data-x="texto" data-forma="botao" style="font:700 16px/20px ' + fX + ';color:' + b.tx + '">' + esc(dados.chamada) + '</span></span></a></td></tr>' : '<tr><td style="height:20px"></td></tr>') +
       '<tr><td data-x="caixa" align="' + (est === 'sofisticado' ? 'center' : 'left') + '" style="background:' + (est === 'simples' ? P.fundo : P.escura) + ';padding:24px 40px">' +
       (marca.rodape.frase ? '<p data-x="texto" style="margin:0 0 6px;font:700 15px/22px ' + fT + ';color:' + (est === 'simples' ? P.escura : ac) + '">' + esc(marca.rodape.frase) + '</p>' : '') +
       '<p data-x="texto" style="margin:0;font:400 13px/20px ' + fX + ';color:' + (est === 'simples' ? P.suave : C.mix('#ffffff', P.escura, 0.3)) + '">' + esc([marca.nome, marca.rodape.site, marca.rodape.social].filter(function (x) { return limpar(x); }).join(' · ')) + '</p>' +

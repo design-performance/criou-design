@@ -12,9 +12,12 @@
      Enquanto o cadastro não abre, ninguém baixa (?teste=1 simula o cadastro feito, para conferência). */
   var Q0 = new URLSearchParams(location.search);
   var CADASTRO_ABERTO = false;
-  var CADASTRADO = CADASTRO_ABERTO || Q0.get('teste') === '1';
-  var PLANO = Q0.get('plano') === 'essencial' ? 'essencial' : 'gratuito';
-  var LIMITE_DIA = 3;
+  /* Segurança: os atalhos de teste (?teste=1 e ?plano=essencial) só existem no pré-lançamento.
+     Quando o cadastro abrir, o plano passa a vir do servidor e a URL deixa de valer. */
+  var MODO_TESTE = !CADASTRO_ABERTO;
+  var CADASTRADO = CADASTRO_ABERTO || (MODO_TESTE && Q0.get('teste') === '1');
+  var PLANO = MODO_TESTE && Q0.get('plano') === 'essencial' ? 'essencial' : 'gratuito';
+  var LIMITE_DIA = 3, EDICOES_LIVRES = 3;
   var LIBERADO = CADASTRADO && PLANO === 'essencial';
 
   var M = window.CriouMarca, F = window.CriouFormatos, MO = window.CriouMotor, MD = window.CriouModelos;
@@ -65,6 +68,8 @@
     q.style.width = Math.round(W * k) + 'px'; q.style.height = Math.round(alto) + 'px';
     var f = el('iframe', { title: rotulo || 'Prévia', tabindex: '-1', 'aria-hidden': rotulo ? null : 'true' });
     f.style.width = W + 'px'; f.style.height = (H || 1600) + 'px'; f.style.transform = 'scale(' + k + ')';
+    /* Segurança: prévia de altura fixa roda isolada (sem acesso à página). O e-mail precisa medir a altura. */
+    if (H) f.setAttribute('sandbox', 'allow-scripts');
     if (!H) f.addEventListener('load', function () {
       try { var h = f.contentDocument.documentElement.scrollHeight; f.style.height = h + 'px'; q.style.height = Math.round(h * k) + 'px'; } catch (e) { }
     });
@@ -135,6 +140,7 @@
         marca.configurada = true;
         if (!M.salvar(marca)) { $('#e-erro').textContent = 'O logotipo é grande demais para guardar neste aparelho. Use um arquivo menor.'; return; }
         ir('criar');
+        var t = $('#t-criar'); if (t) { t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
       });
     }
     previaEntrada();
@@ -190,7 +196,7 @@
       return '<label class="cor"><input type="color" data-cor="' + c.id + '" value="' + v + '" aria-label="Cor ' + c.nome + '"><span><b>' + c.nome + '</b>' + c.dica + (auto ? '<br><small>automática</small>' : '') + '</span></label>';
     }).join('');
   }
-  function mostrarLogo(ver, tirar, src, vazio) { $(ver).innerHTML = src ? '<img src="' + src + '" alt="">' : vazio; $(tirar).hidden = !src; }
+  function mostrarLogo(ver, tirar, src, vazio) { $(ver).innerHTML = src ? '<img src="' + esc(M.imagemValida(src)) + '" alt="">' : vazio; $(tirar).hidden = !src; }
   function ligarMarca() {
     var f = $('#form-marca');
     var mudouM = adiar(atualizarAmostras, 150);
@@ -255,7 +261,7 @@
   }
 
   function lerLogo(arquivo, ok) {
-    if (!arquivo) return;
+    if (!arquivo || !arquivoOk(arquivo, 5)) return;
     var leitor = new FileReader();
     leitor.onload = function () {
       var im = new Image();
@@ -356,8 +362,14 @@
     $('#foto-nota').textContent = !L.foto ? 'O layout "Só texto" não usa foto. Escolha outro layout para ela aparecer.' : L.foto === 'fundo' ? 'No layout "Foto de fundo", a foto ocupa a peça inteira.' : 'Quer a foto na peça inteira? Escolha "Foto de fundo" em Layout.';
     desenharRecorte();
   }
+  var TIPOS_IMG = /^image\/(png|jpeg|webp|svg\+xml)$/;
+  function arquivoOk(arquivo, mb) {
+    if (!TIPOS_IMG.test(arquivo.type || '')) { aviso('Use uma imagem PNG, JPG ou WebP.'); return false; }
+    if (arquivo.size > mb * 1048576) { aviso('Arquivo grande demais (máximo ' + mb + ' MB).'); return false; }
+    return true;
+  }
   function lerFoto(arquivo) {
-    if (!arquivo) return;
+    if (!arquivo || !arquivoOk(arquivo, 15)) return;
     var leitor = new FileReader();
     leitor.onload = function () {
       var im = new Image();
@@ -450,6 +462,8 @@
     });
     $('#formatos').addEventListener('click', function (e) {
       var b = e.target.closest('[data-f]'); if (!b) return;
+      /* Outro formato é outra peça: a registrada fica guardada e a próxima ganha código novo. */
+      if (est.formato !== b.dataset.f && est.editando) { est.editando = null; $('#feito').hidden = true; }
       est.formato = b.dataset.f;
       $$('#formatos [data-f]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
       montarCampos(); desenharLayouts(); mudou();
@@ -476,6 +490,10 @@
   /* Dados prontos para o desenho: foto recortada no quadro do layout. */
   async function dadosPara(fo, layoutId, m, dadosBase) {
     var d = Object.assign({}, dadosBase || est.dados, { imagem: est.imagem });
+    /* Só entram na peça os campos que este formato pede (data e botão preenchidos num post
+       não podem aparecer cortados numa miniatura de vídeo, onde nem há campo para apagá-los). */
+    if (fo.campos) Object.keys(F.CAMPOS).forEach(function (k) { if (fo.campos.indexOf(k) < 0 && k !== 'link') delete d[k]; });
+    if (fo.campos && fo.campos.indexOf('chamada') < 0) delete d.link;
     var dec = MO.decidir(fo, d, m, layoutId);
     if (est.imagem && dec.temFoto) Object.assign(d, await MD.fotos(fo, dec, est.imagem.src, est.imagem.ajuste, fo.email ? 2 : 1));
     return { d: d, dec: dec };
@@ -507,7 +525,11 @@
     $('#porque').innerHTML = feitos[0].dec.porque.map(function (p) { return '<li><b>' + p.tema + ':</b> ' + esc(p.texto) + '</li>'; }).join('');
     mensagens(false);
   }
-  var mudou = adiar(function () { $('#feito').hidden = true; atualizarPrevia(); }, 160);
+  /* Cada mudança ganha um número; a confirmação de "peça registrada" só some se algo mudou depois do registro
+     (antes, uma mudança ainda na fila escondia a confirmação de quem digitava e registrava rápido). */
+  var versao = 0, versaoRegistrada = -1;
+  var mudouAdiado = adiar(function () { if (versao !== versaoRegistrada) $('#feito').hidden = true; atualizarPrevia(); }, 160);
+  function mudou() { versao++; mudouAdiado(); }
 
   function mensagens(mostrarErros) {
     var v = MO.validar(formatoAtual(), est.dados, marca);
@@ -528,7 +550,16 @@
 
   /* ---------- Registro (neste aparelho) ---------- */
   var CHAVE_PECAS = 'criou.pecas.v1';
-  function lerPecas() { try { return JSON.parse(localStorage.getItem(CHAVE_PECAS)) || []; } catch (e) { return []; } }
+  function lerPecas() {
+    try {
+      var l = JSON.parse(localStorage.getItem(CHAVE_PECAS)) || [];
+      if (!Array.isArray(l)) return [];
+      return l.filter(function (p) { return p && typeof p === 'object' && /^[A-Z0-9-]{4,20}$/i.test(String(p.codigo || '')); }).slice(0, 200).map(function (p) {
+        var d = {}; Object.keys(p.dados || {}).forEach(function (k) { var v = p.dados[k]; if (/^[a-z0-9_]{1,30}$/i.test(k) && (typeof v === 'string' || typeof v === 'boolean' || typeof v === 'number')) d[k] = typeof v === 'string' ? v.slice(0, 600) : v; });
+        return { codigo: String(p.codigo), formato: F.porId(p.formato) ? p.formato : 'kit', estilo: M.layout(p.estilo), par: M.PARES && M.PARES[p.par] ? p.par : 'auto', cor: M.corValida(p.cor), dados: d, edicoes: Math.max(0, parseInt(p.edicoes, 10) || 0), quando: isNaN(Date.parse(p.quando)) ? new Date().toISOString() : p.quando, comFoto: !!p.comFoto };
+      });
+    } catch (e) { return []; }
+  }
   function codigoNovo() { return 'CR-' + Date.now().toString(36).toUpperCase().slice(-5) + Math.random().toString(36).slice(2, 4).toUpperCase(); }
   function hoje() { return new Date().toISOString().slice(0, 10); }
   function usoHoje() { try { var u = JSON.parse(localStorage.getItem('criou.uso') || '{}'); return u.dia === hoje() ? u.n : 0; } catch (e) { return 0; } }
@@ -536,21 +567,25 @@
   function bloqueadoPremium() { return PLANO === 'gratuito' && M.LAYOUTS[M.layout(est.layout)].premium; }
   function infoPlano() {
     var i = $('#plano-info'); if (!i) return;
-    i.textContent = PLANO === 'gratuito' ? 'Plano gratuito: ' + usoHoje() + ' de ' + LIMITE_DIA + ' peças hoje. Layouts premium no Essencial.' : 'Plano Essencial: sem limite no uso normal.';
+    i.textContent = !CADASTRADO ? 'Criar e salvar é livre. Para baixar, você vai precisar do cadastro gratuito, que abre em breve.'
+      : PLANO === 'gratuito' ? 'Plano gratuito: ' + usoHoje() + ' de ' + LIMITE_DIA + ' peças hoje. Layouts premium no Essencial.' : 'Plano Essencial: sem limite no uso normal.';
   }
   function registrar(e) {
     e.preventDefault();
     var v = mensagens(true);
     if (!v.ok) { if (window.matchMedia('(max-width:960px)').matches) aba('info'); var p = $('#form-peca .tem-erro input, #form-peca .tem-erro textarea'); if (p) setTimeout(function () { p.focus(); }, 300); return; }
     if (bloqueadoPremium()) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Layout premium.</b> Ele faz parte do plano Essencial. Você pode ver a prévia à vontade; para registrar no gratuito, escolha um layout básico ou elaborado.</div>'); $('#layouts').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
-    if (PLANO === 'gratuito' && !est.editando && usoHoje() >= LIMITE_DIA) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Limite de hoje.</b> O plano gratuito cria até ' + LIMITE_DIA + ' peças por dia. Amanhã libera de novo, ou conheça o Essencial, sem limite no uso normal.</div>'); return; }
+    /* Editar uma peça é livre até EDICOES_LIVRES vezes; depois disso conta como peça nova no gratuito. */
+    var antiga = est.editando ? lerPecas().filter(function (x) { return x.codigo === est.editando; })[0] : null;
+    var edicoes = antiga ? (antiga.edicoes || 0) + 1 : 0, contaComoNova = !antiga || edicoes > EDICOES_LIVRES;
+    if (PLANO === 'gratuito' && contaComoNova && usoHoje() >= LIMITE_DIA) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Limite de hoje.</b> O plano gratuito cria até ' + LIMITE_DIA + ' peças por dia. Amanhã libera de novo, ou conheça o Essencial, sem limite no uso normal.</div>'); return; }
     var fo = formatoAtual(), lista = lerPecas(), codigo = est.editando || codigoNovo();
-    if (!est.editando) contarUso();
+    if (contaComoNova) { contarUso(); edicoes = 0; }
     infoPlano();
-    var reg = { codigo: codigo, formato: fo.id, estilo: est.layout, par: est.par, cor: est.cor, dados: est.dados, quando: new Date().toISOString(), comFoto: !!est.imagem };
+    var reg = { codigo: codigo, edicoes: edicoes, formato: fo.id, estilo: est.layout, par: est.par, cor: est.cor, dados: est.dados, quando: new Date().toISOString(), comFoto: !!est.imagem };
     lista = lista.filter(function (x) { return x.codigo !== codigo; }); lista.unshift(reg);
-    try { localStorage.setItem(CHAVE_PECAS, JSON.stringify(lista.slice(0, 200))); } catch (err) { }
-    est.editando = codigo;
+    try { localStorage.setItem(CHAVE_PECAS, JSON.stringify(lista.slice(0, 200))); } catch (err) { aviso('Sem espaço neste aparelho para guardar a peça. Apague peças antigas em "Minhas peças".'); return; }
+    est.editando = codigo; versaoRegistrada = versao;
     $('#codigo').textContent = codigo;
     $('#feito-sub').textContent = fo.kit ? 'Campanha registrada.' : 'Peça registrada.';
     montarDownloads(fo, codigo);
@@ -608,7 +643,7 @@
     caixa.innerHTML = lista.map(function (p) {
       var f = F.porId(p.formato) || { nome: p.formato };
       var L = M.LAYOUTS[M.layout(p.estilo)];
-      return '<div class="cartao peca-item"><div><b>' + esc(MO.semMarcas(p.dados.titulo || '')) + '</b><small>' + p.codigo + ' · ' + (f.rede && !f.kit && !f.extra ? f.rede + ' · ' : '') + f.nome + ' · ' + L.nome + ' · ' + new Date(p.quando).toLocaleDateString('pt-BR') + (p.comFoto ? ' · tinha foto' : '') + '</small></div><button class="btn sec" type="button" data-abrir="' + p.codigo + '">Abrir</button></div>';
+      return '<div class="cartao peca-item"><div><b>' + esc(MO.semMarcas(p.dados.titulo || '')) + '</b><small>' + esc(p.codigo) + ' · ' + (f.rede && !f.kit && !f.extra ? f.rede + ' · ' : '') + f.nome + ' · ' + L.nome + ' · ' + new Date(p.quando).toLocaleDateString('pt-BR') + (p.comFoto ? ' · tinha foto' : '') + '</small></div><button class="btn sec" type="button" data-abrir="' + esc(p.codigo) + '">Abrir</button></div>';
     }).join('');
   }
   $('#lista-pecas').addEventListener('click', function (e) {
@@ -635,5 +670,14 @@
   /* ---------- Início ---------- */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!$('#vista-criar').hidden) { desenharLayouts(); atualizarPrevia(); } });
   ir((location.hash || '').slice(1) || 'criar');
+  /* A coluna da prévia (com o registro e os downloads) só fica fixa na rolagem se couber na tela;
+     se for mais alta, rola junto, para nenhum botão ficar escondido embaixo dela. */
+  function ajustarFixa() {
+    var c = $('.zona-criacao .previa-col'); if (!c) return;
+    c.classList.toggle('fixa', window.innerWidth > 960 && c.offsetHeight < window.innerHeight - 110);
+  }
+  if (window.ResizeObserver) new ResizeObserver(ajustarFixa).observe($('.zona-criacao .previa-col'));
+  window.addEventListener('resize', ajustarFixa);
+  window.addEventListener('hashchange', function () { var v = (location.hash || '').slice(1); if (/^[a-z]+$/.test(v) && $('#vista-' + v) && $('#vista-' + v).hidden) ir(v); });
   window.addEventListener('resize', adiar(function () { if (!$('#vista-criar').hidden) { atualizarPrevia(); desenharLayouts(); } }, 300));
 })();

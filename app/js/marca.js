@@ -144,8 +144,34 @@
         if (m[k] == null) m[k] = p[k];
         else if (typeof p[k] === 'object' && !Array.isArray(p[k])) m[k] = Object.assign({}, p[k], m[k]);
       });
-      return m;
+      return limpar(m);
     } catch (e) { return padrao(); }
+  }
+
+  /* Segurança: o que vem do aparelho pode ter sido alterado à mão. Antes de virar HTML,
+     cada valor passa por aqui: cor só em #rrggbb, imagem só PNG/JPEG/WebP em data URL,
+     fonte e forma só da lista, textos com tamanho limitado. */
+  var COR = /^#[0-9a-f]{6}$/i, IMG = /^data:image\/(png|jpeg|webp);base64,[a-z0-9+\/=]+$/i;
+  function cor(v) { return typeof v === 'string' && COR.test(v) ? v : ''; }
+  function imagem(v) { return typeof v === 'string' && v.length < 3e6 && IMG.test(v) ? v : ''; }
+  function texto(v, n) { return typeof v === 'string' ? v.slice(0, n) : ''; }
+  function limpar(m) {
+    var p = padrao(), r = Object.assign({}, m);
+    r.nome = texto(m.nome, 40) || p.nome;
+    r.logo = imagem(m.logo); r.logoClaro = imagem(m.logoClaro);
+    r.cores = {}; Object.keys(p.cores).forEach(function (k) { r.cores[k] = cor((m.cores || {})[k]); });
+    if (!r.cores.principal) r.cores.principal = p.cores.principal;
+    var f = m.fontes || {};
+    r.fontes = { titulo: FONTES[f.titulo] ? f.titulo : p.fontes.titulo, texto: FONTES[f.texto] ? f.texto : p.fontes.texto };
+    r.forma = FORMAS[m.forma] ? m.forma : p.forma;
+    r.estilo = layout(m.estilo);
+    var rd = m.rodape || {};
+    r.rodape = { site: texto(rd.site, 120), social: texto(rd.social, 80), frase: texto(rd.frase, 160) };
+    r.legal = texto(m.legal, 400);
+    var lg = m.linguagem || {}, pl = p.linguagem;
+    r.linguagem = { tom: texto(lg.tom, 20) || pl.tom, proibidas: texto(lg.proibidas, 600), estrangeirismos: lg.estrangeirismos !== false, maxExclamacoes: isNaN(parseInt(lg.maxExclamacoes, 10)) ? pl.maxExclamacoes : Math.max(0, Math.min(5, parseInt(lg.maxExclamacoes, 10))), caixaAltaTitulo: !!lg.caixaAltaTitulo };
+    r.configurada = !!m.configurada;
+    return r;
   }
   function salvar(m) {
     try { raiz.localStorage.setItem(CHAVE, JSON.stringify(m)); return true; }
@@ -190,7 +216,7 @@
   }
 
   raiz.CriouMarca = {
-    ler: ler, salvar: salvar, padrao: padrao, paleta: paleta, realces: realces,
+    ler: ler, salvar: salvar, limpar: limpar, corValida: cor, imagemValida: imagem, padrao: padrao, paleta: paleta, realces: realces,
     FONTES: FONTES, urlFontes: urlFontes, pilha: pilha, serifada: serifada,
     FORMAS: FORMAS, raioCss: raioCss, ESTILOS: ESTILOS, LAYOUTS: LAYOUTS, PARES: PARES, layout: layout,
     cor: { mix: mix, contraste: contraste, sobre: sobre, garantir: garantir, lum: lum, girar: girar }
