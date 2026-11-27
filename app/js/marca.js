@@ -208,11 +208,22 @@
   /* Realces da barra de formatação (cores de fundo sob o texto). */
   function realces(m) {
     var p = paleta(m);
+    var comp = girar(p.principal, 180), quente = girar(p.principal, 40);
     return [
       { id: 'destaque', nome: 'destaque', fundo: p.destaque, texto: p.sobreDestaque },
+      { id: 'marca', nome: 'da marca', fundo: p.principal, texto: p.sobrePrincipal },
       { id: 'apoio', nome: 'apoio', fundo: p.apoio, texto: p.escura },
-      { id: 'marca', nome: 'da marca', fundo: p.principal, texto: p.sobrePrincipal }
-    ];
+      { id: 'escura', nome: 'escura', fundo: p.escura, texto: sobre(p.escura) },
+      { id: 'acao', nome: 'do botão', fundo: p.acao, texto: sobre(p.acao) },
+      { id: 'comp', nome: 'complementar', fundo: comp, texto: sobre(comp) },
+      { id: 'vizinha', nome: 'vizinha', fundo: quente, texto: sobre(quente) },
+      { id: 'branco', nome: 'branco', fundo: '#ffffff', texto: '#111111' },
+      { id: 'preto', nome: 'preto', fundo: '#111111', texto: '#ffffff' }
+    ].filter(function (r, i, l) {
+      // as três primeiras sempre ficam (peças antigas usam); as outras saem se repetirem uma cor quase igual
+      if (i < 3) return true;
+      return !l.slice(0, i).some(function (o) { return contraste(o.fundo, r.fundo) < 1.25; });
+    });
   }
 
   raiz.CriouMarca = {

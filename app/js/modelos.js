@@ -18,9 +18,22 @@
   function px(n) { return Math.round(n) + 'px'; }
 
   /* Texto com marcas → HTML. realce: como o ==destaque== aparece neste estilo. */
+  /* Destaque escolhido no editor (cor-, box- ou faixa- + cor): vale em qualquer layout.
+     Sem estilo explícito, cada layout desenha o destaque do seu jeito. */
+  var RP = null;
+  var RAIOS = { reta: '0', suave: '.16em', pilula: '.55em', folha: '.34em 0 .34em 0' };
+  function realceRico(x, id, realce) {
+    var m = /^(cor|box|faixa)-([a-z]+)$/.exec(id);
+    if (!m || !RP) return realce(x, id);
+    var k = RP.cores[m[2]] || RP.cores.destaque, quebra = 'box-decoration-break:clone;-webkit-box-decoration-break:clone;';
+    if (m[1] === 'cor') return '<span style="color:' + k.fundo + '">' + x + '</span>';
+    if (m[1] === 'box') return '<span style="background:' + k.fundo + ';color:' + k.texto + ';border-radius:' + (RAIOS[RP.forma] || '.16em') + ';padding:0 .14em;' + quebra + '">' + x + '</span>';
+    return '<span style="background-image:linear-gradient(transparent 56%,' + k.fundo + ' 56%,' + k.fundo + ' 94%,transparent 94%);padding:0 .06em;' + quebra + '">' + x + '</span>';
+  }
+  function prepararRealces(marca) { var c = {}; M.realces(marca).forEach(function (r) { c[r.id] = r; }); RP = { cores: c, forma: marca.forma }; }
   function rico(t, realce) {
     var s = esc(t);
-    s = s.replace(/==\(([a-z0-9-]+)\)([\s\S]+?)==/gi, function (_, id, x) { return realce(x, id); })
+    s = s.replace(/==\(([a-z0-9-]+)\)([\s\S]+?)==/gi, function (_, id, x) { return realceRico(x, id, realce); })
       .replace(/==([\s\S]+?)==/g, function (_, x) { return realce(x, 'destaque'); })
       .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
       .replace(/(^|[^*\w])\*(?=\S)([^*\n]+?)\*(?!\*)/g, '$1<em>$2</em>');
@@ -671,8 +684,9 @@
     var L = M.LAYOUTS[dec.estilo] || {};
     POS = L.posicao ? { j: { topo: 'flex-start', centro: 'center', base: 'flex-end' }[dados.posicao], a: { esquerda: 'left', centro: 'center', direita: 'right' }[dados.alinhamento] } : {};
     c.girado = L.girar ? (dados.girar == null ? !!L.giradoPadrao && MO_sem(c.titulo).length <= 28 : !!dados.girar) : false;
+    prepararRealces(marca);
     var r = ESTILOS[dec.desenho || 'simples'](c);
-    POS = {};
+    POS = {}; RP = null;
     return documento(marca, c.W, c.H, r.fundo, r.corpo, opts);
   }
 
@@ -701,6 +715,7 @@
   }
 
   function email(formato, dados, marca, dec, opts) {
+    prepararRealces(marca);
     var P = dec.paleta, est = ({ simples: 'simples', texto: 'simples', robusto: 'robusto', fundo: 'robusto', sofisticado: 'sofisticado', efeito: 'sofisticado' })[dec.desenho] || 'simples', fT = M.pilha(marca.fontes.titulo), fX = M.pilha(marca.fontes.texto);
     var titulo = limpar(dados.titulo) || 'Seu recado aqui', apoio = limpar(dados.apoio), data = dataTexto(dados.data, dados.hora, dados.local);
     var cab = est === 'simples' ? '#ffffff' : est === 'sofisticado' ? P.escura : P.principal;

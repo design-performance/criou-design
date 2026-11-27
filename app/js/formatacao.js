@@ -153,5 +153,182 @@
     return caixa;
   }
 
-  raiz.CriouFormatacao = { barra: barra };
+
+  /* ============================================================
+     Editor visual do título: o destaque aparece como na peça, sem códigos.
+     Por baixo continua gravando as mesmas marcas (==(estilo-cor)texto==),
+     então a prévia, a exportação e as peças antigas seguem funcionando.
+     Clicar dentro de um destaque e escolher outro estilo ou cor muda na hora.
+     ============================================================ */
+  var ESTILOS_R = [['auto', 'Automático', 'Do jeito que o layout desenha'], ['cor', 'Cor', 'Só a cor das letras'], ['box', 'Box', 'Fundo colorido atrás do trecho'], ['faixa', 'Marca-texto', 'Faixa colorida embaixo do trecho']];
+  function lerId(id) { var m = /^(cor|box|faixa)-([a-z]+)$/.exec(id || ''); return m ? { e: m[1], c: m[2] } : { e: 'auto', c: id || 'destaque' }; }
+  function idDe(e, c) { return e === 'auto' ? c : e + '-' + c; }
+  function escH(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  function editorRealce(inp, realces) {
+    var ed = document.createElement('div');
+    ed.className = 'fmt-campo';
+    ed.contentEditable = 'true';
+    ed.id = inp.id;
+    ed.setAttribute('role', 'textbox');
+    ed.setAttribute('aria-multiline', 'false');
+    ed.setAttribute('spellcheck', 'true');
+    ed.dataset.placeholder = inp.getAttribute('placeholder') || '';
+    if (inp.getAttribute('aria-describedby')) ed.setAttribute('aria-describedby', inp.getAttribute('aria-describedby'));
+    var cores = {}, atual = { e: 'auto', c: 'destaque' }, guardado = null;
+    function mapa(lista) { cores = {}; lista.forEach(function (r) { cores[r.id] = r; }); }
+    mapa(realces);
+
+    function estilizar(mk) {
+      var r = lerId(mk.dataset.r), k = cores[r.c] || cores.destaque || { fundo: '#FFE500', texto: '#111111' };
+      var C = raiz.CriouMarca && raiz.CriouMarca.cor;
+      var legivel = C ? C.garantir(k.fundo, '#ffffff', 3) : k.fundo;
+      mk.title = 'Destaque: ' + ESTILOS_R.filter(function (x) { return x[0] === r.e; })[0][1] + (r.e === 'auto' ? '' : ' · ' + (k.nome || r.c));
+      mk.style.cssText = 'color:inherit;padding:0 .1em;border-radius:.2em;box-decoration-break:clone;-webkit-box-decoration-break:clone;' +
+        (r.e === 'box' ? 'background:' + k.fundo + ';color:' + k.texto :
+         r.e === 'cor' ? 'background:transparent;color:' + legivel + ';font-weight:700' :
+         r.e === 'faixa' ? 'background:linear-gradient(transparent 55%,' + k.fundo + ' 55%)' :
+         'background:transparent;border-bottom:2px dashed ' + legivel + ';border-radius:0');
+    }
+    function paraHtml(v) {
+      return escH(v || '')
+        .replace(/==\(([a-z0-9-]+)\)([\s\S]+?)==/gi, '<mark data-r="$1">$2</mark>')
+        .replace(/==([\s\S]+?)==/g, '<mark data-r="destaque">$1</mark>')
+        .replace(/\*\*([\s\S]+?)\*\*/g, '<b>$1</b>')
+        .replace(/(^|[^*\w])\*(?=\S)([^*\n]+?)\*(?!\*)/g, '$1<i>$2</i>');
+    }
+    function envolto(a, dentro, b) { var m = dentro.match(/^(\s*)([\s\S]*?)(\s*)$/); return m[2] ? m[1] + a + m[2] + b + m[3] : dentro; }
+    function paraTexto(no) {
+      var out = '';
+      no.childNodes.forEach(function (n) {
+        if (n.nodeType === 3) { out += n.nodeValue.replace(/ /g, ' '); return; }
+        if (n.nodeType !== 1) return;
+        var t = n.tagName, d = paraTexto(n);
+        if (t === 'BR') out += ' ';
+        else if (t === 'MARK') out += envolto('==(' + (/^[a-z0-9-]+$/i.test(n.dataset.r || '') ? n.dataset.r : 'destaque') + ')', d, '==');
+        else if (t === 'B' || t === 'STRONG') out += envolto('**', d, '**');
+        else if (t === 'I' || t === 'EM') out += envolto('*', d, '*');
+        else out += d;
+      });
+      return out;
+    }
+    Object.defineProperty(ed, 'value', {
+      get: function () { return paraTexto(ed).replace(/[\r\n]+/g, ' '); },
+      set: function (v) { ed.innerHTML = paraHtml(v); ed.querySelectorAll('mark').forEach(estilizar); }
+    });
+    ed.value = inp.value;
+
+    function avisar() { ed.dispatchEvent(new Event('input', { bubbles: true })); }
+    function dentro(n) { return n && (n === ed || ed.contains(n)); }
+    function intervalo() {
+      var s = raiz.getSelection();
+      if (s.rangeCount && dentro(s.getRangeAt(0).commonAncestorContainer)) return s.getRangeAt(0);
+      return guardado;
+    }
+    function markEm(rg) {
+      if (!rg) return null;
+      var n = rg.startContainer; n = n.nodeType === 3 ? n.parentNode : n;
+      var mk = n.closest ? n.closest('mark') : null;
+      if (mk && dentro(mk)) return mk;
+      if (rg.startContainer === rg.endContainer && rg.startContainer.nodeType === 1) { var f = rg.startContainer.childNodes[rg.startOffset]; if (f && f.tagName === 'MARK' && rg.endOffset === rg.startOffset + 1) return f; }
+      return null;
+    }
+    function desembrulhar(mk) { var pai = mk.parentNode; while (mk.firstChild) pai.insertBefore(mk.firstChild, mk); pai.removeChild(mk); pai.normalize(); }
+    /* Deixa o cursor no fim do destaque (sem seleção azul por cima), para o estilo aparecer no campo. */
+    function selecionar(no) {
+      var s = raiz.getSelection(), r = document.createRange(), t = no.lastChild;
+      while (t && t.nodeType === 1 && t.lastChild) t = t.lastChild;
+      if (t && t.nodeType === 3) r.setStart(t, t.length); else r.selectNodeContents(no);
+      r.collapse(false); s.removeAllRanges(); s.addRange(r); guardado = r.cloneRange();
+    }
+
+    var dica = document.createElement('p'); dica.className = 'fmt-dica'; dica.setAttribute('aria-live', 'polite');
+    function aplicar(e, c) {
+      atual = { e: e, c: c };
+      var rg = intervalo(), mk = markEm(rg);
+      if (mk) { mk.dataset.r = idDe(e, c); estilizar(mk); selecionar(mk); avisar(); estado(); return; }
+      if (!rg || rg.collapsed || !rg.toString().trim()) { dica.textContent = 'Selecione uma ou mais palavras do título e escolha como destacar.'; estado(); return; }
+      ed.focus();
+      var txt = rg.toString(), esq = txt.length - txt.replace(/^\s+/, '').length, dir = txt.length - txt.replace(/\s+$/, '').length;
+      if (esq && rg.startContainer.nodeType === 3) rg.setStart(rg.startContainer, Math.min(rg.startOffset + esq, rg.startContainer.length));
+      if (dir && rg.endContainer.nodeType === 3) rg.setEnd(rg.endContainer, Math.max(rg.endOffset - dir, 0));
+      var frag = rg.extractContents();
+      frag.querySelectorAll('mark').forEach(desembrulhar);
+      var novo = document.createElement('mark'); novo.dataset.r = idDe(e, c); novo.appendChild(frag);
+      rg.insertNode(novo); estilizar(novo);
+      ed.querySelectorAll('mark').forEach(function (m) { if (!m.textContent) m.remove(); });
+      dica.textContent = 'Para mudar, toque dentro do destaque e escolha outro estilo ou cor.';
+      selecionar(novo); avisar(); estado();
+    }
+    function tirar() {
+      var rg = intervalo(), mk = markEm(rg);
+      if (mk) desembrulhar(mk);
+      else if (rg) ed.querySelectorAll('mark').forEach(function (m) { if (rg.intersectsNode(m)) desembrulhar(m); });
+      dica.textContent = ''; avisar(); estado();
+    }
+
+    var barraEl = document.createElement('div');
+    barraEl.className = 'fmt-barra fmt-visual';
+    barraEl.setAttribute('role', 'toolbar');
+    barraEl.setAttribute('aria-label', 'Destaque do título');
+    function bt(html, titulo, classe, acao) {
+      var b = botao(html, titulo, classe, acao);
+      b.addEventListener('pointerdown', function (e) { e.preventDefault(); });
+      return b;
+    }
+    var rot = document.createElement('span'); rot.className = 'fmt-rot'; rot.textContent = 'Destaque';
+    barraEl.appendChild(rot);
+    var grupoE = document.createElement('div'); grupoE.className = 'fmt-grupo'; grupoE.setAttribute('role', 'group'); grupoE.setAttribute('aria-label', 'Estilo do destaque');
+    ESTILOS_R.forEach(function (x) {
+      var b = bt('<span class="fmt-amostra fmt-a-' + x[0] + '">Aa</span>' + x[1], x[1] + ': ' + x[2], 'fmt-estilo', function () { aplicar(x[0], x[0] === 'auto' ? atual.c : atual.c); });
+      b.dataset.e = x[0]; grupoE.appendChild(b);
+    });
+    barraEl.appendChild(grupoE);
+    var grupoC = document.createElement('div'); grupoC.className = 'fmt-grupo fmt-cores'; grupoC.setAttribute('role', 'group'); grupoC.setAttribute('aria-label', 'Cor do destaque');
+    barraEl.appendChild(grupoC);
+    function desenharCores() {
+      grupoC.innerHTML = '';
+      Object.keys(cores).forEach(function (id) {
+        var k = cores[id];
+        var b = bt('', 'Cor ' + (k.nome || id), 'fmt-cor', function () { aplicar(atual.e === 'auto' ? 'box' : atual.e, id); });
+        b.dataset.c = id; b.style.background = k.fundo; grupoC.appendChild(b);
+      });
+    }
+    desenharCores();
+    barraEl.appendChild(bt('Tirar', 'Tirar o destaque do trecho', 'fmt-limpar', tirar));
+
+    function estado() {
+      var mk = markEm(intervalo()), r = mk ? lerId(mk.dataset.r) : atual;
+      if (mk) atual = { e: r.e, c: r.c };
+      barraEl.querySelectorAll('.fmt-estilo').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.e === r.e)); });
+      barraEl.querySelectorAll('.fmt-cor').forEach(function (b) { b.setAttribute('aria-pressed', String(r.e !== 'auto' && b.dataset.c === r.c)); });
+      barraEl.classList.toggle('no-destaque', !!mk);
+    }
+    document.addEventListener('selectionchange', function () {
+      if (!document.body.contains(ed)) return;
+      var s = raiz.getSelection();
+      if (s.rangeCount && dentro(s.getRangeAt(0).commonAncestorContainer)) { guardado = s.getRangeAt(0).cloneRange(); estado(); }
+    });
+    ed.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+    ed.addEventListener('paste', function (e) {
+      e.preventDefault();
+      var t = (e.clipboardData || raiz.clipboardData).getData('text/plain').replace(/\s+/g, ' ');
+      document.execCommand('insertText', false, t);
+    });
+    ed.addEventListener('input', function () {
+      if (!ed.textContent) ed.innerHTML = '';
+      ed.querySelectorAll('font,span:not([class])').forEach(function (x) { if (x.tagName !== 'MARK') desembrulhar(x); });
+      ed.querySelectorAll('mark').forEach(function (m) { if (!m.style.cssText) estilizar(m); });
+    });
+    estado();
+
+    var raizEl = document.createElement('div'); raizEl.className = 'fmt-editor';
+    raizEl.appendChild(barraEl); raizEl.appendChild(ed); raizEl.appendChild(dica);
+    return {
+      raiz: raizEl, campo: ed,
+      atualizar: function (lista) { mapa(lista); desenharCores(); ed.querySelectorAll('mark').forEach(estilizar); estado(); }
+    };
+  }
+
+  raiz.CriouFormatacao = { barra: barra, editorRealce: editorRealce };
 })(window);

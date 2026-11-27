@@ -306,7 +306,7 @@ class Agente:
         # 1. textos maliciosos em todos os campos
         await self.entrar(teste=True, nome='Teste')
         await self.pg.evaluate("document.querySelectorAll('details').forEach(d => d.open = true)")
-        campos = await self.pg.eval_on_selector_all('#form-peca input[type=text], #form-peca textarea, #form-peca input:not([type])', 'e => e.map(x => x.id).filter(Boolean)')
+        campos = await self.pg.eval_on_selector_all('#form-peca input[type=text], #form-peca textarea, #form-peca input:not([type]), #form-peca [contenteditable=true]', 'e => e.map(x => x.id).filter(Boolean)')
         for i, c in enumerate(campos):
             try: await self.pg.fill('#' + c, XSS[i % len(XSS)])
             except Exception: pass

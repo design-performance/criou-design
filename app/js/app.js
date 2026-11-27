@@ -326,10 +326,18 @@
     var inp = w.querySelector('input,textarea');
     inp.value = v;
     if (c.ajuda) inp.setAttribute('aria-describedby', 'a-' + id);
-    if (c.formato) w.insertBefore(window.CriouFormatacao.barra(inp, M.realces(marcaDa(est.layout, est.par, est.cor)), c.formato), inp);
+    if (c.formato === 'realce' && inp.tagName === 'INPUT') {
+      /* Título: editor visual, o destaque aparece como na peça (sem os códigos). */
+      var edt = window.CriouFormatacao.editorRealce(inp, M.realces(marcaDa(est.layout, est.par, est.cor)));
+      w.replaceChild(edt.raiz, inp); inp = edt.campo; editores[id] = edt;
+      var lb = w.querySelector('label'); lb.id = 'l-' + id; inp.setAttribute('aria-labelledby', 'l-' + id);
+      lb.addEventListener('click', function (e) { if (!e.target.closest('.conta')) { e.preventDefault(); inp.focus(); } });
+    } else if (c.formato) w.insertBefore(window.CriouFormatacao.barra(inp, M.realces(marcaDa(est.layout, est.par, est.cor)), c.formato), inp);
     inp.addEventListener('input', function () { est.dados[id] = inp.value; contar(id); mudou(); mudouMinis(); });
     return w;
   }
+  var editores = {};
+  function atualizarEditores() { var r = M.realces(marcaDa(est.layout, est.par, est.cor)); Object.keys(editores).forEach(function (k) { if (document.body.contains(editores[k].campo)) editores[k].atualizar(r); else delete editores[k]; }); }
   var PRINCIPAIS = ['titulo', 'apoio', 'texto'];
   function montarCampos() {
     var fo = formatoAtual(), a = $('#campos'), b = $('#campos-mais');
@@ -531,7 +539,7 @@
   /* Cada mudança ganha um número; a confirmação de "peça registrada" só some se algo mudou depois do registro
      (antes, uma mudança ainda na fila escondia a confirmação de quem digitava e registrava rápido). */
   var versao = 0, versaoRegistrada = -1;
-  var mudouAdiado = adiar(function () { if (versao !== versaoRegistrada) $('#feito').hidden = true; atualizarPrevia(); }, 160);
+  var mudouAdiado = adiar(function () { if (versao !== versaoRegistrada) $('#feito').hidden = true; atualizarPrevia(); atualizarEditores(); }, 160);
   function mudou() { versao++; mudouAdiado(); }
 
   function mensagens(mostrarErros) {
@@ -576,7 +584,7 @@
   function registrar(e) {
     e.preventDefault();
     var v = mensagens(true);
-    if (!v.ok) { if (window.matchMedia('(max-width:760px)').matches) aba('info'); var p = $('#form-peca .tem-erro input, #form-peca .tem-erro textarea'); if (p) setTimeout(function () { p.focus(); }, 300); return; }
+    if (!v.ok) { if (window.matchMedia('(max-width:760px)').matches) aba('info'); var p = $('#form-peca .tem-erro input, #form-peca .tem-erro textarea, #form-peca .tem-erro .fmt-campo'); if (p) setTimeout(function () { p.focus(); }, 300); return; }
     if (bloqueadoPremium()) { $('#msgs').insertAdjacentHTML('afterbegin', '<div class="msg premium"><b>Layout premium.</b> Ele faz parte do plano Essencial. Você pode ver a prévia à vontade; para registrar no gratuito, escolha um layout básico ou elaborado.</div>'); $('#layouts').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     /* Editar uma peça é livre até EDICOES_LIVRES vezes; depois disso conta como peça nova no gratuito. */
     var antiga = est.editando ? lerPecas().filter(function (x) { return x.codigo === est.editando; })[0] : null;
