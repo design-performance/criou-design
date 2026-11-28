@@ -630,9 +630,14 @@
   }
 
   var geracao = 0;
+  var alturaTela = 0;
   async function atualizarPrevia() {
     var fo = formatoAtual(), minha = ++geracao, m = marcaDa(est.layout, est.par, est.cor);
-    var palco = $('#palco'), largura = Math.min(palco.clientWidth - 36, 560) || 320;
+    var palco = $('#palco'), largura = Math.max(220, Math.min((palco.clientWidth || 360) - 36, 560));
+    /* A prévia cabe na altura da tela (computador e tablet): fica fixa ao lado sem passar do quadro.
+       Altura da primeira medida da tela, para a barra do navegador não mexer no tamanho. */
+    var telaH = alturaTela || (alturaTela = window.innerHeight), lado = window.innerWidth > 760;
+    var alturaMax = lado ? Math.max(240, telaH - 380) : Math.max(320, telaH - 230);
     var lista = fo.kit ? fo.kit.map(F.porId) : [fo];
     var feitos = [];
     for (var i = 0; i < lista.length; i++) feitos.push(await dadosPara(lista[i], est.layout, m));
@@ -640,16 +645,18 @@
     var novo = el('div', { class: 'palco-novo' }), destino = palco;
     palco = novo;
     if (fo.kit) {
-      var g = el('div', { class: 'kit' });
+      var g = el('div', { class: 'kit' + (lista.length === 2 ? ' dois' : '') });
+      var linhas = Math.ceil(lista.length / 2), altLinha = alturaMax / linhas - 26;
       lista.forEach(function (f, i) {
         var fig = el('figure');
-        fig.appendChild(quadro(MD.html(f, feitos[i].d, m, feitos[i].dec, { previa: !LIBERADO }), f.largura, f.altura, (largura - 14) / 2, f.nome));
+        var w = Math.min((largura - 14) / 2, f.altura ? altLinha * f.largura / f.altura : (largura - 14) / 2);
+        fig.appendChild(quadro(MD.html(f, feitos[i].d, m, feitos[i].dec, { previa: !LIBERADO }), f.largura, f.altura, Math.max(90, w), f.nome));
         fig.appendChild(el('figcaption', null, f.nome + (f.rede && f.rede !== 'Instagram' ? ' · ' + f.rede : '')));
         g.appendChild(fig);
       });
       palco.appendChild(g);
     } else {
-      var alvoW = fo.altura && fo.altura / fo.largura > 1.4 ? Math.min(largura, 330) : largura;
+      var alvoW = fo.altura ? Math.min(largura, (alturaMax - 10) * fo.largura / fo.altura) : largura;
       palco.appendChild(quadro(MD.html(fo, feitos[0].d, m, feitos[0].dec, { previa: !LIBERADO }), fo.largura, fo.altura, alvoW, fo.nome));
     }
     var velhos = Array.prototype.slice.call(destino.children);
@@ -812,10 +819,17 @@
      se for mais alta, rola junto, para nenhum botão ficar escondido embaixo dela. */
   function ajustarFixa() {
     var c = $('.zona-criacao .previa-col'); if (!c) return;
-    c.classList.toggle('fixa', window.innerWidth > 760 && c.offsetHeight < window.innerHeight - 110);
+    c.classList.toggle('fixa', window.innerWidth > 760 && c.offsetHeight < (alturaTela || window.innerHeight) - 70);
   }
   if (window.ResizeObserver) new ResizeObserver(ajustarFixa).observe($('.zona-criacao .previa-col'));
   window.addEventListener('resize', ajustarFixa);
   window.addEventListener('hashchange', function () { var v = (location.hash || '').slice(1); if (/^[a-z]+$/.test(v) && $('#vista-' + v) && $('#vista-' + v).hidden) ir(v); });
-  window.addEventListener('resize', adiar(function () { if (!$('#vista-criar').hidden) { atualizarPrevia(); desenharLayouts(); } }, 300));
+  /* Só redesenha se a LARGURA mudar. No celular e no tablet, rolar a página esconde a barra do navegador
+     e muda só a altura: antes isso redesenhava tudo a cada rolagem (prévia piscando e "deslizando"). */
+  var larguraAntes = window.innerWidth;
+  window.addEventListener('resize', adiar(function () {
+    if (Math.abs(window.innerWidth - larguraAntes) < 40) return;
+    larguraAntes = window.innerWidth; alturaTela = 0;
+    if (!$('#vista-criar').hidden) { atualizarPrevia(); desenharLayouts(); }
+  }, 300));
 })();

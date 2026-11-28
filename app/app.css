@@ -365,3 +365,10 @@ details.mais>summary{display:block}
 #formatos details.mais .pub-lista{margin-top:8px}
 @media (max-width:360px){.pub-lista{grid-template-columns:1fr}}
 @media (max-width:420px){.pub-forma{display:none}.pub{gap:8px;padding:6px 8px}}
+
+/* Prévia sempre dentro do quadro */
+.kit{grid-template-columns:repeat(2,minmax(0,1fr));justify-items:center}
+.kit figure{max-width:100%;min-width:0}
+.kit .quadro,.palco .quadro{max-width:100%}
+.palco{overflow:hidden}
+.grade3>.zona-criacao{align-self:stretch}

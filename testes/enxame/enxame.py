@@ -134,7 +134,7 @@ class Agente:
         if await b.count(): await b.click(); await self.pg.wait_for_timeout(150)
 
     async def quadro(self):
-        for _ in range(40):  # a prévia nova carrega por cima da antiga; espera a troca terminar
+        for _ in range(80):  # a prévia nova carrega por cima da antiga; espera a troca terminar
             if not await self.pg.query_selector('#palco .chegando'): break
             await self.pg.wait_for_timeout(100)
         el = await self.pg.query_selector('#palco iframe')
