@@ -37,7 +37,7 @@
   var CORES_PRONTAS = ['#1F3DFF', '#0E7C66', '#2F6B4F', '#E8C21A', '#FF6A00', '#E5243B', '#FF2E88', '#7A1FA2', '#3B2A20', '#111111'];
 
   var marca = M.ler();
-  var est = { formato: 'kit', layout: 'limpo', par: 'auto', cor: '', corDest: '', dados: { assunto: 'novidade' }, imagem: null, editando: null };
+  var est = { formato: 'kit:post-retrato,story', layout: 'limpo', par: 'auto', cor: '', corDest: '', dados: { assunto: 'novidade' }, imagem: null, editando: null };
 
   /* Chegando da página inicial: ?nome=&cor= */
   var Q = new URLSearchParams(location.search);
@@ -63,26 +63,40 @@
   }
 
   /* ---------- Quadro de prévia (iframe na escala) ---------- */
+  /* Prévia leve: a peça é desenhada já no tamanho da miniatura (zoom dentro do documento),
+     em vez de desenhar 1080 px e encolher. Assim o navegador pinta pouco e a rolagem não pisca em branco.
+     O e-mail mede a própria altura, então continua no jeito antigo. */
   function quadro(html, W, H, alvoW, rotulo) {
     var k = alvoW / W, alto = H ? H * k : 600;
     var q = el('div', { class: 'quadro' });
     q.style.width = Math.round(W * k) + 'px'; q.style.height = Math.round(alto) + 'px';
     var f = el('iframe', { title: rotulo || 'Prévia', tabindex: '-1', 'aria-hidden': rotulo ? null : 'true' });
-    f.style.width = W + 'px'; f.style.height = (H || 1600) + 'px'; f.style.transform = 'scale(' + k + ')';
-    /* Segurança: prévia de altura fixa roda isolada (sem acesso à página). O e-mail precisa medir a altura. */
-    if (H) f.setAttribute('sandbox', 'allow-scripts');
-    if (!H) f.addEventListener('load', function () {
-      try { var h = f.contentDocument.documentElement.scrollHeight; f.style.height = h + 'px'; q.style.height = Math.round(h * k) + 'px'; } catch (e) { }
-    });
+    if (H) {
+      f.setAttribute('sandbox', 'allow-scripts');
+      f.style.width = Math.round(W * k) + 'px'; f.style.height = Math.round(H * k) + 'px';
+      html = html.replace('<head>', '<head><style>html{zoom:' + k.toFixed(5) + '}html,body{overflow:hidden}</style>');
+    } else {
+      f.style.width = W + 'px'; f.style.height = '1600px'; f.style.transform = 'scale(' + k + ')';
+      f.addEventListener('load', function () {
+        try { var h = f.contentDocument.documentElement.scrollHeight; f.style.height = h + 'px'; q.style.height = Math.round(h * k) + 'px'; } catch (e) { }
+      });
+    }
     f.srcdoc = html;
     q.appendChild(f);
     return q;
   }
+  /* Troca sem piscar: o novo quadro carrega por cima e só então o antigo sai. */
+  function carregado(raizEl, limite) {
+    var fs = Array.prototype.slice.call(raizEl.querySelectorAll('iframe'));
+    return Promise.race([Promise.all(fs.map(function (f) { return new Promise(function (ok) { f.addEventListener('load', function () { setTimeout(ok, 60); }, { once: true }); }); })), new Promise(function (ok) { setTimeout(ok, limite || 1500); })]);
+  }
   function mini(caixa, fo, d, m, dec) {
-    caixa.innerHTML = '';
     var alvo = caixa.clientWidth || 160;
-    var q = quadro(MD.html(fo, d, m, dec), fo.largura, fo.altura, alvo);
-    caixa.appendChild(q.firstChild);
+    var q = quadro(MD.html(fo, d, m, dec), fo.largura, fo.altura, alvo), f = q.firstChild;
+    var antigos = Array.prototype.slice.call(caixa.children);
+    if (antigos.length) f.classList.add('chegando');
+    caixa.appendChild(f);
+    carregado({ querySelectorAll: function () { return [f]; } }).then(function () { antigos.forEach(function (a) { a.remove(); }); f.classList.remove('chegando'); });
   }
 
   /* ---------- Navegação ---------- */
@@ -313,14 +327,34 @@
     desenharLayouts();
     atualizarPrevia();
   }
+  /* Formatos: a pessoa marca onde vai publicar. Um marcado = uma peça; vários = uma campanha. */
+  function marcados() { var fo = formatoAtual(); return fo.kit ? fo.kit.slice() : [fo.id]; }
+  function definirMarcados(ids) {
+    var ordem = F.lista.map(function (f) { return f.id; });
+    ids = ids.filter(function (x, i, l) { return l.indexOf(x) === i; }).sort(function (a, b) { return ordem.indexOf(a) - ordem.indexOf(b); });
+    var novo = ids.length === 1 ? ids[0] : 'kit:' + ids.join(',');
+    if (novo === est.formato) return;
+    if (est.editando) { est.editando = null; $('#feito').hidden = true; }
+    est.formato = novo;
+    desenharFormatos(); montarCampos(); desenharLayouts(); mudou();
+  }
   function desenharFormatos() {
-    var grupos = {}, ordem = [];
-    F.lista.forEach(function (f) { var g = f.extra ? '_extra' : f.rede; if (!grupos[g]) { grupos[g] = []; ordem.push(g); } grupos[g].push(f); });
-    function chip(f) { return '<button type="button" class="chip' + (f.recomendado ? ' rec' : '') + '" data-f="' + f.id + '" aria-pressed="' + (f.id === est.formato) + '">' + f.nome + (f.kit ? ' <small>' + f.kit.length + ' peças</small>' : '') + '</button>'; }
-    var html = ordem.filter(function (g) { return g !== '_extra'; }).map(function (g) {
-      return '<div class="rede"><span>' + (g === 'Campanha' ? 'Tudo junto' : g) + '</span>' + grupos[g].map(chip).join('') + '</div>';
-    }).join('');
-    html += '<details class="mais"' + (formatoAtual().extra ? ' open' : '') + '><summary>Mais formatos <span class="opc">· banner, e-mail, cartaz, outdoor</span></summary><div class="rede" style="margin-top:0">' + grupos._extra.map(chip).join('') + '</div></details>';
+    var sel = marcados(), grupos = {}, ordem = [], dAntes = $('#formatos details.mais'), aberto = dAntes && dAntes.open;
+    F.lista.forEach(function (f) { if (f.kit) return; var g = f.extra ? '_extra' : f.rede; if (!grupos[g]) { grupos[g] = []; ordem.push(g); } grupos[g].push(f); });
+    function card(f) {
+      var on = sel.indexOf(f.id) >= 0, r = f.altura ? f.largura / f.altura : 0.6;
+      var w = r >= 1 ? 26 : Math.round(26 * r), h = r >= 1 ? Math.round(26 / r) : 26;
+      return '<button type="button" class="pub" data-f="' + f.id + '" aria-pressed="' + on + '"><span class="pub-forma" aria-hidden="true"><i style="width:' + w + 'px;height:' + h + 'px"></i></span>' +
+        '<span class="pub-txt"><b>' + f.nome + '</b><small>' + (f.email ? 'HTML · 600 px' : f.largura + ' × ' + f.altura) + '</small></span><span class="pub-check" aria-hidden="true"></span></button>';
+    }
+    var atalhos = '<div class="pub-atalhos" role="group" aria-label="Combinações prontas">' + F.ATALHOS.map(function (a) {
+      var igual = a[1].length === sel.length && a[1].every(function (x) { return sel.indexOf(x) >= 0; });
+      return '<button type="button" class="chip" data-atalho="' + a[1].join(',') + '" aria-pressed="' + igual + '">' + a[0] + '</button>';
+    }).join('') + '</div>';
+    var html = '<p class="pub-pergunta">Onde você vai publicar? <span>Marque um ou mais.</span></p>' + atalhos +
+      ordem.filter(function (g) { return g !== '_extra'; }).map(function (g) { return '<div class="pub-grupo"><span>' + g + '</span><div class="pub-lista">' + grupos[g].map(card).join('') + '</div></div>'; }).join('') +
+      '<details class="mais"' + (aberto || grupos._extra.some(function (f) { return sel.indexOf(f.id) >= 0; }) ? ' open' : '') + '><summary>Mais formatos <span class="opc">· banner, e-mail, cartaz, outdoor</span></summary><div class="pub-lista">' + grupos._extra.map(card).join('') + '</div></details>' +
+      '<p class="pub-resumo" aria-live="polite"><b>' + (sel.length === 1 ? '1 peça' : sel.length + ' peças') + '</b>: ' + sel.map(function (x) { var f = F.porId(x); return f.nome + (f.rede === 'LinkedIn' ? ' (LinkedIn)' : ''); }).join(' · ') + '</p>';
     $('#formatos').innerHTML = html;
   }
 
@@ -556,12 +590,13 @@
       mudou(); mudouMinis();
     });
     $('#formatos').addEventListener('click', function (e) {
+      var at = e.target.closest('[data-atalho]');
+      if (at) { definirMarcados(at.dataset.atalho.split(',')); return; }
       var b = e.target.closest('[data-f]'); if (!b) return;
-      /* Outro formato é outra peça: a registrada fica guardada e a próxima ganha código novo. */
-      if (est.formato !== b.dataset.f && est.editando) { est.editando = null; $('#feito').hidden = true; }
-      est.formato = b.dataset.f;
-      $$('#formatos [data-f]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
-      montarCampos(); desenharLayouts(); mudou();
+      var id = b.dataset.f, f = F.porId(id), sel = marcados(), tem = sel.indexOf(id) >= 0;
+      if (f.email || (sel.length === 1 && F.porId(sel[0]).email)) { definirMarcados([id]); return; }  // e-mail é sempre sozinho
+      if (tem && sel.length === 1) return;  // pelo menos um formato
+      definirMarcados(tem ? sel.filter(function (x) { return x !== id; }) : sel.concat(id));
     });
     $('#layouts').addEventListener('click', function (e) {
       var b = e.target.closest('.lay'); if (!b) return;
@@ -602,7 +637,8 @@
     var feitos = [];
     for (var i = 0; i < lista.length; i++) feitos.push(await dadosPara(lista[i], est.layout, m));
     if (minha !== geracao) return;
-    palco.innerHTML = '';
+    var novo = el('div', { class: 'palco-novo' }), destino = palco;
+    palco = novo;
     if (fo.kit) {
       var g = el('div', { class: 'kit' });
       lista.forEach(function (f, i) {
@@ -616,6 +652,13 @@
       var alvoW = fo.altura && fo.altura / fo.largura > 1.4 ? Math.min(largura, 330) : largura;
       palco.appendChild(quadro(MD.html(fo, feitos[0].d, m, feitos[0].dec, { previa: !LIBERADO }), fo.largura, fo.altura, alvoW, fo.nome));
     }
+    var velhos = Array.prototype.slice.call(destino.children);
+    if (velhos.length) novo.classList.add('chegando');
+    destino.appendChild(novo);
+    carregado(novo).then(function () {
+      if (minha !== geracao) { if (novo.parentNode && destino.children.length > 1) novo.remove(); return; }
+      velhos.forEach(function (v) { v.remove(); }); novo.classList.remove('chegando');
+    });
     $('#legenda').textContent = fo.kit ? fo.descricao + ' Prévia ao vivo.' : (fo.rede ? fo.rede + ' · ' : '') + fo.nome + (fo.email ? ' · 600 px de largura' : ' · ' + fo.largura + ' × ' + fo.altura + ' px') + (fo.nota ? ' · ' + fo.nota : '');
     $('#porque').innerHTML = feitos[0].dec.porque.map(function (p) { return '<li><b>' + p.tema + ':</b> ' + esc(p.texto) + '</li>'; }).join('');
     mensagens(false);
@@ -651,7 +694,7 @@
       if (!Array.isArray(l)) return [];
       return l.filter(function (p) { return p && typeof p === 'object' && /^[A-Z0-9-]{4,20}$/i.test(String(p.codigo || '')); }).slice(0, 200).map(function (p) {
         var d = {}; Object.keys(p.dados || {}).forEach(function (k) { var v = p.dados[k]; if (/^[a-z0-9_]{1,30}$/i.test(k) && (typeof v === 'string' || typeof v === 'boolean' || typeof v === 'number')) d[k] = typeof v === 'string' ? v.slice(0, 600) : v; });
-        return { codigo: String(p.codigo), formato: F.porId(p.formato) ? p.formato : 'kit', estilo: M.layout(p.estilo), par: M.PARES && M.PARES[p.par] ? p.par : 'auto', cor: M.corValida(p.cor), corDest: M.corValida(p.corDest), dados: d, edicoes: Math.max(0, parseInt(p.edicoes, 10) || 0), quando: isNaN(Date.parse(p.quando)) ? new Date().toISOString() : p.quando, comFoto: !!p.comFoto };
+        return { codigo: String(p.codigo), formato: F.porId(p.formato) ? String(p.formato).slice(0, 200) : 'kit:post-retrato,story', estilo: M.layout(p.estilo), par: M.PARES && M.PARES[p.par] ? p.par : 'auto', cor: M.corValida(p.cor), corDest: M.corValida(p.corDest), dados: d, edicoes: Math.max(0, parseInt(p.edicoes, 10) || 0), quando: isNaN(Date.parse(p.quando)) ? new Date().toISOString() : p.quando, comFoto: !!p.comFoto };
       });
     } catch (e) { return []; }
   }
@@ -745,7 +788,7 @@
     if (e.target.closest('[data-ir2]')) { ir('criar'); return; }
     var b = e.target.closest('[data-abrir]'); if (!b) return;
     var p = lerPecas().filter(function (x) { return x.codigo === b.dataset.abrir; })[0]; if (!p) return;
-    est.formato = F.porId(p.formato) ? p.formato : 'kit'; est.layout = M.layout(p.estilo); est.par = p.par || 'auto'; est.cor = p.cor || ''; est.corDest = p.corDest || '';
+    est.formato = F.porId(p.formato) ? p.formato : 'kit:post-retrato,story'; est.layout = M.layout(p.estilo); est.par = p.par || 'auto'; est.cor = p.cor || ''; est.corDest = p.corDest || '';
     est.dados = clone(p.dados); est.imagem = null; est.editando = p.codigo;
     ir('criar');
   });

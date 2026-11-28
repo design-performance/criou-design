@@ -96,8 +96,9 @@
     f.setAttribute('tabindex', '-1');
     f.setAttribute('loading', 'lazy');
     f.setAttribute('sandbox', 'allow-scripts');
-    f.style.cssText = 'position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none;width:' + fo.largura + 'px;height:' + fo.altura + 'px';
-    f.srcdoc = MD.html(fo, d, m, dec);
+    f.style.cssText = 'position:absolute;left:0;top:0;border:0;pointer-events:none;width:100%;height:100%;opacity:0;transition:opacity .25s';
+    f.addEventListener('load', function () { f.style.opacity = '1'; });
+    f._html = MD.html(fo, d, m, dec);
     el.style.aspectRatio = fo.largura + ' / ' + fo.altura;
     el.innerHTML = '';
     el.appendChild(f);
@@ -107,8 +108,11 @@
   }
   function escalar(el) {
     var f = el.firstChild; if (!f) return;
-    var fo = F.porId(EX[el.getAttribute('data-ex')].formato);
-    f.style.transform = 'scale(' + (el.clientWidth / fo.largura) + ')';
+    var fo = F.porId(EX[el.getAttribute('data-ex')].formato), k = (el.clientWidth || 300) / fo.largura;
+    /* Desenha já no tamanho da tela (zoom no documento): pinta pouco e não pisca em branco na rolagem. */
+    if (f._k && Math.abs(k - f._k) / k < 0.08) return;
+    f._k = k;
+    f.srcdoc = f._html.replace('<head>', '<head><style>html{zoom:' + k.toFixed(5) + '}html,body{overflow:hidden}</style>');
   }
 
   var pecas = Array.prototype.slice.call(document.querySelectorAll('[data-ex]'));

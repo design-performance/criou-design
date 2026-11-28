@@ -117,6 +117,16 @@ class Agente:
             b = self.pg.locator('.abas [data-aba="%s"]' % n)
             if await b.count(): await b.click(); await self.pg.wait_for_timeout(400)
 
+    async def formato(self, f):
+        """Deixa marcado só este formato (ou um kit "kit:a,b"), como uma pessoa faria marcando e desmarcando."""
+        alvo = f[4:].split(',') if f.startswith('kit:') else [f]
+        await self.pg.evaluate("document.querySelectorAll('#formatos details').forEach(d => d.open = true)")
+        for x in alvo:
+            b = self.pg.locator('#formatos .pub[data-f="%s"]' % x)
+            if await b.get_attribute('aria-pressed') != 'true': await b.click(); await self.pg.wait_for_timeout(120)
+        for x in await self.pg.eval_on_selector_all('#formatos .pub[aria-pressed=true]', 'e => e.map(b => b.dataset.f)'):
+            if x not in alvo: await self.pg.click('#formatos .pub[data-f="%s"]' % x); await self.pg.wait_for_timeout(120)
+
     async def sub(self, nome):
         """Abre uma aba das Opções (Layout, Cor, Fonte, Texto)."""
         await self.aba('opcoes')
@@ -124,6 +134,9 @@ class Agente:
         if await b.count(): await b.click(); await self.pg.wait_for_timeout(150)
 
     async def quadro(self):
+        for _ in range(40):  # a prévia nova carrega por cima da antiga; espera a troca terminar
+            if not await self.pg.query_selector('#palco .chegando'): break
+            await self.pg.wait_for_timeout(100)
         el = await self.pg.query_selector('#palco iframe')
         return await el.content_frame() if el else None
 
@@ -135,7 +148,7 @@ class Agente:
             await fr.wait_for_load_state('load', timeout=4000)
             return await fr.evaluate('''() => {
               const peca = document.querySelector('[data-x=peca]'); if (!peca) return null;
-              const B = peca.getBoundingClientRect(), r = [], U = Math.min(B.width, B.height);
+              const B = peca.getBoundingClientRect(), r = [], U = Math.min(peca.offsetWidth, peca.offsetHeight);  // sem zoom, para comparar com font-size
               const vis = e => { const cs = getComputedStyle(e); return cs.visibility !== 'hidden' && cs.display !== 'none' && !e.closest('[aria-hidden=true]') && e.textContent.trim(); };
               const textos = [...document.querySelectorAll('[data-x=texto]')].filter(vis);
               const folhas = textos.filter(e => !e.querySelector('[data-x=texto]') && !e.closest('[data-intencional]'));  // corte e fita sobrepõem de propósito
@@ -244,8 +257,8 @@ class Agente:
         t0 = time.time()
         await self.entrar(teste=True, nome='Loja do Rafa', cor='#E3263C')
         await self.pg.fill('#f-titulo', self.rnd.choice(self.p['titulos']))
-        fmt = self.rnd.choice(['post-retrato', 'story', 'kit', 'post-quadrado'])
-        await self.pg.click('[data-f="%s"]' % fmt); self.passo('formato ' + fmt)
+        fmt = self.rnd.choice(['post-retrato', 'story', 'kit:post-retrato,story,linkedin-quadrado,banner-site', 'kit:linkedin-quadrado,linkedin-vertical', 'post-quadrado'])
+        await self.formato(fmt); self.passo('formato ' + fmt)
         lays = await self.pg.eval_on_selector_all('.lay[data-l]', 'e => e.map(x => [x.dataset.l, !!x.querySelector(".cadeado")])')
         tempos = []
         for _ in range(6):
@@ -284,7 +297,7 @@ class Agente:
         await self.pg.set_input_files('#f-imagem', str(FIX / 'foto.jpg'))
         await self.pg.wait_for_timeout(1200)
         await self.pg.evaluate("document.querySelectorAll('#formatos details').forEach(d => d.open = true)")
-        fmts = await self.pg.eval_on_selector_all('[data-f]', 'e => e.map(x => x.dataset.f)')
+        fmts = await self.pg.eval_on_selector_all('#formatos .pub[data-f]', 'e => e.map(x => x.dataset.f)')
         meus = [f for i, f in enumerate(fmts) if i % 2 == self.n % 2]
         for k, tit in enumerate(self.p['titulos']):
             await self.pg.fill('#f-titulo', tit)
@@ -295,7 +308,7 @@ class Agente:
                         try: await self.pg.fill('#' + campo, v)
                         except Exception: pass
             for f in meus:
-                await self.pg.click('[data-f="%s"]' % f)
+                await self.formato(f)
                 await self.pg.wait_for_timeout(300)
                 for l in await self.pg.eval_on_selector_all('.lay[data-l]', 'e => e.map(x => x.dataset.l)'):
                     await self.pg.click('.lay[data-l="%s"]' % l)
@@ -321,7 +334,7 @@ class Agente:
             try: await self.pg.fill('#' + c, XSS[i % len(XSS)])
             except Exception: pass
         for f in ['post-retrato', 'email', 'story']:
-            await self.pg.click('[data-f="%s"]' % f); await self.pg.wait_for_timeout(700)
+            await self.formato(f); await self.pg.wait_for_timeout(700)
             await self.aba('criacao')
             await self.varrer_injecao('campos do estúdio (%s)' % f)
             await self.aba('info')

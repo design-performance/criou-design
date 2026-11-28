@@ -12,9 +12,9 @@
   var P4 = ['png', 'jpg', 'pdf', 'pptx'];
   /* rede: agrupa na tela. extra: fica em "Mais formatos", sem destaque. */
   var FORMATOS = [
-    { id: 'kit', nome: 'Campanha completa', rede: 'Campanha', descricao: 'Post do feed, story, LinkedIn e banner largo de uma vez.', kit: ['post-retrato', 'story', 'linkedin-quadrado', 'banner-site'], campos: CAMPOS_PECA, recomendado: true },
-    { id: 'kit-instagram', nome: 'Só Instagram', rede: 'Campanha', descricao: 'Post 4:5, post 3:4 da grade nova e story.', kit: ['post-retrato', 'post-34', 'story'], campos: CAMPOS_PECA },
-    { id: 'kit-local', nome: 'Evento ou loja', rede: 'Campanha', descricao: 'Post, story (serve no status do WhatsApp) e cartaz A4 para imprimir.', kit: ['post-retrato', 'story', 'cartaz-a4'], campos: CAMPOS_PECA },
+    { id: 'kit', nome: 'Campanha completa', rede: 'Campanha', descricao: 'Post do feed, story, LinkedIn e banner largo de uma vez.', kit: ['post-retrato', 'story', 'linkedin-quadrado', 'banner-site'], campos: CAMPOS_PECA, atalho: 'Tudo' },
+    { id: 'kit-instagram', nome: 'Só Instagram', rede: 'Campanha', descricao: 'Post 4:5, post 3:4 da grade nova e story.', kit: ['post-retrato', 'post-34', 'story'], campos: CAMPOS_PECA, atalho: null },
+    { id: 'kit-local', nome: 'Evento ou loja', rede: 'Campanha', descricao: 'Post, story (serve no status do WhatsApp) e cartaz A4 para imprimir.', kit: ['post-retrato', 'story', 'cartaz-a4'], campos: CAMPOS_PECA, atalho: 'Evento com cartaz' },
     { id: 'post-quadrado', nome: 'Quadrado 1:1', rede: 'Instagram', largura: 1080, altura: 1080, margem: 90, campos: CAMPOS_PECA, exportar: P4 },
     { id: 'post-retrato', nome: 'Post 4:5', rede: 'Instagram', largura: 1080, altura: 1350, margem: 90, campos: CAMPOS_PECA, exportar: P4, nota: 'O tamanho mais seguro para o feed. Na grade do perfil, o topo e a base aparecem um pouco cortados.' },
     { id: 'post-34', nome: 'Post 3:4', rede: 'Instagram', largura: 1080, altura: 1440, margem: 90, campos: CAMPOS_PECA, exportar: P4, nota: 'Mesmo formato da grade do perfil: aparece inteiro lá.' },
@@ -53,7 +53,29 @@
     link: { rotulo: 'Link do botão', tipo: 'texto', max: 300, opcional: true, placeholder: 'https://' }
   };
 
-  function porId(id) { return FORMATOS.filter(function (f) { return f.id === id; })[0]; }
+  function simples(id) { return FORMATOS.filter(function (f) { return f.id === id; })[0]; }
+  /* Campanha montada pela pessoa: "kit:post-retrato,story" vira um kit com essas peças. */
+  function porId(id) {
+    if (typeof id === 'string' && id.indexOf('kit:') === 0) {
+      var ids = id.slice(4).split(',').filter(function (x, i, l) { var f = simples(x); return f && !f.kit && !f.email && l.indexOf(x) === i; });
+      if (!ids.length) return null;
+      if (ids.length === 1) return simples(ids[0]);
+      var campos = [];
+      ids.forEach(function (x) { simples(x).campos.forEach(function (c) { if (campos.indexOf(c) < 0) campos.push(c); }); });
+      return { id: 'kit:' + ids.join(','), nome: 'Campanha', rede: 'Campanha', kit: ids, campos: CAMPOS_PECA.filter(function (c) { return campos.indexOf(c) >= 0; }),
+        descricao: ids.length + ' peças: ' + ids.map(function (x) { return nomeCurto(simples(x)); }).join(', ') + '.' };
+    }
+    return simples(id);
+  }
+  function nomeCurto(f) { return (f.rede === 'LinkedIn' ? 'LinkedIn ' : f.rede === 'YouTube' ? '' : '') + f.nome.charAt(0).toLowerCase() + f.nome.slice(1); }
+  /* Atalhos para quem não quer pensar: um toque marca a combinação. */
+  var ATALHOS = [
+    ['Feed + Story', ['post-retrato', 'story']],
+    ['Instagram + LinkedIn', ['post-retrato', 'story', 'linkedin-quadrado']],
+    ['Só LinkedIn', ['linkedin-quadrado', 'linkedin-vertical']],
+    ['Tudo', ['post-retrato', 'story', 'linkedin-quadrado', 'banner-site']],
+    ['Evento com cartaz', ['post-retrato', 'story', 'cartaz-a4']]
+  ];
 
-  raiz.CriouFormatos = { lista: FORMATOS, porId: porId, ASSUNTOS: ASSUNTOS, CAMPOS: CAMPOS };
+  raiz.CriouFormatos = { lista: FORMATOS, porId: porId, ATALHOS: ATALHOS, ASSUNTOS: ASSUNTOS, CAMPOS: CAMPOS };
 })(window);
