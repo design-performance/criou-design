@@ -41,3 +41,11 @@ per.addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!
   document.getElementById('preco').innerHTML=anual?'R$ 299<small>/ano</small>':'R$ 29,90<small>/mês</small>';
   document.getElementById('eco').textContent=anual?'Economize R$ 59,80 em relação a 12 mensalidades.':'Cancele quando quiser, pelo painel.';});
 }
+
+/* Aviso de pré-lançamento: some quando a pessoa fecha (e continua fechado nas próximas visitas). */
+(function () {
+  var pre = document.getElementById('pre'), x = document.getElementById('pre-x');
+  if (!pre || !x) return;
+  try { if (localStorage.getItem('criou.aviso.fechado') === '1') pre.hidden = true; } catch (e) { }
+  x.addEventListener('click', function () { pre.hidden = true; try { localStorage.setItem('criou.aviso.fechado', '1'); } catch (e) { } });
+})();

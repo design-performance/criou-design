@@ -36,7 +36,9 @@ a{color:inherit}
 .soft{background:var(--soft)}
 .mute{color:var(--mute)}
 .lead{font-size:clamp(18px,1.55vw,21px);line-height:1.55;max-width:60ch}
-.pre{background:var(--ink);color:#fff;font-size:14px;text-align:center;padding:9px 16px}
+.pre{background:var(--ink);color:#fff;font-size:13px;line-height:1.3;text-align:center;padding:7px 44px;position:relative}.pre[hidden]{display:none}.pre-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer}.pre-x:hover{background:rgba(255,255,255,.15)}
+/* Menu fixo calmo: o brilho e o pulso ficam só nos botões grandes do conteúdo */
+.nav .btn.cta{animation:none}@media(max-width:600px){.so-largo{display:none}.pre{font-size:12.5px}}.nav .btn.cta::after{display:none}
 .pre b{color:var(--acc)}
 header.nav{position:sticky;top:0;z-index:20;background:var(--blue);color:#fff}
 .nav .wrap{display:flex;align-items:center;gap:28px;min-height:72px}
@@ -265,7 +267,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-bet
 </head>
 <body>
 <a class="pular-conteudo" href="#topo">Pular para o conteúdo</a>
-<div class="pre"><b>Pré-lançamento.</b> A versão de teste já funciona. Cadastro, download sem marca d'água e planos serão liberados em breve.</div>
+<div class="pre" id="pre"><span><b>Pré-lançamento:</b> <span class="so-largo">a versão de teste já funciona; </span>cadastro em breve.</span><button type="button" class="pre-x" id="pre-x" aria-label="Fechar aviso">×</button></div>
 <header class="nav"><div class="wrap">
   <a class="logo" href="#topo" aria-label="Criou, início"><span class="wm">cri<b>ou</b></span></a>
   <nav aria-label="Principal"><a href="#como-funciona">Como funciona</a><a href="#exemplos">Exemplos</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a></nav>

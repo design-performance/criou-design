@@ -823,6 +823,11 @@
   }
   if (window.ResizeObserver) new ResizeObserver(ajustarFixa).observe($('.zona-criacao .previa-col'));
   window.addEventListener('resize', ajustarFixa);
+  (function () {
+    var a = $('#aviso-topo'), x = $('#aviso-x'); if (!a || !x) return;
+    try { if (localStorage.getItem('criou.aviso.fechado') === '1') a.hidden = true; } catch (e) { }
+    x.addEventListener('click', function () { a.hidden = true; try { localStorage.setItem('criou.aviso.fechado', '1'); } catch (e) { } });
+  })();
   window.addEventListener('hashchange', function () { var v = (location.hash || '').slice(1); if (/^[a-z]+$/.test(v) && $('#vista-' + v) && $('#vista-' + v).hidden) ir(v); });
   /* Só redesenha se a LARGURA mudar. No celular e no tablet, rolar a página esconde a barra do navegador
      e muda só a altura: antes isso redesenhava tudo a cada rolagem (prévia piscando e "deslizando"). */
