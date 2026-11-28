@@ -37,7 +37,7 @@
   var CORES_PRONTAS = ['#1F3DFF', '#0E7C66', '#2F6B4F', '#E8C21A', '#FF6A00', '#E5243B', '#FF2E88', '#7A1FA2', '#3B2A20', '#111111'];
 
   var marca = M.ler();
-  var est = { formato: 'kit', layout: 'limpo', par: 'auto', cor: '', dados: { assunto: 'novidade' }, imagem: null, editando: null };
+  var est = { formato: 'kit', layout: 'limpo', par: 'auto', cor: '', corDest: '', dados: { assunto: 'novidade' }, imagem: null, editando: null };
 
   /* Chegando da página inicial: ?nome=&cor= */
   var Q = new URLSearchParams(location.search);
@@ -51,9 +51,10 @@
   linkFontes.href = M.urlFontes(Object.keys(M.FONTES));
 
   /* ---------- Marca efetiva da peça: cor e fontes escolhidas na tela ---------- */
-  function marcaDa(layoutId, par, cor, base) {
+  function marcaDa(layoutId, par, cor, base, dest) {
     var m = clone(base || marca);
-    if (cor) m.cores = { principal: cor, escura: '', acao: '', destaque: '', fundo: '' };
+    if (dest == null) dest = cor && cor === est.cor ? est.corDest : '';
+    if (cor) m.cores = { principal: cor, escura: '', acao: '', destaque: dest || '', fundo: '' };
     par = par || 'auto';
     if (par === 'marca' && m.fontesMarca) { /* mantém as da marca */ }
     else if (M.PARES[par]) m.fontes = { titulo: M.PARES[par].titulo, texto: M.PARES[par].texto };
@@ -104,7 +105,7 @@
     var html = '';
     if (comMarca) html += '<button type="button" class="sw sw-marca" role="radio" aria-checked="' + (!atual) + '" data-c=""><i style="background:' + marca.cores.principal + '"></i>Da marca</button>';
     html += CORES_PRONTAS.map(function (c) { return '<button type="button" class="sw" role="radio" aria-checked="' + (!!atual && atual.toLowerCase() === c.toLowerCase()) + '" data-c="' + c + '" style="background:' + c + '" aria-label="Cor ' + c + '"></button>'; }).join('');
-    var livre = !!atual && CORES_PRONTAS.map(function (c) { return c.toLowerCase(); }).indexOf(atual.toLowerCase()) < 0;
+    var livre = !!atual && atual !== 'paleta' && CORES_PRONTAS.map(function (c) { return c.toLowerCase(); }).indexOf(atual.toLowerCase()) < 0;
     html += '<label class="sw sw-livre" role="radio" aria-checked="' + livre + '" title="Outra cor"' + (livre ? ' style="background:' + atual + '"' : '') + '><span class="sr">Outra cor</span><input type="color" value="' + (atual || '#1F3DFF') + '"></label>';
     caixa.innerHTML = html;
     caixa.onclick = function (e) {
@@ -283,13 +284,30 @@
      ========================================================= */
   function formatoAtual() { return F.porId(est.formato); }
   function formatoDasMinis() { var fo = formatoAtual(); return fo.kit ? F.porId(fo.kit[0]) : (fo.email ? F.porId('post-retrato') : fo); }
+  /* Paletas prontas: um toque escolhe as duas cores; dá para sortear e trocar de lugar. */
+  function desenharPaletas() {
+    var cx = $('#paletas'); if (!cx) return;
+    var grupos = {};
+    M.PALETAS.forEach(function (p) { (grupos[p.grupo] = grupos[p.grupo] || []).push(p); });
+    cx.innerHTML = Object.keys(grupos).map(function (g) {
+      return '<div class="pal-grupo"><span>' + g + '</span>' + grupos[g].map(function (p) {
+        var on = est.corDest && ((est.cor === p.principal && est.corDest === p.destaque) || (est.cor === p.destaque && est.corDest === p.principal));
+        return '<button type="button" class="pal" data-p="' + p.id + '" aria-pressed="' + !!on + '"><i style="background:' + p.principal + '"></i><i style="background:' + p.destaque + '"></i>' + p.nome + '</button>';
+      }).join('') + '</div>';
+    }).join('');
+  }
+  function usarPaleta(principal, destaque) {
+    est.cor = principal; est.corDest = destaque; mudou(); desenharLayouts(); desenharPaletas();
+    $$('#cores-peca .sw').forEach(function (x) { x.setAttribute('aria-checked', 'false'); });
+  }
   var criarLigado = false;
   function montarCriar() {
     if (marca.fontesMarca && est.par === 'auto') est.par = 'marca';
     desenharFormatos();
     montarCampos();
     desenharPares();
-    swatches($('#cores-peca'), est.cor, function (c) { est.cor = c; mudou(); desenharLayouts(); }, true);
+    desenharPaletas();
+    swatches($('#cores-peca'), est.corDest ? 'paleta' : est.cor, function (c) { est.cor = c; est.corDest = ''; mudou(); desenharLayouts(); desenharPaletas(); }, true);
     if (!criarLigado) { criarLigado = true; ligarCriar(); }
     desenharControles(); infoPlano();
     desenharLayouts();
@@ -336,6 +354,42 @@
     inp.addEventListener('input', function () { est.dados[id] = inp.value; contar(id); mudou(); mudouMinis(); });
     return w;
   }
+  /* ---------- Ícone: catálogo com busca e temas ---------- */
+  var temaIcone = 'todos';
+  function campoIcone() {
+    var I = window.CriouIcones, w = el('div', { class: 'campo campo-icone', 'data-campo': 'icone' });
+    function atual() { var id = est.dados.icone; return id && I.existe(id) ? id : ''; }
+    function cab() {
+      var id = atual();
+      return '<span class="rot" id="r-icone">Ícone <span class="opc">· opcional</span></span>' +
+        '<div class="icone-atual"><span class="icone-amostra" aria-hidden="true">' + (id ? I.svg(id, 'currentColor', 1.8) : '') + '</span>' +
+        '<span>' + (id ? esc(I.NOMES[id]) : 'Nenhum ícone') + '</span>' +
+        '<button type="button" class="btn sec sm" data-icone-abrir aria-expanded="false">' + (id ? 'Trocar' : 'Escolher ícone') + '</button>' +
+        (id ? '<button type="button" class="btn sec sm" data-icone-tirar>Tirar</button>' : '') + '</div>';
+    }
+    w.innerHTML = '<div class="icone-cab">' + cab() + '</div><div class="icone-painel" hidden>' +
+      '<input type="search" class="icone-busca" placeholder="Busque: pão, saúde, festa, seta…" aria-label="Buscar ícone">' +
+      '<div class="chips icone-temas" role="group" aria-label="Temas de ícones"><button type="button" class="chip" data-tema="todos" aria-pressed="true">Todos</button>' +
+      I.TEMAS.map(function (t) { return '<button type="button" class="chip" data-tema="' + esc(t.nome) + '" aria-pressed="false">' + esc(t.nome) + '</button>'; }).join('') + '</div>' +
+      '<div class="icone-grade" role="listbox" aria-label="Ícones"></div><p class="icone-conta"></p></div>';
+    var painel = $('.icone-painel', w), grade = $('.icone-grade', w), busca = $('.icone-busca', w);
+    function lista() {
+      var q = busca.value, ids = q ? I.buscar(q) : (temaIcone === 'todos' ? I.buscar('') : (I.TEMAS.filter(function (t) { return t.nome === temaIcone; })[0] || { icones: [] }).icones);
+      grade.innerHTML = ids.map(function (id) { return '<button type="button" role="option" class="icone-op" data-id="' + id + '" aria-selected="' + (id === atual()) + '" title="' + esc(I.NOMES[id]) + '" aria-label="' + esc(I.NOMES[id]) + '">' + I.svg(id, 'currentColor', 1.8) + '</button>'; }).join('') || '<p class="icone-vazio">Nada com esse nome. Tente outra palavra.</p>';
+      $('.icone-conta', w).textContent = ids.length + ' ícone' + (ids.length === 1 ? '' : 's');
+    }
+    function redesenharCab() { $('.icone-cab', w).innerHTML = cab(); $('[data-icone-abrir]', w).setAttribute('aria-expanded', String(!painel.hidden)); }
+    w.addEventListener('click', function (e) {
+      if (e.target.closest('[data-icone-abrir]')) { painel.hidden = !painel.hidden; redesenharCab(); if (!painel.hidden) { lista(); busca.focus(); } return; }
+      if (e.target.closest('[data-icone-tirar]')) { delete est.dados.icone; redesenharCab(); lista(); mudou(); mudouMinis(); return; }
+      var t = e.target.closest('[data-tema]');
+      if (t) { temaIcone = t.dataset.tema; busca.value = ''; $$('[data-tema]', w).forEach(function (x) { x.setAttribute('aria-pressed', String(x === t)); }); lista(); return; }
+      var o = e.target.closest('.icone-op');
+      if (o) { est.dados.icone = o.dataset.id; painel.hidden = true; redesenharCab(); mudou(); mudouMinis(); }
+    });
+    busca.addEventListener('input', lista);
+    return w;
+  }
   var editores = {};
   function atualizarEditores() { var r = M.realces(marcaDa(est.layout, est.par, est.cor)); Object.keys(editores).forEach(function (k) { if (document.body.contains(editores[k].campo)) editores[k].atualizar(r); else delete editores[k]; }); }
   var PRINCIPAIS = ['titulo', 'apoio', 'texto'];
@@ -347,6 +401,7 @@
       (PRINCIPAIS.indexOf(id) >= 0 ? a : b).appendChild(campoHtml(id));
       contar(id);
     });
+    if (!fo.email && window.CriouIcones) a.appendChild(campoIcone());
     $('#mais-opcoes').hidden = !b.children.length;
     var temFoto = fo.campos.indexOf('imagem') >= 0;
     $('#secao-foto').hidden = !temFoto;
@@ -463,6 +518,18 @@
     });
   }
   function ligarCriar() {
+    $('#paletas').addEventListener('click', function (e) {
+      var b = e.target.closest('.pal'); if (!b) return;
+      var p = M.PALETAS.filter(function (x) { return x.id === b.dataset.p; })[0]; if (p) usarPaleta(p.principal, p.destaque);
+    });
+    $('#pal-sortear').addEventListener('click', function () {
+      var l = M.PALETAS.filter(function (x) { return x.principal !== est.cor; }), p = l[Math.floor(Math.random() * l.length)];
+      usarPaleta(p.principal, p.destaque);
+    });
+    $('#pal-trocar').addEventListener('click', function () {
+      var a = est.cor || marca.cores.principal, b = est.corDest || M.paleta(marcaDa(est.layout, est.par, est.cor)).destaque;
+      usarPaleta(b, a);
+    });
     $('#secao-texto').addEventListener('click', function (e) {
       var b = e.target.closest('[data-v]'), g = b && b.closest('[data-ctl]'); if (!g) return;
       var k = g.getAttribute('data-ctl');
@@ -567,7 +634,7 @@
       if (!Array.isArray(l)) return [];
       return l.filter(function (p) { return p && typeof p === 'object' && /^[A-Z0-9-]{4,20}$/i.test(String(p.codigo || '')); }).slice(0, 200).map(function (p) {
         var d = {}; Object.keys(p.dados || {}).forEach(function (k) { var v = p.dados[k]; if (/^[a-z0-9_]{1,30}$/i.test(k) && (typeof v === 'string' || typeof v === 'boolean' || typeof v === 'number')) d[k] = typeof v === 'string' ? v.slice(0, 600) : v; });
-        return { codigo: String(p.codigo), formato: F.porId(p.formato) ? p.formato : 'kit', estilo: M.layout(p.estilo), par: M.PARES && M.PARES[p.par] ? p.par : 'auto', cor: M.corValida(p.cor), dados: d, edicoes: Math.max(0, parseInt(p.edicoes, 10) || 0), quando: isNaN(Date.parse(p.quando)) ? new Date().toISOString() : p.quando, comFoto: !!p.comFoto };
+        return { codigo: String(p.codigo), formato: F.porId(p.formato) ? p.formato : 'kit', estilo: M.layout(p.estilo), par: M.PARES && M.PARES[p.par] ? p.par : 'auto', cor: M.corValida(p.cor), corDest: M.corValida(p.corDest), dados: d, edicoes: Math.max(0, parseInt(p.edicoes, 10) || 0), quando: isNaN(Date.parse(p.quando)) ? new Date().toISOString() : p.quando, comFoto: !!p.comFoto };
       });
     } catch (e) { return []; }
   }
@@ -593,7 +660,7 @@
     var fo = formatoAtual(), lista = lerPecas(), codigo = est.editando || codigoNovo();
     if (contaComoNova) { contarUso(); edicoes = 0; }
     infoPlano();
-    var reg = { codigo: codigo, edicoes: edicoes, formato: fo.id, estilo: est.layout, par: est.par, cor: est.cor, dados: est.dados, quando: new Date().toISOString(), comFoto: !!est.imagem };
+    var reg = { codigo: codigo, edicoes: edicoes, formato: fo.id, estilo: est.layout, par: est.par, cor: est.cor, corDest: est.corDest || '', dados: est.dados, quando: new Date().toISOString(), comFoto: !!est.imagem };
     lista = lista.filter(function (x) { return x.codigo !== codigo; }); lista.unshift(reg);
     try { localStorage.setItem(CHAVE_PECAS, JSON.stringify(lista.slice(0, 200))); } catch (err) { aviso('Sem espaço neste aparelho para guardar a peça. Apague peças antigas em "Minhas peças".'); return; }
     est.editando = codigo; versaoRegistrada = versao;
@@ -661,7 +728,7 @@
     if (e.target.closest('[data-ir2]')) { ir('criar'); return; }
     var b = e.target.closest('[data-abrir]'); if (!b) return;
     var p = lerPecas().filter(function (x) { return x.codigo === b.dataset.abrir; })[0]; if (!p) return;
-    est.formato = F.porId(p.formato) ? p.formato : 'kit'; est.layout = M.layout(p.estilo); est.par = p.par || 'auto'; est.cor = p.cor || '';
+    est.formato = F.porId(p.formato) ? p.formato : 'kit'; est.layout = M.layout(p.estilo); est.par = p.par || 'auto'; est.cor = p.cor || ''; est.corDest = p.corDest || '';
     est.dados = clone(p.dados); est.imagem = null; est.editando = p.codigo;
     ir('criar');
   });

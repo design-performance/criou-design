@@ -132,7 +132,7 @@ class Agente:
               const B = peca.getBoundingClientRect(), r = [], U = Math.min(B.width, B.height);
               const vis = e => { const cs = getComputedStyle(e); return cs.visibility !== 'hidden' && cs.display !== 'none' && !e.closest('[aria-hidden=true]') && e.textContent.trim(); };
               const textos = [...document.querySelectorAll('[data-x=texto]')].filter(vis);
-              const folhas = textos.filter(e => !e.querySelector('[data-x=texto]'));
+              const folhas = textos.filter(e => !e.querySelector('[data-x=texto]') && !e.closest('[data-intencional]'));  // corte e fita sobrepõem de propósito
               const nome = e => e.textContent.trim().slice(0, 28);
               document.querySelectorAll('[data-pilha]').forEach(p => { const a = p.getBoundingClientRect();
                 if (a.left < B.left - 2 || a.right > B.right + 2 || a.top < B.top - 2 || a.bottom > B.bottom + 2) r.push('bloco de texto sai da peça'); });
@@ -252,7 +252,7 @@ class Agente:
                 if agora != antes: break
                 await self.pg.wait_for_timeout(50)
             tempos.append(time.time() - t)
-            sw = self.pg.locator('#cores-peca button')
+            sw = self.pg.locator('#paletas .pal')
             if await sw.count(): await sw.nth(self.rnd.randrange(await sw.count())).click()
             await self.pausa()
         self.medidas['troca_layout_ms'] = round(1000 * sum(tempos) / len(tempos))

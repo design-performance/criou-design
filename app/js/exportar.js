@@ -236,7 +236,14 @@
     var r = await fetch(src, { mode: 'cors' });
     if (!r.ok) throw new Error('imagem');
     var b = await r.blob();
-    return new Promise(function (ok) { var f = new FileReader(); f.onload = function () { ok(f.result); }; f.readAsDataURL(b); });
+    var url = await new Promise(function (ok) { var f = new FileReader(); f.onload = function () { ok(f.result); }; f.readAsDataURL(b); });
+    if (!/svg/.test(b.type)) return url;
+    /* Ícones em SVG viram PNG nítido: abre em qualquer versão do PowerPoint. */
+    return new Promise(function (ok, erro) {
+      var im = new Image();
+      im.onload = function () { var t = document.createElement('canvas'); t.width = t.height = 512; t.getContext('2d').drawImage(im, 0, 0, 512, 512); ok(t.toDataURL('image/png')); };
+      im.onerror = erro; im.src = url;
+    });
   }
 
   /* Fonte da peça no PowerPoint: mesma família da marca; negrito pelo peso. */

@@ -60,8 +60,12 @@
     'Nunito': { pesos: '400;600;700;800;900', tipo: 'Arredondada' },
     'Fredoka': { pesos: '400;500;600;700', tipo: 'Arredondada divertida' },
     'Playfair Display': { pesos: '400;600;700;800', ital: true, tipo: 'Serifa elegante' },
-    'DM Serif Display': { pesos: '400', ital: true, tipo: 'Serifa de destaque' }
+    'DM Serif Display': { pesos: '400', ital: true, tipo: 'Serifa de destaque' },
+    'Anton': { pesos: '400', tipo: 'Condensada de impacto' },
+    'Oswald': { pesos: '400;500;600;700', tipo: 'Condensada firme' }
   };
+  /* Peso mais próximo que a família tem de verdade (sem negrito falso). */
+  function peso(f, desejado) { var d = FONTES[f]; if (!d) return desejado; var ps = d.pesos.split(';').map(Number); return ps.reduce(function (a, b) { return Math.abs(b - desejado) < Math.abs(a - desejado) ? b : a; }, ps[0]); }
   function urlFontes(lista) {
     var vistas = {};
     var partes = lista.filter(function (f) { if (!FONTES[f] || vistas[f]) return false; vistas[f] = 1; return true; }).map(function (f) {
@@ -96,8 +100,22 @@
     expressiva: { nome: 'Expressiva', titulo: 'Unbounded', texto: 'Figtree' },
     elegante: { nome: 'Elegante', titulo: 'Playfair Display', texto: 'Inter' },
     editorial: { nome: 'Editorial', titulo: 'DM Serif Display', texto: 'Figtree' },
-    divertida: { nome: 'Divertida', titulo: 'Fredoka', texto: 'Nunito' }
+    divertida: { nome: 'Divertida', titulo: 'Fredoka', texto: 'Nunito' },
+    impacto: { nome: 'Impacto', titulo: 'Anton', texto: 'Inter' },
+    condensada: { nome: 'Condensada', titulo: 'Oswald', texto: 'Inter' }
   };
+
+  /* ---------- Paletas prontas: duas cores que já combinam, por clima ----------
+     Quem não entende de cor escolhe pelo nome; a paleta derivada confere a leitura. */
+  var PALETAS = [
+    ['padaria', 'Padaria', 'Quentes', '#C2410C', '#FDE68A'], ['por-do-sol', 'Pôr do sol', 'Quentes', '#E11D48', '#FDBA74'],
+    ['cafe', 'Café', 'Quentes', '#6F4E37', '#F3D9B1'], ['tomate', 'Tomate', 'Quentes', '#DC2626', '#FEF3C7'], ['terra', 'Terra', 'Quentes', '#9A3412', '#FCD34D'],
+    ['oceano', 'Oceano', 'Frias', '#0E7490', '#A5F3FC'], ['saude', 'Saúde', 'Frias', '#0F766E', '#CCFBF1'], ['ceu', 'Céu', 'Frias', '#2563EB', '#BFDBFE'], ['menta', 'Menta', 'Frias', '#059669', '#D1FAE5'],
+    ['neon', 'Neon', 'Vibrantes', '#16161D', '#D6FF3D'], ['choque', 'Rosa choque', 'Vibrantes', '#DB2777', '#FDE047'], ['eletrico', 'Elétrico', 'Vibrantes', '#4F46E5', '#FDE047'], ['laranja-pop', 'Laranja pop', 'Vibrantes', '#EA580C', '#C7D2FE'],
+    ['pastel', 'Pastel', 'Suaves', '#DB6FA6', '#DDD6FE'], ['lavanda', 'Lavanda', 'Suaves', '#7C3AED', '#EDE9FE'], ['pessego', 'Pêssego', 'Suaves', '#F97316', '#FFE4E6'], ['areia', 'Areia', 'Suaves', '#A16207', '#FEF9C3'],
+    ['luxo', 'Luxo', 'Sóbrias', '#1C1917', '#D4AF37'], ['vinho', 'Vinho', 'Sóbrias', '#7F1D1D', '#FBCFE8'], ['grafite', 'Grafite', 'Sóbrias', '#334155', '#FACC15'], ['marinho', 'Marinho', 'Sóbrias', '#1E3A8A', '#FCD34D'],
+    ['floresta', 'Floresta', 'Natureza', '#166534', '#BEF264'], ['oliva', 'Oliva', 'Natureza', '#4D7C0F', '#FEF08A'], ['brinquedo', 'Brinquedo', 'Natureza', '#2563EB', '#FB7185']
+  ].map(function (p) { return { id: p[0], nome: p[1], grupo: p[2], principal: p[3], destaque: p[4] }; });
 
   /* ---------- Layouts, em três níveis ---------- */
   var LAYOUTS = {
@@ -110,6 +128,12 @@
     gradiente: { nivel: 'Premium', nome: 'Gradiente', desenho: 'efeito', par: 'expressiva', foto: 'bloco', frase: 'Luzes em degradê, textura e foto em cartão.' },
     foco: { nivel: 'Premium', nome: 'Foco', desenho: 'foco', par: 'geometrica', foto: 'fundo', posicao: false, frase: 'Foto desfocada na cor da marca, com uma janela nítida e o título por cima.' },
     grade: { nivel: 'Premium', nome: 'Grade', desenho: 'grade', par: 'tecnica', foto: 'fundo', posicao: false, frase: 'Pôster com grade, quadrados de cor e título que vaza da peça.' },
+    poster: { nivel: 'Básico', nome: 'Pôster', desenho: 'poster', par: 'impacto', foto: 'bloco', frase: 'Cor chapada, título condensado gigante e informações pequenas nos cantos.' },
+    dividido: { nivel: 'Elaborado', nome: 'Dividido', desenho: 'dividido', par: 'condensada', foto: 'bloco', posicao: false, frase: 'Metade texto, metade foto, com os dados em etiquetas brancas.' },
+    fita: { nivel: 'Elaborado', nome: 'Fita', desenho: 'fita', par: 'impacto', foto: null, posicao: false, frase: 'Título enorme e fitas coloridas atravessando com as informações.' },
+    corte: { nivel: 'Premium', nome: 'Corte', desenho: 'corte', par: 'impacto', foto: 'fundo', posicao: false, frase: 'Título gigante que vaza da peça de propósito, sobre a foto em preto e branco.' },
+    mosaico: { nivel: 'Premium', nome: 'Mosaico', desenho: 'mosaico', par: 'geometrica', foto: 'fundo', posicao: false, frase: 'A foto fatiada em grade, com partes em preto e branco e o título por cima.' },
+    revista: { nivel: 'Premium', nome: 'Revista', desenho: 'revista', par: 'condensada', foto: 'fundo', posicao: false, frase: 'Capa de revista: nome da marca no topo, manchete grande e chamadas nos cantos.' },
     meiotom: { nivel: 'Premium', nome: 'Meio-tom', desenho: 'meiotom', par: 'expressiva', foto: 'fundo', posicao: false, girar: true, giradoPadrao: true, frase: 'Recorte em retícula, como impressão antiga, e título na vertical.' }
   };
   Object.keys(LAYOUTS).forEach(function (k) { LAYOUTS[k].premium = LAYOUTS[k].nivel === 'Premium'; if (LAYOUTS[k].posicao !== false) LAYOUTS[k].posicao = true; });
@@ -227,8 +251,8 @@
   }
 
   raiz.CriouMarca = {
-    ler: ler, salvar: salvar, limpar: limpar, corValida: cor, imagemValida: imagem, padrao: padrao, paleta: paleta, realces: realces,
-    FONTES: FONTES, urlFontes: urlFontes, pilha: pilha, serifada: serifada,
+    ler: ler, salvar: salvar, limpar: limpar, PALETAS: PALETAS, corValida: cor, imagemValida: imagem, padrao: padrao, paleta: paleta, realces: realces,
+    FONTES: FONTES, peso: peso, urlFontes: urlFontes, pilha: pilha, serifada: serifada,
     FORMAS: FORMAS, raioCss: raioCss, ESTILOS: ESTILOS, LAYOUTS: LAYOUTS, PARES: PARES, layout: layout,
     cor: { mix: mix, contraste: contraste, sobre: sobre, garantir: garantir, lum: lum, girar: girar }
   };
