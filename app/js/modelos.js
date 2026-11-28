@@ -608,7 +608,7 @@
     var nSelo = [c.selo, c.rodape].filter(Boolean).length;
     var meta = [c.marca.nome, c.data || c.selo].filter(Boolean).join(' — ');
     var altMeta = largo ? H - m - c.mb * 0.6 - nSelo * et * 1.3 - U * 0.06 : H * 0.5;
-    var etM = Math.min(et, altMeta / (Math.max(8, meta.length) * 0.62));
+    var etM = Math.min(et, altMeta / (Math.max(8, meta.length) * 0.72));
     corpo += girarBloco(Math.round(m * 0.35), m, etM * 2.6, altMeta, -90, etiqueta(meta, c, tx, etM, 'white-space:nowrap'), 'right', 'center');
     var realce = function (x) { return '<span style="color:' + C.garantir(P.destaque, '#555555', 3) + '">' + x + '</span>'; };
     var n = MO_sem(c.titulo).length || 1;
@@ -820,7 +820,114 @@
     return { fundo: base, corpo: corpo };
   }
 
-  var ESTILOS = { poster: poster, dividido: dividido, fita: fita, corte: corte, mosaico: mosaico, revista: revista, simples: simples, sofisticado: sofisticado, robusto: robusto, texto: texto, fundo: fundoFoto, efeito: efeito, manchete: manchete, foco: foco, grade: grade, meiotom: meiotom };
+  /* NÚMERO · número ou data gigante ao lado do texto ("5 pilares", "13 dez") */
+  function numeroDe(c) {
+    var t = MO_sem(c.titulo), m = /^\s*(\d{1,3})\s+(.+)$/.exec(t);
+    if (m) return { n: m[1], resto: m[2], deTitulo: true };
+    var d = c.dados && c.dados.data ? /^(\d{4})-(\d{2})-(\d{2})/.exec(c.dados.data) : null;
+    if (d) return { n: String(+d[3]), resto: t, deTitulo: false, sub: c.data };
+    return { n: '→', resto: t, deTitulo: false };
+  }
+  function numero(c) {
+    var P = c.P, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U, largo = c.tipo === 'largo', alto = c.tipo === 'alto';
+    var base = C.mix(P.fundo || '#ffffff', '#ffffff', 0.4), tx = P.escura, ac = P.principalLegivel, nm = numeroDe(c);
+    var hN = alto ? H * 0.3 : H * (largo ? 0.62 : 0.5), tamN = hN / 0.78;
+    var wN = Math.min(tamN * 0.56 * nm.n.length, alto ? W - 2 * m : W * 0.46);
+    tamN = Math.min(tamN, wN / (0.56 * nm.n.length));
+    var limiteN = H - c.mb - U * 0.08 - (alto ? 0 : c.mt + U * 0.02);
+    if (!alto) tamN = Math.min(tamN, limiteN / 0.86);
+    var yN = alto ? c.mt + U * 0.08 : c.mt + U * 0.02 + (limiteN - tamN * 0.8) / 2;
+    corpo += '<div data-x="texto" style="position:absolute;left:' + px(m - tamN * 0.04) + ';top:' + px(yN - tamN * 0.12) + ';font-family:' + c.fT + ';font-weight:' + pesoT(c, 900) + ';font-size:' + px(tamN) + ';line-height:1;letter-spacing:-0.04em;color:' + ac + '">' + esc(nm.n) + '</div>';
+    var wReal = 0.56 * nm.n.length * tamN, xT = alto ? m : m + wReal + U * 0.03, yT = alto ? yN + tamN * 0.82 + U * 0.03 : c.mt + U * 0.06;
+    var areaW = W - m - xT, fim = H - c.mb - U * 0.1;
+    var realce = function (x) { return '<span style="color:' + ac + '">' + x + '</span>'; };
+    var tam = U * (largo ? 0.08 : 0.1) * c.dec.escala;
+    var resto = nm.deTitulo ? c.titulo.replace(/^\s*(?:\*\*|==(?:\([a-z0-9-]+\))?)?\s*\d{1,3}\s+/i, '') : c.titulo;
+    var bloco = '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:' + pesoT(c, 800) + ';font-size:' + px(tam) + ';line-height:1.02;text-transform:uppercase;color:' + tx + ';flex:none' + (c.vazio ? ';opacity:.6' : '') + '">' + rico(resto, realce) + '</div>' +
+      (nm.sub ? '<div data-x="texto" style="font-family:' + c.fX + ';font-weight:800;font-size:' + px(U * 0.026) + ';color:' + ac + ';margin-top:' + px(U * 0.014) + ';text-transform:uppercase;letter-spacing:.04em;flex:none">' + esc(nm.sub) + '</div>' : '') +
+      (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-size:' + px(U * 0.026) + ';line-height:1.4;color:' + P.texto + ';margin-top:' + px(U * 0.018) + ';flex:none">' + rico(c.apoio, realce) + '</div>' : '') +
+      botao(c.chamada, c.marca, P, base, U * 0.025, 'left');
+    corpo += pilha(xT, yT, areaW, fim - yT, bloco, 'left', alto ? 'flex-start' : 'center');
+    corpo += '<div style="position:absolute;left:' + px(m) + ';bottom:' + px(c.mb) + '">' + marcaOuLogo(c, tx, U * 0.042, base) + '</div>';
+    var et = [c.selo, c.rodape].filter(Boolean).join('  ·  ');
+    if (et) corpo += '<div style="position:absolute;right:' + px(m) + ';bottom:' + px(c.mb) + ';max-width:55%">' + etiqueta(et, c, P.suave, U * 0.018, 'text-align:right') + '</div>';
+    corpo += caixa(abs(m, c.mt - U * 0.02, W - 2 * m, Math.max(2, U * 0.003)) + 'background:' + tx);
+    return { fundo: base, corpo: corpo };
+  }
+
+  /* NEON · etiquetas "//", palavra em caixa de cor e faixa diagonal atravessando a foto */
+  function slotNeon(tipo, W, H, m, mb, U) {
+    if (tipo === 'largo') return { x: Math.round(W * 0.56), y: m, w: Math.round(W * 0.44) - m, h: H - 2 * m };
+    var h = Math.round(H * (tipo === 'alto' ? 0.34 : 0.34)); return { x: m, y: H - mb - U * 0.1 - h, w: W - 2 * m, h: h };
+  }
+  function neon(c) {
+    var P = c.P, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U, largo = c.tipo === 'largo';
+    var base = '#111113', tx = '#F5F5F0', neonC = C.lum(P.destaque) > 0.45 ? P.destaque : '#D6FF3D', txN = '#111113';
+    var et = U * 0.018, mono = 'font-family:' + c.fX + ';font-weight:700;font-size:' + px(et) + ';letter-spacing:.08em;text-transform:uppercase;color:' + tx;
+    corpo += '<div data-x="texto" style="' + abs(m, c.mt, W * 0.34) + mono + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">// ' + esc(c.selo || c.marca.nome) + '</div>';
+    corpo += '<div data-x="texto" style="position:absolute;right:' + px(m) + ';top:' + px(c.mt) + ';max-width:' + px(W * 0.52) + ';text-align:right;line-height:1.35;' + mono + '">[ ' + esc(c.data || c.marca.nome) + ' ]</div>';
+    var sf = c.temFoto ? slotNeon(c.tipo, W, H, m, c.mb, U) : null;
+    if (sf) {
+      corpo += img(c.foto, sf.x, sf.y, sf.w, sf.h) + caixa(abs(sf.x, sf.y, sf.w, sf.h) + 'border:' + px(Math.max(2, U * 0.003)) + ' solid ' + neonC + ';box-sizing:border-box');
+      var faixa = [c.selo || 'Novidade', c.marca.nome, c.selo || 'Novidade', c.marca.nome, c.selo || 'Novidade'].join('  ✦  ').toUpperCase();
+      corpo += '<div data-x="caixa" data-intencional="fita" data-girar="-5" style="' + (largo ? abs(sf.x - U * 0.02, sf.y + sf.h * 0.72, sf.w + m + U * 0.02) : abs(-W * 0.05, sf.y - U * 0.02, W * 1.1)) + 'transform:rotate(-5deg);background:' + neonC + ';padding:' + px(et * 0.5) + ' 0;overflow:hidden;z-index:4"><div data-x="texto" style="font-family:' + c.fX + ';font-weight:800;font-size:' + px(et * 1.1) + ';letter-spacing:.1em;color:' + txN + ';white-space:nowrap">' + esc(faixa) + '</div></div>';
+    }
+    var realceN = function (x) { return '<span style="background:' + neonC + ';color:' + txN + ';padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone">' + x + '</span>'; };
+    var titulo = /==/.test(c.titulo) ? c.titulo : c.titulo.replace(/(\S+)(\s*[.!?…]*)\s*$/, '==$1==$2');
+    var tam = U * (largo ? 0.1 : 0.13) * c.dec.escala, ty = c.mt + U * 0.07, fim = sf && !largo ? sf.y - U * 0.05 : H - c.mb - U * 0.1;
+    var bloco = '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:' + pesoT(c, 900) + ';font-size:' + px(tam) + ';line-height:1.05;letter-spacing:-0.02em;text-transform:uppercase;color:' + tx + ';flex:none' + (c.vazio ? ';opacity:.6' : '') + '">' + rico(titulo, realceN) + '</div>' +
+      (c.apoio ? '<div data-x="texto" style="font-family:' + c.fX + ';font-size:' + px(U * 0.024) + ';line-height:1.45;color:' + C.mix(tx, base, 0.25) + ';margin-top:' + px(U * 0.02) + ';flex:none">' + esc(c.apoio) + '</div>' : '');
+    corpo += pilha(m, ty, (sf && largo ? sf.x - U * 0.03 : W - m) - m, fim - ty, bloco, 'left', sf && !largo ? 'flex-end' : 'center');
+    if (c.chamada) corpo += '<div data-x="caixa" style="position:absolute;left:' + px(m) + ';bottom:' + px(c.mb) + ';border:' + px(Math.max(2, U * 0.003)) + ' solid ' + tx + ';padding:' + px(et * 0.7) + ' ' + px(et * 1.2) + '"><span data-x="texto" style="' + mono + ';font-size:' + px(et * 1.15) + '">' + esc(c.chamada) + ' ↘</span></div>';
+    else corpo += '<div style="position:absolute;left:' + px(m) + ';bottom:' + px(c.mb) + '">' + marcaOuLogo(c, tx, U * 0.04, base) + '</div>';
+    if (c.rodape) corpo += '<div data-x="texto" style="position:absolute;right:' + px(m) + ';bottom:' + px(c.mb) + ';' + mono + ';color:' + neonC + ';text-align:right;max-width:45%">' + esc(c.rodape) + '</div>';
+    return { fundo: base, corpo: corpo };
+  }
+
+  /* COLAGEM · papel rasgado atrás do título, adesivo redondo, foto tipo polaroide com fita */
+  function papelRasgado(w, h, cor, semente) {
+    var pts = [], n = 18, r = function (i) { return ((Math.sin(i * 12.9898 + semente) * 43758.5453) % 1 + 1) % 1; };
+    for (var i = 0; i <= n; i++) pts.push([i / n * w, r(i) * h * 0.06]);
+    for (i = 0; i <= n; i++) pts.push([w - r(i + 40) * w * 0.035, i / n * h]);
+    for (i = n; i >= 0; i--) pts.push([i / n * w, h - r(i + 80) * h * 0.06]);
+    for (i = n; i >= 0; i--) pts.push([r(i + 120) * w * 0.035, i / n * h]);
+    var d = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L') + 'Z';
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.round(w) + '" height="' + Math.round(h) + '" viewBox="0 0 ' + Math.round(w) + ' ' + Math.round(h) + '"><path d="' + d + '" fill="' + cor + '"/></svg>');
+  }
+  function slotColagem(tipo, W, H, m, mb, U) {
+    if (tipo === 'largo') { var hl = Math.round(H * 0.7); return { x: Math.round(W * 0.66), y: Math.round((H - hl) / 2), w: Math.round(hl * 0.8), h: hl }; }
+    var w = Math.round(W * (tipo === 'alto' ? 0.5 : 0.42)); return { x: W - m - w, y: Math.round(H - mb - U * 0.04 - w * 1.15), w: w, h: Math.round(w * 1.15) };
+  }
+  function colagem(c) {
+    var P = c.P, corpo = '', W = c.W, H = c.H, m = c.m, U = c.U, largo = c.tipo === 'largo';
+    var base = '#F1EEE8', escuro = '#16161A', ac = C.lum(P.destaque) > 0.3 ? P.destaque : P.principal, txAc = C.sobre(ac, escuro);
+    corpo += '<img data-x="img" src="' + grao(W, H, 0.09) + '" alt="" style="' + abs(0, 0, W, H) + 'display:block">';
+    var sf = slotColagem(c.tipo, W, H, m, c.mb, U), bw = Math.round(U * 0.016);
+    corpo += '<div data-x="caixa" data-intencional="fita" data-girar="4" style="' + abs(sf.x - bw, sf.y - bw, sf.w + 2 * bw, sf.h + 2 * bw * 3) + 'background:#ffffff;transform:rotate(4deg);box-shadow:0 ' + px(U * 0.012) + ' ' + px(U * 0.03) + ' rgba(0,0,0,.18)">' +
+      (c.temFoto && c.foto ? img(c.foto, bw, bw, sf.w, sf.h) : '<img data-x="img" src="' + luzes(sf.w, sf.h, P, 5, true) + '" alt="" style="' + abs(bw, bw, sf.w, sf.h) + 'display:block">') + '</div>';
+    corpo += caixa(abs(sf.x + sf.w * 0.3, sf.y - U * 0.03, sf.w * 0.4, U * 0.05) + 'background:' + rgba(ac, 0.75) + ';transform:rotate(-3deg)');
+    var tw = largo ? W * 0.6 : W - 2 * m, tam = U * (largo ? 0.1 : 0.13) * c.dec.escala;
+    var ty = c.mt + U * 0.07, th = (largo ? H - c.mb - U * 0.04 : sf.y - U * 0.02) - ty;
+    corpo += '<img data-x="img" data-intencional="fita" src="' + papelRasgado(tw, th, escuro, c.titulo.length) + '" alt="" style="' + abs(m - U * 0.02, ty, tw, th) + 'display:block">';
+    var realce = function (x) { return '<span style="color:' + ac + '">' + x + '</span>'; };
+    var bloco = '<div data-x="texto" data-fit="' + tam.toFixed(1) + '" style="font-family:' + c.fT + ';font-weight:' + pesoT(c, 800) + ';font-size:' + px(tam) + ';line-height:1;text-transform:uppercase;color:#ffffff;flex:none' + (c.vazio ? ';opacity:.6' : '') + '">' + rico(c.titulo, realce) + '</div>' +
+      (c.selo ? '<div data-x="caixa" style="background:' + ac + ';padding:' + px(U * 0.008) + ' ' + px(U * 0.016) + ';margin-top:' + px(U * 0.02) + ';flex:none"><span data-x="texto" style="font-family:' + c.fT + ';font-weight:' + pesoT(c, 700) + ';font-size:' + px(U * 0.026) + ';color:' + txAc + ';text-transform:uppercase">' + esc(c.selo) + '</span></div>' : '');
+    corpo += pilha(m + U * 0.03, ty + U * 0.04, tw - U * 0.08, th - U * 0.08, bloco, 'left', 'center');
+    var info = [c.apoio, c.data].filter(Boolean).join(' · ');
+    if (info) {
+      var d = U * (largo ? 0.2 : 0.24), cx = largo ? W * 0.58 : m + U * 0.02, cy = largo ? H - c.mb - d : sf.y + sf.h * 0.25;
+      corpo += '<div data-x="caixa" data-intencional="fita" data-girar="-8" style="' + abs(cx, cy, d, d) + 'border-radius:50%;background:' + ac + ';transform:rotate(-8deg);display:flex;align-items:center;justify-content:center;padding:' + px(d * 0.16) + ';box-sizing:border-box;z-index:3"><span data-x="texto" style="font-family:' + c.fX + ';font-weight:700;font-size:' + px(Math.min(U * 0.022, d / Math.sqrt(info.length) * 0.5)) + ';line-height:1.3;color:' + txAc + ';text-align:center">' + esc(info) + '</span></div>';
+    }
+    corpo += '<img data-x="img" src="' + rabisco(U * 0.12, ac) + '" alt="" style="position:absolute;right:' + px(largo ? W * 0.36 : m) + ';top:' + px(c.mt) + ';width:' + px(U * 0.12) + ';height:' + px(U * 0.12) + '">';
+    corpo += '<div style="position:absolute;left:' + px(m) + ';top:' + px(c.mt - U * 0.01) + '">' + etiqueta(c.marca.nome, c, escuro, U * 0.018) + '</div>';
+    if (c.chamada && !largo) corpo += '<div style="position:absolute;left:' + px(m) + ';bottom:' + px(c.mb) + '">' + botao(c.chamada, c.marca, P, base, U * 0.024, 'left') + '</div>';
+    return { fundo: base, corpo: corpo };
+  }
+  function rabisco(t, cor) {
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="' + cor + '" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 34 L12 14 L20 28 L24 10 L28 28 L36 14 L42 34 Z"/><path d="M8 40 Q24 44 40 40"/></svg>');
+  }
+
+  var ESTILOS = { numero: numero, neon: neon, colagem: colagem, poster: poster, dividido: dividido, fita: fita, corte: corte, mosaico: mosaico, revista: revista, simples: simples, sofisticado: sofisticado, robusto: robusto, texto: texto, fundo: fundoFoto, efeito: efeito, manchete: manchete, foco: foco, grade: grade, meiotom: meiotom };
 
   /* Tamanho do quadro da foto em cada estilo (para o recorte). */
   function jfW(W) { return W; }
@@ -851,7 +958,9 @@
     var U = dec.tipo === 'largo' ? H * (W / H >= 2.6 ? 1.9 : 1.55) : W; if (dec.tipo === 'alto' && H / W < 1.5) U = W * 1.04;
     if (D === 'poster') { var sp = slotPoster(dec.tipo, W, H, m, mt, mb); return { w: sp.w, h: sp.h, forma: { efeito: 'pb', contraste: 1.1 } }; }
     if (D === 'dividido') { var sd = slotDividido(dec.tipo, W, H); return { w: sd.w, h: sd.h }; }
-    if (D === 'fita') return null;
+    if (D === 'fita' || D === 'numero') return null;
+    if (D === 'neon') { var sn = slotNeon(dec.tipo, W, H, m, mb, U); return { w: sn.w, h: sn.h, forma: { efeito: 'pb', contraste: 1.15 } }; }
+    if (D === 'colagem') { var sc = slotColagem(dec.tipo, W, H, m, mb, U); return { w: sc.w, h: sc.h, forma: { efeito: 'pb', contraste: 1.1 } }; }
     if (D === 'corte') return { w: W, h: H, forma: { efeito: 'pb', contraste: 1.15, escurecer: 0.25 } };
     if (D === 'revista') return { w: W, h: H, forma: { efeito: 'pb', contraste: 1.1 } };
     if (D === 'mosaico') { var gm = gradeMosaico(dec.tipo, W, H, m, mt, mb, U); return { w: gm.w, h: gm.h, extras: [{ chave: '_fotoPB', w: gm.w, h: gm.h, forma: { efeito: 'pb', contraste: 1.1 } }] }; }

@@ -117,6 +117,12 @@ class Agente:
             b = self.pg.locator('.abas [data-aba="%s"]' % n)
             if await b.count(): await b.click(); await self.pg.wait_for_timeout(400)
 
+    async def sub(self, nome):
+        """Abre uma aba das Opções (Layout, Cor, Fonte, Texto)."""
+        await self.aba('opcoes')
+        b = self.pg.locator('.sub-abas [data-sub="%s"]' % nome)
+        if await b.count(): await b.click(); await self.pg.wait_for_timeout(150)
+
     async def quadro(self):
         el = await self.pg.query_selector('#palco iframe')
         return await el.content_frame() if el else None
@@ -202,7 +208,7 @@ class Agente:
         await self.pausa()
         await self.sem_rolagem_lateral('estúdio (Informações)')
         pequenos = await self.pg.evaluate('''() => [...document.querySelectorAll('#vista-criar button, #vista-criar a, #vista-criar input:not([type=hidden])')]
-          .filter(e => { const r = e.getBoundingClientRect(); return r.width && r.height && getComputedStyle(e).visibility !== 'hidden' && (r.height < 32 || r.width < 32) && e.offsetParent; })
+          .filter(e => { const r = e.getBoundingClientRect(); return r.width && r.height && getComputedStyle(e).visibility !== 'hidden' && getComputedStyle(e).opacity !== '0' && (r.height < 32 || r.width < 32) && e.offsetParent; })
           .map(e => (e.textContent || e.getAttribute('aria-label') || e.id || e.tagName).trim().slice(0, 30))''')
         if pequenos:
             await self.achar('baixa', 'Alvo de toque pequeno', 'estúdio no celular', '%d controles com menos de 32px: %s' % (len(pequenos), ', '.join(pequenos[:6])), foto=False)
@@ -252,8 +258,10 @@ class Agente:
                 if agora != antes: break
                 await self.pg.wait_for_timeout(50)
             tempos.append(time.time() - t)
+            await self.sub('cor')
             sw = self.pg.locator('#paletas .pal')
             if await sw.count(): await sw.nth(self.rnd.randrange(await sw.count())).click()
+            await self.sub('layout')
             await self.pausa()
         self.medidas['troca_layout_ms'] = round(1000 * sum(tempos) / len(tempos))
         if self.medidas['troca_layout_ms'] > 1500:
@@ -294,12 +302,14 @@ class Agente:
                     await self.pausa()
                     p = await self.conferir_peca('%s / %s' % (f, l))
                     if p: await self.achar('média', 'Problema na peça', '%s / %s (título de %d letras)' % (f, l, len(tit)), p)
+                    await self.sub('texto')
                     gir = self.pg.locator('#ctl-girar:not([hidden]) [data-v]')
                     if await gir.count() > 1:
                         await gir.nth(1).click(); await self.pausa()
                         p = await self.conferir_peca('%s / %s girado' % (f, l))
                         if p: await self.achar('média', 'Problema na peça', '%s / %s com texto girado' % (f, l), p)
                         await gir.nth(0).click()
+                    await self.sub('layout')
         self.passo('conferiu %d formatos' % len(meus))
 
     async def hacker(self):

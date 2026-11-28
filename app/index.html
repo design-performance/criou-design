@@ -185,26 +185,32 @@
       </div>
       <div class="zona zona-opcoes">
         <p class="zona-rot">Opções <span>como apresentar</span></p>
-        <div class="cartao">
-          <div class="secao">
+        <div class="cartao opcoes" data-sub="layout">
+          <div class="sub-abas" role="tablist" aria-label="Opções da peça">
+            <button type="button" role="tab" data-sub="layout" aria-selected="true">Layout</button>
+            <button type="button" role="tab" data-sub="cor" aria-selected="false">Cor</button>
+            <button type="button" role="tab" data-sub="fonte" aria-selected="false">Fonte</button>
+            <button type="button" role="tab" data-sub="texto" aria-selected="false">Texto</button>
+          </div>
+          <div class="secao" data-sub="layout">
             <h2>Layout</h2>
             <div class="niveis" id="layouts" role="radiogroup" aria-label="Layouts"></div>
           </div>
-          <div class="secao" id="secao-texto">
+          <div class="secao" id="secao-texto" data-sub="texto">
             <h2>Texto na peça</h2>
             <div class="campo" id="ctl-posicao"><span class="rot" id="r-pos">Posição</span><div class="chips" role="radiogroup" aria-labelledby="r-pos" data-ctl="posicao"></div></div>
             <div class="campo" id="ctl-alinhamento"><span class="rot" id="r-ali">Alinhamento</span><div class="chips" role="radiogroup" aria-labelledby="r-ali" data-ctl="alinhamento"></div></div>
             <div class="campo" id="ctl-girar"><span class="rot" id="r-gir">Título</span><div class="chips" role="radiogroup" aria-labelledby="r-gir" data-ctl="girar"></div></div>
             <p class="ajuda" id="ctl-nota"></p>
           </div>
-          <div class="secao">
+          <div class="secao" data-sub="fonte">
             <h2>Fonte</h2>
             <div class="chips" id="pares" role="radiogroup" aria-label="Combinação de fontes"></div>
           </div>
-          <div class="secao">
+          <div class="secao" data-sub="cor">
             <h2>Cor</h2>
             <p class="dica-cor">Escolha uma combinação pronta. A leitura do texto é conferida sozinha.</p>
-            <div class="pal-acoes"><button type="button" class="btn sec sm" id="pal-sortear">Sortear combinação</button><button type="button" class="btn sec sm" id="pal-trocar">Trocar as cores de lugar</button></div>
+            <div class="pal-acoes"><button type="button" class="btn sec sm" id="pal-sortear">🎲 Sortear cores</button><button type="button" class="btn sec sm" id="pal-trocar">⇄ Inverter cores</button></div>
             <div class="paletas" id="paletas" aria-label="Combinações de cores prontas"></div>
             <details class="cor-unica"><summary>Prefere uma cor só?</summary>
             <div class="swatches" id="cores-peca" role="radiogroup" aria-label="Cor da peça"></div>

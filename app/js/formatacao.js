@@ -276,6 +276,9 @@
       b.addEventListener('pointerdown', function (e) { e.preventDefault(); });
       return b;
     }
+    /* Recolhida até a pessoa selecionar uma palavra: menos coisa na tela para quem é leigo. */
+    var dicaR = document.createElement('span'); dicaR.className = 'fmt-dica-r'; dicaR.innerHTML = '<b>Destacar:</b> selecione uma palavra do título';
+    barraEl.appendChild(dicaR);
     var rot = document.createElement('span'); rot.className = 'fmt-rot'; rot.textContent = 'Destaque';
     barraEl.appendChild(rot);
     var grupoE = document.createElement('div'); grupoE.className = 'fmt-grupo'; grupoE.setAttribute('role', 'group'); grupoE.setAttribute('aria-label', 'Estilo do destaque');
@@ -303,6 +306,8 @@
       barraEl.querySelectorAll('.fmt-estilo').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.e === r.e)); });
       barraEl.querySelectorAll('.fmt-cor').forEach(function (b) { b.setAttribute('aria-pressed', String(r.e !== 'auto' && b.dataset.c === r.c)); });
       barraEl.classList.toggle('no-destaque', !!mk);
+      var rg = intervalo(), sel = rg && !rg.collapsed && rg.toString().trim();
+      barraEl.classList.toggle('recolhida', !(mk || sel));
     }
     document.addEventListener('selectionchange', function () {
       if (!document.body.contains(ed)) return;
@@ -323,7 +328,7 @@
     estado();
 
     var raizEl = document.createElement('div'); raizEl.className = 'fmt-editor';
-    raizEl.appendChild(barraEl); raizEl.appendChild(ed); raizEl.appendChild(dica);
+    raizEl.appendChild(ed); raizEl.appendChild(barraEl); raizEl.appendChild(dica);
     return {
       raiz: raizEl, campo: ed,
       atualizar: function (lista) { mapa(lista); desenharCores(); ed.querySelectorAll('mark').forEach(estilizar); estado(); }

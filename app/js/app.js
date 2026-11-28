@@ -316,11 +316,11 @@
   function desenharFormatos() {
     var grupos = {}, ordem = [];
     F.lista.forEach(function (f) { var g = f.extra ? '_extra' : f.rede; if (!grupos[g]) { grupos[g] = []; ordem.push(g); } grupos[g].push(f); });
-    function chip(f) { return '<button type="button" class="chip' + (f.recomendado ? ' rec' : '') + '" data-f="' + f.id + '" aria-pressed="' + (f.id === est.formato) + '">' + f.nome + (f.kit ? ' <small>4 peças</small>' : '') + '</button>'; }
+    function chip(f) { return '<button type="button" class="chip' + (f.recomendado ? ' rec' : '') + '" data-f="' + f.id + '" aria-pressed="' + (f.id === est.formato) + '">' + f.nome + (f.kit ? ' <small>' + f.kit.length + ' peças</small>' : '') + '</button>'; }
     var html = ordem.filter(function (g) { return g !== '_extra'; }).map(function (g) {
       return '<div class="rede"><span>' + (g === 'Campanha' ? 'Tudo junto' : g) + '</span>' + grupos[g].map(chip).join('') + '</div>';
     }).join('');
-    html += '<details class="mais"' + (formatoAtual().extra ? ' open' : '') + '><summary>Mais formatos <span class="opc">· site, e-mail, cartaz, outdoor</span></summary><div class="rede" style="margin-top:0">' + grupos._extra.map(chip).join('') + '</div></details>';
+    html += '<details class="mais"' + (formatoAtual().extra ? ' open' : '') + '><summary>Mais formatos <span class="opc">· banner, e-mail, cartaz, outdoor</span></summary><div class="rede" style="margin-top:0">' + grupos._extra.map(chip).join('') + '</div></details>';
     $('#formatos').innerHTML = html;
   }
 
@@ -419,8 +419,8 @@
     var caixa = $('#campo-foto');
     var L = M.LAYOUTS[M.layout(est.layout)];
     if (!$('#f-imagem')) {
-      caixa.innerHTML = '<input id="f-imagem" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Escolher foto"><p class="ajuda" id="foto-nota"></p><div id="recorte-caixa"></div>';
-      $('#f-imagem').addEventListener('change', function () { lerFoto(this.files[0]); });
+      caixa.innerHTML = '<label class="arquivo"><input id="f-imagem" class="sr-arquivo" type="file" accept="image/jpeg,image/png,image/webp"><span class="btn sec sm" aria-hidden="true">Escolher foto</span><span class="arquivo-nome" id="f-imagem-nome">Nenhuma foto escolhida</span></label><p class="ajuda" id="foto-nota"></p><div id="recorte-caixa"></div>';
+      $('#f-imagem').addEventListener('change', function () { var f = this.files[0]; $('#f-imagem-nome').textContent = f ? f.name : 'Nenhuma foto escolhida'; lerFoto(f); });
     }
     $('#foto-nota').textContent = !L.foto ? 'O layout "Só texto" não usa foto. Escolha outro layout para ela aparecer.' : L.foto === 'fundo' ? 'No layout "Foto de fundo", a foto ocupa a peça inteira.' : 'Quer a foto na peça inteira? Escolha "Foto de fundo" em Layout.';
     desenharRecorte();
@@ -459,7 +459,7 @@
     caixa.appendChild(ed);
     var tirar = el('button', { type: 'button', class: 'btn-mini' }, 'Tirar a foto');
     tirar.style.marginTop = '8px';
-    tirar.addEventListener('click', function () { est.imagem = null; var i = $('#f-imagem'); if (i) i.value = ''; desenharRecorte(); mudou(); desenharLayouts(); });
+    tirar.addEventListener('click', function () { est.imagem = null; var i = $('#f-imagem'); if (i) { i.value = ''; $('#f-imagem-nome').textContent = 'Nenhuma foto escolhida'; } desenharRecorte(); mudou(); desenharLayouts(); });
     caixa.appendChild(tirar);
   }
 
@@ -468,15 +468,23 @@
   async function desenharLayouts() {
     var caixa = $('#layouts'), fo = formatoDasMinis();
     if (!caixa.children.length) {
-      var niveis = {}, ordem = [];
-      Object.keys(M.LAYOUTS).forEach(function (k) { var n = M.LAYOUTS[k].nivel; if (!niveis[n]) { niveis[n] = []; ordem.push(n); } niveis[n].push(k); });
-      caixa.innerHTML = ordem.map(function (n) {
-        return '<div class="nivel' + (n === 'Premium' ? ' premium' : '') + '"><span>' + n + (n === 'Premium' && PLANO === 'gratuito' ? ' · no Essencial' : '') + '</span><div class="itens">' + niveis[n].map(function (k) {
-          var trava = M.LAYOUTS[k].premium && PLANO === 'gratuito';
-          return '<button type="button" class="lay" role="radio" data-l="' + k + '" aria-checked="false" aria-label="Layout ' + M.LAYOUTS[k].nome + ', ' + n + (trava ? ', disponível no plano Essencial' : '') + '">' + (trava ? '<span class="cadeado" aria-hidden="true">Premium</span>' : '') + '<div class="mini"></div><b>' + M.LAYOUTS[k].nome + '</b></button>';
-        }).join('') + '</div></div>';
-      }).join('');
+      /* Grade única e compacta, com filtro: quem é leigo vê tudo de uma vez e separa o que é grátis. */
+      var nomeNivel = function (n) { return n === 'Premium' ? 'Premium' : 'Grátis'; };
+      caixa.innerHTML = '<div class="lay-filtro chips" role="group" aria-label="Filtrar layouts">' +
+        ['Todos', 'Grátis', 'Premium'].map(function (f, i) { return '<button type="button" class="chip" data-filtro="' + f + '" aria-pressed="' + (i === 0) + '">' + f + '</button>'; }).join('') + '</div><p class="lay-frase" id="lay-frase" aria-live="polite"></p>' +
+        '<div class="lay-grade">' + Object.keys(M.LAYOUTS).sort(function (a, b) { var o = { 'Básico': 0, 'Elaborado': 1, 'Premium': 2 }; return o[M.LAYOUTS[a].nivel] - o[M.LAYOUTS[b].nivel]; }).map(function (k) {
+          var L = M.LAYOUTS[k], trava = L.premium && PLANO === 'gratuito';
+          return '<button type="button" class="lay" role="radio" data-l="' + k + '" data-nivel="' + nomeNivel(L.nivel) + '" aria-checked="false" title="' + esc(L.frase || L.nome) + '" aria-label="Layout ' + L.nome + ', ' + (L.premium ? 'premium' : 'grátis') + (trava ? ', disponível no plano Essencial' : '') + '">' +
+            (L.premium ? '<span class="cadeado' + (trava ? '' : ' livre') + '" aria-hidden="true">' + (trava ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>' : '★') + '</span>' : '') +
+            '<div class="mini"></div><b>' + L.nome + '</b></button>';
+        }).join('') + '</div>';
+      $('.lay-filtro', caixa).addEventListener('click', function (e) {
+        var f = e.target.closest('[data-filtro]'); if (!f) return;
+        $$('[data-filtro]', caixa).forEach(function (x) { x.setAttribute('aria-pressed', String(x === f)); });
+        $$('.lay', caixa).forEach(function (l) { l.hidden = f.dataset.filtro !== 'Todos' && l.dataset.nivel !== f.dataset.filtro; });
+      });
     }
+    fraseLayout();
     $$('.lay', caixa).forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.l === M.layout(est.layout))); });
     $$('.lay .mini', caixa).forEach(function (m) { m.style.aspectRatio = fo.largura + ' / ' + fo.altura; });
     var d = Object.assign({}, est.dados);
@@ -490,6 +498,10 @@
     }
   }
   var mudouMinis = adiar(desenharLayouts, 450);
+  function fraseLayout() {
+    var L = M.LAYOUTS[M.layout(est.layout)], f = $('#lay-frase'); if (!f) return;
+    f.innerHTML = '<b>' + esc(L.nome) + ':</b> ' + esc(L.frase || '') + (L.premium && PLANO === 'gratuito' ? ' <span class="opc">Premium: dá para ver a prévia; registrar e baixar é no plano Essencial.</span>' : '');
+  }
 
   function desenharPares() {
     var html = '<button type="button" class="chip" role="radio" data-p="auto" aria-checked="' + (est.par === 'auto') + '">Automática</button>';
@@ -518,6 +530,11 @@
     });
   }
   function ligarCriar() {
+    $('.sub-abas').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-sub]'); if (!b) return;
+      $('.cartao.opcoes').dataset.sub = b.dataset.sub;
+      $$('.sub-abas [data-sub]').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); });
+    });
     $('#paletas').addEventListener('click', function (e) {
       var b = e.target.closest('.pal'); if (!b) return;
       var p = M.PALETAS.filter(function (x) { return x.id === b.dataset.p; })[0]; if (p) usarPaleta(p.principal, p.destaque);
@@ -550,7 +567,7 @@
       var b = e.target.closest('.lay'); if (!b) return;
       est.layout = b.dataset.l;
       $$('#layouts .lay').forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
-      desenharControles();
+      fraseLayout(); desenharControles();
       if (formatoAtual().campos.indexOf('imagem') >= 0) desenharFoto();
       mudou();
     });
@@ -599,7 +616,7 @@
       var alvoW = fo.altura && fo.altura / fo.largura > 1.4 ? Math.min(largura, 330) : largura;
       palco.appendChild(quadro(MD.html(fo, feitos[0].d, m, feitos[0].dec, { previa: !LIBERADO }), fo.largura, fo.altura, alvoW, fo.nome));
     }
-    $('#legenda').textContent = fo.kit ? 'Prévia ao vivo das quatro peças.' : (fo.rede ? fo.rede + ' · ' : '') + fo.nome + (fo.email ? ' · 600 px de largura' : ' · ' + fo.largura + ' × ' + fo.altura + ' px') + (fo.nota ? ' · ' + fo.nota : '');
+    $('#legenda').textContent = fo.kit ? fo.descricao + ' Prévia ao vivo.' : (fo.rede ? fo.rede + ' · ' : '') + fo.nome + (fo.email ? ' · 600 px de largura' : ' · ' + fo.largura + ' × ' + fo.altura + ' px') + (fo.nota ? ' · ' + fo.nota : '');
     $('#porque').innerHTML = feitos[0].dec.porque.map(function (p) { return '<li><b>' + p.tema + ':</b> ' + esc(p.texto) + '</li>'; }).join('');
     mensagens(false);
   }
